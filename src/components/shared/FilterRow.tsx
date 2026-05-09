@@ -46,11 +46,14 @@ export function FilterRow({ children, className }: { children: React.ReactNode; 
         </div>
       )}
 
-      {/* Scrollable pills row */}
+      {/* Scrollable pills row — padding-right keeps pills behind gradient */}
       <div
         ref={scrollRef}
         onScroll={checkOverflow}
-        className="flex items-center gap-2 overflow-x-auto scrollbar-none"
+        className={cn(
+          'flex items-center gap-2 overflow-x-auto scrollbar-none',
+          canScrollRight && 'pr-7',
+        )}
       >
         {children}
       </div>
