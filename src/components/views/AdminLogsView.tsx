@@ -76,7 +76,7 @@ export default function AdminLogsView() {
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">Логи</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Логи</h1>
         <p className="text-sm text-[#737373] mt-0.5">Системные логи</p>
       </div>
 

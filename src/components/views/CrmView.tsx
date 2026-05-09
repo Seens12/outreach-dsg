@@ -17,6 +17,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
 interface CrmIntegration {
   id: string;
@@ -82,14 +84,23 @@ function CrmIcon({ type }: { type: CrmIntegration['icon'] }) {
 }
 
 export default function CrmView() {
-  const [integrations] = useState<CrmIntegration[]>(mockIntegrations);
+  const [integrations, setIntegrations] = useState<CrmIntegration[]>(mockIntegrations);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  const crmToDisconnect = integrations.find((c) => c.id === confirmId);
+
+  const handleDisconnect = (id: string) => {
+    setIntegrations((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, connected: false, syncedRecords: 0, lastSync: 'Никогда' } : c))
+    );
+  };
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#0d0d0d]">CRM</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">CRM</h1>
           <p className="text-sm text-[#737373]">Управление интеграцией с CRM-системами</p>
         </div>
       </div>
@@ -163,6 +174,7 @@ export default function CrmView() {
                       variant="outline"
                       size="sm"
                       className="flex-1 border-[#dc2626]/30 text-[#dc2626] hover:bg-[#dc2626]/5 hover:text-[#dc2626]"
+                      onClick={() => setConfirmId(crm.id)}
                     >
                       <Unplug className="size-3.5" />
                       Отключить
@@ -179,7 +191,7 @@ export default function CrmView() {
                 ) : (
                   <Button
                     size="sm"
-                    className="w-full bg-[#2563eb] hover:bg-[#2563eb]/90 text-white"
+                    className="w-full bg-[#0d0d0d] hover:bg-[#262626] text-white"
                   >
                     <Link2 className="size-3.5" />
                     Подключить
@@ -203,6 +215,21 @@ export default function CrmView() {
           </CardContent>
         </Card>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Отключить CRM?"
+        description={crmToDisconnect ? `Интеграция с «${crmToDisconnect.name}» будет отключена. Все несинхронизированные данные могут быть потеряны.` : 'Интеграция будет отключена.'}
+        confirmLabel="Отключить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDisconnect(confirmId);
+            toast.success('CRM отключён');
+            setConfirmId(null);
+          }
+        }}
+      />
     </div>
   );
 }

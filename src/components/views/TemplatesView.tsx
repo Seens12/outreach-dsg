@@ -12,6 +12,8 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/shared/EmptyState'
 
 type Category = 'cold' | 'follow-up' | 'meeting'
 
@@ -165,12 +167,12 @@ export default function TemplatesView() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-bold text-[#0d0d0d]">Шаблоны</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Шаблоны</h1>
           <p className="text-[13px] text-[#737373]">
             Управление email-шаблонами
           </p>
         </div>
-        <Button className="gap-2 bg-[#2563eb] text-white hover:bg-[#2563eb]/90">
+        <Button onClick={() => toast.success('Шаблон создан')} className="gap-2 bg-[#0d0d0d] text-white hover:bg-[#262626]">
           <Plus className="h-4 w-4" />
           Создать шаблон
         </Button>
@@ -195,6 +197,16 @@ export default function TemplatesView() {
 
       {/* Template grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {filteredTemplates.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyState
+              icon={FileText}
+              title="Нет шаблонов"
+              description="Нет шаблонов в этой категории"
+            />
+          </div>
+        ) : (
+        <>
         {filteredTemplates.map((template) => (
           <TemplateCard key={template.id} template={template} />
         ))}
@@ -208,6 +220,8 @@ export default function TemplatesView() {
             Создать шаблон
           </span>
         </button>
+        </>
+        )}
       </div>
     </div>
   )

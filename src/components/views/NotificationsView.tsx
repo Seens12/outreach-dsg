@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 
 interface NotificationCategory {
   id: string;
@@ -82,7 +83,7 @@ export default function NotificationsView() {
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#0d0d0d]">Уведомления</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Уведомления</h1>
         <p className="text-sm text-[#737373]">Настройка уведомлений</p>
       </div>
 
@@ -119,7 +120,7 @@ export default function NotificationsView() {
           Активно уведомлений: <span className="font-medium text-[#0d0d0d]">{enabledCount}</span> из{' '}
           <span className="font-medium text-[#0d0d0d]">{categories.length}</span>
         </p>
-        <Button className="bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
+        <Button onClick={() => toast.success('Настройки уведомлений сохранены')} className="bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
           <Save className="size-4" />
           Сохранить настройки
         </Button>

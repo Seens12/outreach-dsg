@@ -22,6 +22,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
 interface Session {
   id: string;
@@ -104,12 +106,16 @@ export default function SecurityView() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
+  const [confirmSessionId, setConfirmSessionId] = useState<string | null>(null);
+  const [confirmApiKeyId, setConfirmApiKeyId] = useState<string | null>(null);
+  const [sessions, setSessions] = useState<Session[]>(mockSessions);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>(mockApiKeys);
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#0d0d0d]">Безопасность</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Безопасность</h1>
         <p className="text-sm text-[#737373]">Настройки безопасности аккаунта</p>
       </div>
 
@@ -137,6 +143,7 @@ export default function SecurityView() {
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  aria-label={showCurrentPassword ? 'Скрыть пароль' : 'Показать пароль'}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] hover:text-[#737373]"
                 >
                   {showCurrentPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -157,6 +164,7 @@ export default function SecurityView() {
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
+                  aria-label={showNewPassword ? 'Скрыть пароль' : 'Показать пароль'}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] hover:text-[#737373]"
                 >
                   {showNewPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -177,6 +185,7 @@ export default function SecurityView() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Скрыть пароль' : 'Показать пароль'}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] hover:text-[#737373]"
                 >
                   {showConfirmPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -185,7 +194,7 @@ export default function SecurityView() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button size="sm" className="bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
+            <Button onClick={() => toast.success('Пароль изменён')} size="sm" className="bg-[#0d0d0d] hover:bg-[#262626] text-white">
               <Lock className="size-3.5" />
               Изменить
             </Button>
@@ -206,7 +215,7 @@ export default function SecurityView() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-[#0d0d0d]">Двухфакторная аутентификация</h3>
-              <p className="mt-0.5 text-xs text-[#a3a3a3]">
+              <p className="mt-0.5 text-xs text-[#737373]">
                 Дополнительный уровень защиты при входе в аккаунт
               </p>
               <div className="mt-2">
@@ -243,7 +252,7 @@ export default function SecurityView() {
             <h3 className="text-sm font-semibold text-[#0d0d0d]">Активные сессии</h3>
           </div>
           <div className="divide-y divide-[#f5f5f5]">
-            {mockSessions.map((session) => (
+            {sessions.map((session) => (
               <div
                 key={session.id}
                 className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
@@ -261,7 +270,7 @@ export default function SecurityView() {
                         </Badge>
                       )}
                     </div>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[#a3a3a3]">
+                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[#737373]">
                       <span>{session.location}</span>
                       <span>IP: {session.ip}</span>
                       <span className="flex items-center gap-1">
@@ -276,6 +285,7 @@ export default function SecurityView() {
                     variant="outline"
                     size="sm"
                     className="border-[#dc2626]/30 text-[#dc2626] hover:bg-[#dc2626]/5 hover:text-[#dc2626] shrink-0 self-start"
+                    onClick={() => setConfirmSessionId(session.id)}
                   >
                     <LogOut className="size-3.5" />
                     Завершить
@@ -306,7 +316,7 @@ export default function SecurityView() {
             </Button>
           </div>
           <div className="divide-y divide-[#f5f5f5]">
-            {mockApiKeys.map((apiKey) => (
+            {apiKeys.map((apiKey) => (
               <div
                 key={apiKey.id}
                 className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
@@ -317,7 +327,7 @@ export default function SecurityView() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[#0d0d0d]">{apiKey.name}</p>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[#a3a3a3]">
+                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[#737373]">
                       <span className="font-mono bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#737373]">
                         {apiKey.keyPreview}
                       </span>
@@ -327,10 +337,10 @@ export default function SecurityView() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Button variant="ghost" size="icon" className="size-8 text-[#a3a3a3] hover:text-[#737373]">
+                  <Button variant="ghost" size="icon" aria-label="Копировать" className="size-8 text-[#a3a3a3] hover:text-[#737373]">
                     <Copy className="size-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="size-8 text-[#a3a3a3] hover:text-[#dc2626]">
+                  <Button variant="ghost" size="icon" aria-label="Удалить" className="size-8 text-[#a3a3a3] hover:text-[#dc2626]" onClick={() => setConfirmApiKeyId(apiKey.id)}>
                     <Trash2 className="size-3.5" />
                   </Button>
                 </div>
@@ -339,6 +349,36 @@ export default function SecurityView() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={confirmSessionId !== null}
+        onOpenChange={(open) => !open && setConfirmSessionId(null)}
+        title="Завершить сессию?"
+        description={`Сессия будет принудительно завершена, и пользователь будет разлогинен.`}
+        confirmLabel="Завершить"
+        onConfirm={() => {
+          if (confirmSessionId) {
+            setSessions((prev) => prev.filter((s) => s.id !== confirmSessionId));
+            toast.success('Сессия завершена');
+            setConfirmSessionId(null);
+          }
+        }}
+      />
+
+      <ConfirmDialog
+        open={confirmApiKeyId !== null}
+        onOpenChange={(open) => !open && setConfirmApiKeyId(null)}
+        title="Удалить API-ключ?"
+        description={`API-ключ будет удалён безвозвратно. Все приложения, использующие этот ключ, потеряют доступ.`}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmApiKeyId) {
+            setApiKeys((prev) => prev.filter((k) => k.id !== confirmApiKeyId));
+            toast.success('Ключ удалён');
+            setConfirmApiKeyId(null);
+          }
+        }}
+      />
     </div>
   );
 }

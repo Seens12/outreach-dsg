@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 import {
   TrendingUp,
   TrendingDown,
@@ -15,6 +17,8 @@ import {
   ChevronRight,
   User,
 } from 'lucide-react'
+import { useAppStore } from '@/lib/store'
+import { Skeleton } from '@/components/ui/skeleton'
 
 // ── Demo Data ───────────────────────────────────────────────
 
@@ -151,6 +155,14 @@ function SparkBars({ bars }: { bars: number[] }) {
 // ── Main Component ──────────────────────────────────────────
 
 export default function DashboardView() {
+  const { setView } = useAppStore()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
+
   return (
     <div className="flex flex-col gap-6 p-6 text-[13.5px] text-[#171717] overflow-y-auto h-full custom-scroll">
       {/* ── Page Header ──────────────────────────────────── */}
@@ -164,8 +176,12 @@ export default function DashboardView() {
       </div>
 
       {/* ── Metric Cards ─────────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-4">
-        {metrics.map((m) => {
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-[120px] rounded-[10px] border border-[#e8e8e8]" />
+            ))
+          : metrics.map((m) => {
           const Icon = iconMap[m.label]
           return (
             <div
@@ -218,7 +234,7 @@ export default function DashboardView() {
             {attentionItems.map((item) => (
               <div key={item.id} className="flex items-center gap-1.5 text-[12.5px] text-[#a16207]">
                 <span>{item.text}</span>
-                <button className="inline-flex items-center gap-0.5 font-medium text-[#b45309] hover:underline underline-offset-2">
+                <button onClick={() => setView('campaigns')} className="inline-flex items-center gap-0.5 font-medium text-[#b45309] hover:underline underline-offset-2 cursor-pointer">
                   {item.action}
                   <ChevronRight className="w-3 h-3" />
                 </button>
@@ -230,13 +246,20 @@ export default function DashboardView() {
 
       {/* ── Two-Column Grid ──────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4">
+        {loading ? (
+          <>
+            <Skeleton className="h-[360px] rounded-[10px] border border-[#e8e8e8]" />
+            <Skeleton className="h-[360px] rounded-[10px] border border-[#e8e8e8]" />
+          </>
+        ) : (
+        <>
         {/* Activity Feed */}
         <div className="border border-[#e8e8e8] rounded-[10px] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#e8e8e8]">
             <h2 className="text-[14px] font-semibold text-[#0d0d0d]">
               Последняя активность
             </h2>
-            <button className="text-[12px] text-[#737373] hover:text-[#171717] transition-colors font-medium">
+            <button onClick={() => setView('activity')} className="text-[12px] text-[#737373] hover:text-[#171717] transition-colors font-medium cursor-pointer">
               Все записи
             </button>
           </div>
@@ -253,7 +276,7 @@ export default function DashboardView() {
                   <p className="text-[13px] text-[#404040] leading-[1.4]">
                     {item.text}
                   </p>
-                  <div className="flex items-center gap-1 mt-1 text-[11.5px] text-[#a3a3a3]">
+                  <div className="flex items-center gap-1 mt-1 text-[11.5px] text-[#737373]">
                     <Clock className="w-3 h-3" />
                     {item.time}
                   </div>
@@ -274,7 +297,7 @@ export default function DashboardView() {
                 5
               </span>
             </div>
-            <button className="text-[12px] text-[#737373] hover:text-[#171717] transition-colors font-medium">
+            <button onClick={() => setView('leads')} className="text-[12px] text-[#737373] hover:text-[#171717] transition-colors font-medium cursor-pointer">
               Все лиды
             </button>
           </div>
@@ -294,7 +317,7 @@ export default function DashboardView() {
                       <span className="text-[13px] font-medium text-[#171717] truncate">
                         {lead.name}
                       </span>
-                      <span className="text-[12px] text-[#a3a3a3] truncate">
+                      <span className="text-[12px] text-[#737373] truncate">
                         {lead.company}
                       </span>
                     </div>
@@ -310,6 +333,8 @@ export default function DashboardView() {
             })}
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   )

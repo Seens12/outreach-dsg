@@ -298,7 +298,7 @@ export default function ChatView() {
       {/* ── Input Area ───────────────────────────────────── */}
       <div className="border-t border-[#e8e8e8] bg-white px-6 py-4">
         <div className="max-w-[680px] mx-auto">
-          <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 focus-within:border-[#a3a3a3] focus-within:bg-white transition-colors">
+          <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 focus-within:border-[#737373] focus-within:bg-white transition-colors">
             {/* Attachment */}
             <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
               <Paperclip className="w-4 h-4 text-[#737373]" />
@@ -311,7 +311,7 @@ export default function ChatView() {
               onKeyDown={handleKeyDown}
               placeholder="Напишите сообщение..."
               rows={1}
-              className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#a3a3a3] resize-none outline-none min-h-[32px] max-h-[120px] py-1.5 leading-[1.5]"
+              className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[120px] py-1.5 leading-[1.5]"
             />
 
             {/* File upload */}

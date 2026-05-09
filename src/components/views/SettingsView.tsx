@@ -30,15 +30,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
 export default function SettingsView() {
   const [autoFollowUp, setAutoFollowUp] = useState(true);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#0d0d0d]">Настройки</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Настройки</h1>
         <p className="text-sm text-[#737373]">Общие настройки аккаунта</p>
       </div>
 
@@ -290,11 +293,24 @@ export default function SettingsView() {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button size="lg" className="bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
+        <Button onClick={() => setConfirmOpen(true)} size="lg" className="bg-[#0d0d0d] hover:bg-[#262626] text-white">
           <Save className="size-4" />
           Сохранить изменения
         </Button>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Сохранить настройки?"
+        description="Все изменения будут применены"
+        confirmLabel="Сохранить"
+        destructive={false}
+        onConfirm={() => {
+          toast.success('Настройки сохранены');
+          setConfirmOpen(false);
+        }}
+      />
     </div>
   );
 }

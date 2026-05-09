@@ -13,8 +13,11 @@ import {
   Clock,
   XCircle,
 } from 'lucide-react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import {
   Table,
   TableHeader,
@@ -40,13 +43,13 @@ const plans: Plan[] = [
   },
   {
     name: 'Professional',
-    price: '$79/мес',
+    price: '$99/мес',
     users: 'до 20 пользователей',
     features: ['10 000 писем/мес', '10 ящиков', 'AI-ассистент', 'CRM интеграция'],
   },
   {
     name: 'Enterprise',
-    price: 'Индивидуально',
+    price: '$249/мес',
     users: 'Без ограничений',
     features: ['Неограниченные письма', 'Неограниченные ящики', 'Приоритетная поддержка', 'Custom интеграции'],
   },
@@ -75,11 +78,19 @@ const paymentStatusConfig = {
 }
 
 export default function AdminBillingView() {
+  const [planList, setPlanList] = useState<Plan[]>(plans)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const planToDelete = planList.find((p) => p.name === confirmId)
+
+  const handleDelete = (name: string) => {
+    setPlanList((prev) => prev.filter((p) => p.name !== name))
+  }
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           Биллинг (админ)
         </h1>
         <p className="text-sm text-[#737373] mt-0.5">
@@ -129,7 +140,7 @@ export default function AdminBillingView() {
             <h2 className="text-sm font-semibold text-[#171717]">
               Тарифные планы
             </h2>
-            <Button
+            <Button onClick={() => toast.success('План добавлен')}
               size="sm"
               className="rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2"
             >
@@ -138,7 +149,7 @@ export default function AdminBillingView() {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {plans.map((plan) => (
+            {planList.map((plan) => (
               <div
                 key={plan.name}
                 className="rounded-[10px] border border-[#e8e8e8] bg-white p-5"
@@ -151,6 +162,7 @@ export default function AdminBillingView() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Изменить"
                       className="h-7 w-7 text-[#a8a8a8] hover:text-[#171717]"
                     >
                       <Pencil className="w-3 h-3" />
@@ -158,7 +170,9 @@ export default function AdminBillingView() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Удалить"
                       className="h-7 w-7 text-[#a8a8a8] hover:text-[#dc2626]"
+                      onClick={() => setConfirmId(plan.name)}
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
@@ -167,7 +181,7 @@ export default function AdminBillingView() {
                 <div className="text-lg font-semibold text-[#171717] mb-1">
                   {plan.price}
                 </div>
-                <div className="text-[12px] text-[#a8a8a8] mb-4">
+                <div className="text-[12px] text-[#737373] mb-4">
                   {plan.users}
                 </div>
                 <ul className="space-y-2">
@@ -227,7 +241,7 @@ export default function AdminBillingView() {
                       <TableCell className="text-[13px] text-[#171717] font-medium">
                         {p.amount}
                       </TableCell>
-                      <TableCell className="text-[13px] text-[#a8a8a8]">
+                      <TableCell className="text-[13px] text-[#737373]">
                         {p.date}
                       </TableCell>
                       <TableCell>
@@ -253,6 +267,21 @@ export default function AdminBillingView() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить план?"
+        description={planToDelete ? `Тарифный план «${planToDelete.name}» будет удалён безвозвратно.` : 'Тарифный план будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId)
+            toast.success('План удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

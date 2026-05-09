@@ -9,10 +9,13 @@ import {
   Megaphone,
   Send,
   TrendingUp,
+  Users,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/shared/EmptyState'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -63,11 +66,21 @@ const roleConfig: Record<MemberRole, { color: string; bg: string }> = {
 export default function TeamView() {
   const [search, setSearch] = useState('')
 
+  const filteredMembers = members.filter((member) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      member.name.toLowerCase().includes(q) ||
+      member.email.toLowerCase().includes(q) ||
+      member.role.toLowerCase().includes(q)
+    )
+  })
+
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold tracking-[-0.02em] text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           Команда
         </h1>
         <p className="text-[13px] text-[#737373] font-medium mt-1">
@@ -81,13 +94,14 @@ export default function TeamView() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#a8a8a8]" />
           <Input
             placeholder="Поиск участников..."
+            aria-label="Поиск"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 h-[36px] text-[13px] bg-[#fafafa] border-[#e8e8e8] rounded-[8px] focus-visible:ring-[#2563eb]/20 focus-visible:border-[#2563eb]/40"
           />
         </div>
 
-        <Button className="h-[36px] text-[13px] font-medium rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] text-white gap-2">
+        <Button onClick={() => toast.success('Приглашение отправлено')} className="h-[36px] text-[13px] font-medium rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] text-white gap-2">
           <UserPlus className="w-4 h-4" />
           Пригласить
         </Button>
@@ -95,7 +109,17 @@ export default function TeamView() {
 
       {/* Team cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {members.map((member) => {
+        {filteredMembers.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyState
+              icon={Users}
+              title="Нет участников"
+              description={search ? `По запросу «${search}» ничего не найдено` : 'Пригласите первого участника'}
+            />
+          </div>
+        ) : (
+        <>
+        {filteredMembers.map((member) => {
           const roleCfg = roleConfig[member.role]
           return (
             <div
@@ -121,12 +145,12 @@ export default function TeamView() {
                     <div className="text-[13px] font-semibold text-[#171717] leading-tight">
                       {member.name}
                     </div>
-                    <div className="text-[12px] text-[#a8a8a8] mt-0.5">
+                    <div className="text-[12px] text-[#737373] mt-0.5">
                       {member.email}
                     </div>
                   </div>
                 </div>
-                <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                <button aria-label="Действия" className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                   <MoreHorizontal className="w-[14px] h-[14px]" />
                 </button>
               </div>
@@ -153,7 +177,7 @@ export default function TeamView() {
                   <div className="text-[15px] font-bold text-[#171717] leading-none">
                     {member.campaigns}
                   </div>
-                  <div className="text-[10.5px] text-[#a8a8a8] mt-1">
+                  <div className="text-[10.5px] text-[#737373] mt-1">
                     кампании
                   </div>
                 </div>
@@ -164,7 +188,7 @@ export default function TeamView() {
                   <div className="text-[15px] font-bold text-[#171717] leading-none">
                     {member.sent}
                   </div>
-                  <div className="text-[10.5px] text-[#a8a8a8] mt-1">
+                  <div className="text-[10.5px] text-[#737373] mt-1">
                     отправлено
                   </div>
                 </div>
@@ -175,7 +199,7 @@ export default function TeamView() {
                   <div className="text-[15px] font-bold text-[#171717] leading-none">
                     {member.conversion}
                   </div>
-                  <div className="text-[10.5px] text-[#a8a8a8] mt-1">
+                  <div className="text-[10.5px] text-[#737373] mt-1">
                     конверсия
                   </div>
                 </div>
@@ -191,6 +215,8 @@ export default function TeamView() {
             </div>
           )
         })}
+        </>
+        )}
       </div>
     </div>
   )

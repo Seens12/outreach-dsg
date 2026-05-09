@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Search,
   Plus,
@@ -9,11 +9,15 @@ import {
   Phone,
   Eye,
   ChevronDown,
+  UserPlus,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { Skeleton } from '@/components/ui/skeleton'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,12 +77,27 @@ const filters: Array<{ label: string; count?: number }> = [
 export default function LeadsView() {
   const [activeFilter, setActiveFilter] = useState('Все')
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
+
+  const filteredLeads = leads.filter((lead) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      lead.name.toLowerCase().includes(q) ||
+      lead.company.toLowerCase().includes(q)
+    )
+  })
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold tracking-[-0.02em] text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           Лиды
         </h1>
         <p className="text-[13px] text-[#737373] font-medium mt-1">
@@ -92,13 +111,14 @@ export default function LeadsView() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#a8a8a8]" />
           <Input
             placeholder="Поиск лидов..."
+            aria-label="Поиск"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 h-[36px] text-[13px] bg-[#fafafa] border-[#e8e8e8] rounded-[8px] focus-visible:ring-[#2563eb]/20 focus-visible:border-[#2563eb]/40"
           />
         </div>
 
-        <Button className="h-[36px] text-[13px] font-medium rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] text-white gap-2">
+        <Button onClick={() => toast.success('Лид добавлен')} className="h-[36px] text-[13px] font-medium rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] text-white gap-2">
           <Plus className="w-4 h-4" />
           Добавить лид
         </Button>
@@ -136,6 +156,20 @@ export default function LeadsView() {
 
       {/* Table */}
       <div className="border border-[#e8e8e8] rounded-[10px] bg-white overflow-hidden">
+        {loading ? (
+          <div className="p-4 space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </div>
+        ) : filteredLeads.length === 0 ? (
+          <EmptyState
+            icon={UserPlus}
+            title="Нет лидов"
+            description={search ? `По запросу «${search}» ничего не найдено` : 'Добавьте первый лид'}
+            action={!search ? { label: 'Добавить лид', onClick: () => toast.success('Лид добавлен') } : undefined}
+          />
+        ) : (
         <table className="w-full text-[13px] font-medium">
           <thead>
             <tr className="border-b border-[#e8e8e8] bg-[#fafafa]">
@@ -160,7 +194,7 @@ export default function LeadsView() {
             </tr>
           </thead>
           <tbody>
-            {leads.map((lead, idx) => {
+            {filteredLeads.map((lead, idx) => {
               const cfg = statusConfig[lead.status]
               return (
                 <tr
@@ -182,7 +216,7 @@ export default function LeadsView() {
                         <div className="text-[13px] font-semibold text-[#171717] leading-tight">
                           {lead.name}
                         </div>
-                        <div className="text-[12px] text-[#a8a8a8]">
+                        <div className="text-[12px] text-[#737373]">
                           {lead.company}
                         </div>
                       </div>
@@ -207,16 +241,16 @@ export default function LeadsView() {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                      <button aria-label="Просмотр" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                         <Eye className="w-[14px] h-[14px]" />
                       </button>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                      <button aria-label="Отправить email" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                         <Mail className="w-[14px] h-[14px]" />
                       </button>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                      <button aria-label="Позвонить" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                         <Phone className="w-[14px] h-[14px]" />
                       </button>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                      <button aria-label="Действия" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                         <MoreHorizontal className="w-[14px] h-[14px]" />
                       </button>
                     </div>
@@ -226,6 +260,7 @@ export default function LeadsView() {
             })}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   )

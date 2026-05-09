@@ -14,6 +14,9 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 type MailboxStatus = 'connected' | 'pending'
 
@@ -84,19 +87,26 @@ function CheckIndicator({ ok, label }: { ok: boolean; label: string }) {
 }
 
 export default function MailboxesView() {
-  const [data] = useState<Mailbox[]>(mailboxes)
+  const [data, setData] = useState<Mailbox[]>(mailboxes)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const mailboxToDelete = data.find((m) => m.id === confirmId)
+
+  const handleDelete = (id: string) => {
+    setData((prev) => prev.filter((m) => m.id !== id))
+  }
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-bold text-[#0d0d0d]">Ящики</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Ящики</h1>
           <p className="text-[13px] text-[#737373]">
             Управление email-ящиками
           </p>
         </div>
-        <Button className="gap-2 bg-[#2563eb] text-white hover:bg-[#2563eb]/90">
+        <Button onClick={() => toast.success('Ящик добавлен')} className="gap-2 bg-[#0d0d0d] text-white hover:bg-[#262626]">
           <Plus className="h-4 w-4" />
           Добавить ящик
         </Button>
@@ -104,6 +114,15 @@ export default function MailboxesView() {
 
       {/* Mailbox list */}
       <div className="flex flex-col gap-4">
+        {data.length === 0 ? (
+          <EmptyState
+            icon={Mail}
+            title="Нет почтовых ящиков"
+            description="Подключите первый почтовый ящик для начала работы"
+            action={{ label: 'Добавить ящик', onClick: () => toast.success('Ящик добавлен') }}
+          />
+        ) : (
+        <>
         {data.map((mailbox) => (
           <div
             key={mailbox.id}
@@ -156,6 +175,7 @@ export default function MailboxesView() {
                   variant="outline"
                   size="sm"
                   className="gap-1.5 text-[13px] text-red-600 hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+                  onClick={() => setConfirmId(mailbox.id)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Удалить
@@ -164,7 +184,24 @@ export default function MailboxesView() {
             </div>
           </div>
         ))}
+        </>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить ящик?"
+        description={mailboxToDelete ? `Ящик «${mailboxToDelete.email}» будет удалён безвозвратно.` : 'Ящик будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId)
+            toast.success('Ящик удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

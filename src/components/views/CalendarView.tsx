@@ -12,6 +12,7 @@ import {
   CalendarDays,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/shared/EmptyState'
 
 type EventType = 'scheduled' | 'pending' | 'meeting'
 
@@ -139,8 +140,9 @@ function generateCalendarEvents(): Record<number, CalendarEvent[]> {
 }
 
 export default function CalendarView() {
-  const [month, setMonth] = useState(0) // January
-  const [year, setYear] = useState(2025)
+  const now = new Date()
+  const [month, setMonth] = useState(now.getMonth())
+  const [year, setYear] = useState(now.getFullYear())
 
   const calendarEvents = generateCalendarEvents()
 
@@ -179,7 +181,7 @@ export default function CalendarView() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold text-[#0d0d0d]">Календарь</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Календарь</h1>
         <p className="text-[13px] text-[#737373]">
           Планирование follow-up и встреч
         </p>
@@ -224,7 +226,7 @@ export default function CalendarView() {
         <div className="grid grid-cols-7 gap-px rounded-lg bg-[#f5f5f5]">
           {cells.map((day, idx) => {
             const events = day ? calendarEvents[day] || [] : []
-            const isToday = day === 15 // Simulate "today" as Jan 15
+            const isToday = day === now.getDate() && month === now.getMonth() && year === now.getFullYear()
 
             return (
               <div
@@ -285,6 +287,14 @@ export default function CalendarView() {
           Ближайшие задачи
         </h3>
         <div className="flex flex-col divide-y divide-[#f5f5f5]">
+          {upcomingTasks.length === 0 ? (
+            <EmptyState
+              icon={CalendarDays}
+              title="Нет событий"
+              description="Нет запланированных задач на эту дату"
+            />
+          ) : (
+          <>
           {upcomingTasks.map((task) => {
             const Icon = typeIcons[task.type]
             return (
@@ -319,6 +329,8 @@ export default function CalendarView() {
               </div>
             )
           })}
+          </>
+          )}
         </div>
       </div>
     </div>

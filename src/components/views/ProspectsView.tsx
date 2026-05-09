@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/shared/EmptyState'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -68,11 +69,22 @@ export default function ProspectsView() {
   const [activeFilter, setActiveFilter] = useState('Все')
   const [search, setSearch] = useState('')
 
+  const filteredContacts = contacts.filter((contact) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      contact.name.toLowerCase().includes(q) ||
+      contact.company.toLowerCase().includes(q) ||
+      contact.email.toLowerCase().includes(q) ||
+      contact.position.toLowerCase().includes(q)
+    )
+  })
+
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold tracking-[-0.02em] text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           Контакты
         </h1>
         <p className="text-[13px] text-[#737373] font-medium mt-1">
@@ -86,6 +98,7 @@ export default function ProspectsView() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#a8a8a8]" />
           <Input
             placeholder="Поиск контактов..."
+            aria-label="Поиск"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 h-[36px] text-[13px] bg-[#fafafa] border-[#e8e8e8] rounded-[8px] focus-visible:ring-[#2563eb]/20 focus-visible:border-[#2563eb]/40"
@@ -118,7 +131,17 @@ export default function ProspectsView() {
 
       {/* Contact cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {contacts.map((contact) => {
+        {filteredContacts.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyState
+              icon={UserPlus}
+              title="Нет контактов"
+              description={search ? `По запросу «${search}» ничего не найдено` : 'Добавьте первый контакт'}
+            />
+          </div>
+        ) : (
+        <>
+        {filteredContacts.map((contact) => {
           const cfg = sourceConfig[contact.source]
           const SourceIcon = cfg.icon
           return (
@@ -136,12 +159,12 @@ export default function ProspectsView() {
                     <div className="text-[13px] font-semibold text-[#171717] leading-tight">
                       {contact.name}
                     </div>
-                    <div className="text-[12px] text-[#a8a8a8] mt-0.5">
+                    <div className="text-[12px] text-[#737373] mt-0.5">
                       {contact.position}
                     </div>
                   </div>
                 </div>
-                <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
+                <button aria-label="Действия" className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
                   <MoreHorizontal className="w-[14px] h-[14px]" />
                 </button>
               </div>
@@ -179,11 +202,11 @@ export default function ProspectsView() {
 
               {/* Action buttons */}
               <div className="flex items-center gap-2 pt-3 border-t border-[#f0f0f0]">
-                <button className="flex-1 h-[32px] flex items-center justify-center gap-1.5 rounded-[7px] text-[12px] font-medium text-[#525252] bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors duration-150 cursor-pointer">
+                <button aria-label="Отправить email" className="flex-1 h-[32px] flex items-center justify-center gap-1.5 rounded-[7px] text-[12px] font-medium text-[#525252] bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors duration-150 cursor-pointer">
                   <Mail className="w-3.5 h-3.5" />
                   Email
                 </button>
-                <button className="flex-1 h-[32px] flex items-center justify-center gap-1.5 rounded-[7px] text-[12px] font-medium text-[#525252] bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors duration-150 cursor-pointer">
+                <button aria-label="Позвонить" className="flex-1 h-[32px] flex items-center justify-center gap-1.5 rounded-[7px] text-[12px] font-medium text-[#525252] bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors duration-150 cursor-pointer">
                   <Phone className="w-3.5 h-3.5" />
                   Позвонить
                 </button>
@@ -191,6 +214,8 @@ export default function ProspectsView() {
             </div>
           )
         })}
+        </>
+        )}
       </div>
     </div>
   )

@@ -138,7 +138,7 @@ export function Sidebar() {
       <nav className="flex-1 py-2.5 px-2 overflow-y-auto custom-scroll">
         {navGroups.map((group) => (
           <div key={group.label} className="mb-4">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#a8a8a8] px-2 mb-1">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] px-2 mb-1">
               {group.label}
             </div>
             {group.items.map((item) => {
@@ -148,6 +148,7 @@ export function Sidebar() {
                 <button
                   key={item.id}
                   onClick={() => setView(item.id)}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'w-full flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
                     isActive
@@ -195,7 +196,7 @@ export function Sidebar() {
             <div className="text-[12.5px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
               Алексей Козлов
             </div>
-            <div className="text-[11px] text-[#a8a8a8] group-hover:text-white/60 transition-colors">Pro план</div>
+            <div className="text-[11px] text-[#737373] group-hover:text-white/60 transition-colors">Pro план</div>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-[#a8a8a8] group-hover:text-white/60 transition-colors" />
         </button>

@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import {
   Table,
   TableHeader,
@@ -43,12 +45,26 @@ const statusConfig = {
 
 export default function AdminTenantsView() {
   const [search, setSearch] = useState('')
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const [tenantList, setTenantList] = useState(tenants)
+
+  const tenantToDelete = tenantList.find((t) => t.name === confirmId)
+
+  const filteredTenants = tenantList.filter((t) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      t.name.toLowerCase().includes(q) ||
+      t.plan.toLowerCase().includes(q)
+    )
+  })
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">Тенанты</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Тенанты</h1>
         <p className="text-sm text-[#737373] mt-0.5">
           Управление клиентами
         </p>
@@ -62,9 +78,10 @@ export default function AdminTenantsView() {
             <input
               type="text"
               placeholder="Поиск тенантов..."
+              aria-label="Поиск"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 rounded-lg border border-[#e8e8e8] bg-white text-sm outline-none focus:border-[#737373] transition-colors placeholder:text-[#a8a8a8] text-[#171717]"
+              className="w-full h-9 pl-9 pr-3 rounded-lg border border-[#e8e8e8] bg-white text-sm outline-none focus:border-[#737373] transition-colors placeholder:text-[#737373] text-[#171717]"
             />
           </div>
           <Button className="h-9 rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2">
@@ -99,7 +116,7 @@ export default function AdminTenantsView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {tenants.map((t) => {
+              {filteredTenants.map((t) => {
                 const cfg = statusConfig[t.status]
                 return (
                   <TableRow
@@ -124,7 +141,7 @@ export default function AdminTenantsView() {
                         {cfg.label}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-[13px] text-[#a8a8a8]">
+                    <TableCell className="text-[13px] text-[#737373]">
                       {t.created}
                     </TableCell>
                     <TableCell className="text-right">
@@ -132,6 +149,7 @@ export default function AdminTenantsView() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Изменить"
                           className="h-8 w-8 text-[#a8a8a8] hover:text-[#171717]"
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -139,7 +157,9 @@ export default function AdminTenantsView() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Удалить"
                           className="h-8 w-8 text-[#a8a8a8] hover:text-[#dc2626]"
+                          onClick={() => setConfirmId(t.name)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
@@ -152,6 +172,21 @@ export default function AdminTenantsView() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить тенант?"
+        description={tenantToDelete ? `Тенант «${tenantToDelete.name}» будет удалён безвозвратно.` : 'Тенант будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            setTenantList((prev) => prev.filter((t) => t.name !== confirmId))
+            toast.success('Тенант удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

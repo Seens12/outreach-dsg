@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { toast } from 'sonner';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 type TestStatus = 'Активный' | 'Завершённый' | 'Черновик';
 
@@ -76,10 +78,10 @@ export default function AbTestingView() {
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#0d0d0d]">A/B Тесты</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">A/B Тесты</h1>
           <p className="text-sm text-[#737373]">Сравнение вариантов email</p>
         </div>
-        <Button className="mt-3 sm:mt-0 bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
+        <Button onClick={() => toast.success('Тест создан')} className="mt-3 sm:mt-0 bg-[#0d0d0d] hover:bg-[#262626] text-white">
           <Plus className="size-4" />
           Новый тест
         </Button>
@@ -87,6 +89,15 @@ export default function AbTestingView() {
 
       {/* Test Cards */}
       <div className="grid gap-4">
+        {tests.length === 0 ? (
+          <EmptyState
+            icon={FlaskConical}
+            title="Нет A/B тестов"
+            description="Создайте первый A/B тест для сравнения вариантов"
+            action={{ label: 'Новый тест', onClick: () => toast.success('Тест создан') }}
+          />
+        ) : (
+        <>
         {tests.map((test) => (
           <Card
             key={test.id}
@@ -198,6 +209,8 @@ export default function AbTestingView() {
             </CardContent>
           </Card>
         ))}
+        </>
+        )}
       </div>
     </div>
   );

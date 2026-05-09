@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   Send,
   Eye,
@@ -154,7 +155,7 @@ export default function CampaignsView() {
             </button>
           ))}
         </div>
-        <button className="inline-flex items-center gap-2 bg-[#0d0d0d] text-white px-4 py-2 rounded-[8px] text-[13px] font-medium hover:bg-[#262626] transition-colors">
+        <button onClick={() => toast.success('Кампания создана')} className="inline-flex items-center gap-2 bg-[#0d0d0d] text-white px-4 py-2 rounded-[8px] text-[13px] font-medium hover:bg-[#262626] transition-colors cursor-pointer">
           <Plus className="size-4" />
           Новая кампания
         </button>
@@ -182,19 +183,19 @@ export default function CampaignsView() {
                     {status.label}
                   </span>
                 </div>
-                <button className="p-1 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f5f5f5] transition-colors">
+                <button aria-label="Действия" className="p-1 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f5f5f5] transition-colors">
                   <MoreHorizontal className="size-4" />
                 </button>
               </div>
 
               {/* Stats row */}
-              <div className="grid grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center justify-center size-7 rounded-[7px] bg-[#f5f5f5]">
                     <Send className="size-3.5 text-[#525252]" />
                   </div>
                   <div>
-                    <p className="text-[12px] text-[#a3a3a3]">
+                    <p className="text-[12px] text-[#737373]">
                       Отправлено
                     </p>
                     <p className="text-[14px] font-semibold text-[#0d0d0d]">
@@ -207,7 +208,7 @@ export default function CampaignsView() {
                     <Eye className="size-3.5 text-[#525252]" />
                   </div>
                   <div>
-                    <p className="text-[12px] text-[#a3a3a3]">Открыто</p>
+                    <p className="text-[12px] text-[#737373]">Открыто</p>
                     <p className="text-[14px] font-semibold text-[#0d0d0d]">
                       {campaign.opened.toLocaleString('ru-RU')}
                     </p>
@@ -218,7 +219,7 @@ export default function CampaignsView() {
                     <MessageSquare className="size-3.5 text-[#525252]" />
                   </div>
                   <div>
-                    <p className="text-[12px] text-[#a3a3a3]">Ответы</p>
+                    <p className="text-[12px] text-[#737373]">Ответы</p>
                     <p className="text-[14px] font-semibold text-[#0d0d0d]">
                       {campaign.replied.toLocaleString('ru-RU')}
                     </p>
@@ -229,7 +230,7 @@ export default function CampaignsView() {
                     <TrendingUp className="size-3.5 text-[#525252]" />
                   </div>
                   <div>
-                    <p className="text-[12px] text-[#a3a3a3]">Конверсия</p>
+                    <p className="text-[12px] text-[#737373]">Конверсия</p>
                     <p className="text-[14px] font-semibold text-[#0d0d0d]">
                       {campaign.conversion}%
                     </p>
@@ -246,7 +247,7 @@ export default function CampaignsView() {
               </div>
 
               {/* Meta row */}
-              <div className="flex items-center justify-between text-[12px] text-[#a3a3a3]">
+              <div className="flex items-center justify-between text-[12px] text-[#737373]">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="size-3" />
                   <span>
@@ -266,7 +267,7 @@ export default function CampaignsView() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-[#a3a3a3]">
+        <div className="flex flex-col items-center justify-center py-20 text-[#737373]">
           <BarChart3 className="size-10 mb-3 text-[#d4d4d4]" />
           <p className="text-[14px] font-medium">Нет кампаний</p>
           <p className="text-[12px] mt-1">

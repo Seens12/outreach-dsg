@@ -20,6 +20,7 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card'
+import { toast } from 'sonner'
 
 export default function AdminSystemView() {
   const [maintenance, setMaintenance] = useState(false)
@@ -30,7 +31,7 @@ export default function AdminSystemView() {
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">Система</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Система</h1>
         <p className="text-sm text-[#737373] mt-0.5">Системные настройки</p>
       </div>
 
@@ -252,7 +253,7 @@ export default function AdminSystemView() {
 
         {/* Save button */}
         <div className="flex justify-end">
-          <Button className="rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2">
+          <Button onClick={() => toast.success('Настройки системы сохранены')} className="rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2">
             <Save className="w-4 h-4" />
             Сохранить настройки
           </Button>

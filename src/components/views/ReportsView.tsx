@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import {
   BarChart,
   Bar,
@@ -183,6 +185,9 @@ function MiniBarChart({ data, barColor }: { data: { name: string; value: number 
 
 export default function ReportsView() {
   const [reportList, setReportList] = useState<Report[]>(reports)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const reportToDelete = reportList.find((r) => r.id === confirmId)
 
   const handleDelete = (id: string) => {
     setReportList((prev) => prev.filter((r) => r.id !== id))
@@ -205,14 +210,14 @@ export default function ReportsView() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-[-0.02em] text-[#0d0d0d]">
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
               Отчёты
             </h1>
             <p className="text-sm text-[#737373] mt-1">
               Генерация и просмотр отчётов
             </p>
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0d0d0d] text-white text-sm font-medium rounded-[10px] hover:bg-[#262626] transition-colors shadow-sm cursor-pointer">
+          <button onClick={() => toast.success('Отчёт создан')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0d0d0d] text-white text-sm font-medium rounded-[10px] hover:bg-[#262626] transition-colors shadow-sm cursor-pointer">
             <Plus className="w-4 h-4" />
             Создать отчёт
           </button>
@@ -282,21 +287,21 @@ export default function ReportsView() {
                 {/* Actions */}
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <button
+                    aria-label="Скачать"
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-[#737373] hover:text-[#0d0d0d] hover:bg-[#fafafa] transition-colors cursor-pointer"
-                    title="Скачать"
                   >
                     <Download className="w-4 h-4" />
                   </button>
                   <button
+                    aria-label="Просмотр"
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-[#737373] hover:text-[#2563eb] hover:bg-[#eff6ff] transition-colors cursor-pointer"
-                    title="Просмотр"
                   >
                     <Eye className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(report.id)}
+                    onClick={() => setConfirmId(report.id)}
+                    aria-label="Удалить"
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-[#737373] hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors cursor-pointer"
-                    title="Удалить"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -319,6 +324,21 @@ export default function ReportsView() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить отчёт?"
+        description={reportToDelete ? `Отчёт «${reportToDelete.name}» будет удалён безвозвратно.` : 'Отчёт будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId)
+            toast.success('Отчёт удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

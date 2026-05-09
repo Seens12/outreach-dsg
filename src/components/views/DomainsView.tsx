@@ -14,6 +14,9 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 interface DnsCheck {
   label: string
@@ -101,19 +104,26 @@ function DomainHealthScore({ checks }: { checks: DnsCheck[] }) {
 }
 
 export default function DomainsView() {
-  const [data] = useState<Domain[]>(domains)
+  const [data, setData] = useState<Domain[]>(domains)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const domainToDelete = data.find((d) => d.id === confirmId)
+
+  const handleDelete = (id: string) => {
+    setData((prev) => prev.filter((d) => d.id !== id))
+  }
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-bold text-[#0d0d0d]">Домены</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Домены</h1>
           <p className="text-[13px] text-[#737373]">
             Настройка DNS и доменов
           </p>
         </div>
-        <Button className="gap-2 bg-[#2563eb] text-white hover:bg-[#2563eb]/90">
+        <Button onClick={() => toast.success('Домен добавлен')} className="gap-2 bg-[#0d0d0d] text-white hover:bg-[#262626]">
           <Plus className="h-4 w-4" />
           Добавить домен
         </Button>
@@ -121,6 +131,15 @@ export default function DomainsView() {
 
       {/* Domain cards */}
       <div className="flex flex-col gap-4">
+        {data.length === 0 ? (
+          <EmptyState
+            icon={Globe}
+            title="Нет доменов"
+            description="Добавьте домен для настройки DNS"
+            action={{ label: 'Добавить домен', onClick: () => toast.success('Домен добавлен') }}
+          />
+        ) : (
+        <>
         {data.map((domain) => (
           <div
             key={domain.id}
@@ -188,6 +207,7 @@ export default function DomainsView() {
                   variant="outline"
                   size="sm"
                   className="gap-1.5 text-[13px] text-red-600 hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+                  onClick={() => setConfirmId(domain.id)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Удалить
@@ -196,7 +216,24 @@ export default function DomainsView() {
             </div>
           </div>
         ))}
+        </>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить домен?"
+        description={domainToDelete ? `Домен «${domainToDelete.domain}» будет удалён безвозвратно.` : 'Домен будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId)
+            toast.success('Домен удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

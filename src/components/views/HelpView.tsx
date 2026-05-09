@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import {
   Search,
-  Rocket,
   Megaphone,
   Puzzle,
   BarChart3,
-  Shield,
   FileCode,
+  Users,
+  CreditCard,
   ChevronRight,
   Headphones,
 } from 'lucide-react'
@@ -19,14 +19,16 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import { useAppStore } from '@/lib/store'
 
 const quickLinks = [
-  { icon: Rocket, title: 'Начало работы', desc: 'Быстрый старт с платформой' },
-  { icon: Megaphone, title: 'Кампании', desc: 'Создание и управление' },
-  { icon: Puzzle, title: 'Интеграции', desc: 'Подключение сервисов' },
-  { icon: BarChart3, title: 'Аналитика', desc: 'Отчёты и метрики' },
-  { icon: Shield, title: 'Безопасность', desc: 'Защита данных' },
-  { icon: FileCode, title: 'API документация', desc: 'Для разработчиков' },
+  { icon: Megaphone, title: 'Кампании', desc: 'Создание и управление', action: 'campaigns' as const },
+  { icon: Puzzle, title: 'Шаблоны', desc: 'Управление шаблонами', action: 'templates' as const },
+  { icon: BarChart3, title: 'Аналитика', desc: 'Отчёты и метрики', action: 'analytics' as const },
+  { icon: FileCode, title: 'API документация', desc: 'Для разработчиков', action: 'api' as const },
+  { icon: Users, title: 'Сообщество', desc: 'Форум и обсуждения', action: 'community' as const },
+  { icon: CreditCard, title: 'Тарифы', desc: 'Управление подпиской', action: 'billing' as const },
 ]
 
 const faqItems = [
@@ -48,7 +50,7 @@ const faqItems = [
   {
     question: 'Какие тарифные планы доступны?',
     answer:
-      'Доступны три плана: Starter (от $29/мес), Professional (от $79/мес) и Enterprise (индивидуально). Все планы включают неограниченные кампании, AI-ассистент и аналитику. Различия — в количестве пользователей и объёме рассылок.',
+      'Доступны три плана: Starter ($29/мес), Professional ($99/мес) и Enterprise ($249/мес). Все планы включают неограниченные кампании, AI-ассистент и аналитику. Различия — в количестве пользователей и объёме рассылок.',
   },
   {
     question: 'Как настроить SPF, DKIM и DMARC?',
@@ -59,12 +61,54 @@ const faqItems = [
 
 export default function HelpView() {
   const [searchQuery, setSearchQuery] = useState('')
+  const { setView } = useAppStore()
+
+  const handleQuickLinkClick = (action: string) => {
+    switch (action) {
+      case 'campaigns':
+        setView('campaigns')
+        break
+      case 'templates':
+        setView('templates')
+        break
+      case 'analytics':
+        setView('analytics')
+        break
+      case 'billing':
+        setView('billing')
+        break
+      case 'api':
+        toast.info('Документация API будет доступна в следующей версии')
+        break
+      case 'community':
+        toast.info('Сообщество будет доступно в следующей версии')
+        break
+    }
+  }
+
+  const filteredFaq = faqItems.filter((item) => {
+    if (!searchQuery) return true
+    const q = searchQuery.toLowerCase()
+    return (
+      item.question.toLowerCase().includes(q) ||
+      item.answer.toLowerCase().includes(q)
+    )
+  })
+
+  const filteredQuickLinks = quickLinks.filter((item) => {
+    if (!searchQuery) return true
+    const q = searchQuery.toLowerCase()
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q)
+    )
+  })
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">Помощь</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Помощь</h1>
         <p className="text-sm text-[#737373] mt-0.5">
           Центр помощи и поддержки
         </p>
@@ -89,11 +133,12 @@ export default function HelpView() {
             Быстрые ссылки
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {quickLinks.map((item) => {
+            {filteredQuickLinks.map((item) => {
               const Icon = item.icon
               return (
                 <button
                   key={item.title}
+                  onClick={() => handleQuickLinkClick(item.action)}
                   className="flex items-center gap-3 p-4 rounded-[10px] border border-[#e8e8e8] bg-white hover:border-[#d4d4d4] hover:shadow-sm transition-all text-left cursor-pointer group"
                 >
                   <div className="w-9 h-9 rounded-[8px] bg-[#fafafa] flex items-center justify-center flex-shrink-0 group-hover:bg-[#f5f5f5] transition-colors">
@@ -121,7 +166,7 @@ export default function HelpView() {
           </h2>
           <div className="rounded-[10px] border border-[#e8e8e8] bg-white overflow-hidden">
             <Accordion type="single" collapsible className="w-full">
-              {faqItems.map((item, i) => (
+              {filteredFaq.map((item, i) => (
                 <AccordionItem
                   key={i}
                   value={`faq-${i}`}

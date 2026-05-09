@@ -18,6 +18,8 @@ import {
   TableRow,
   TableCell,
 } from '@/components/ui/table'
+import { toast } from 'sonner'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 interface User {
   name: string
@@ -44,12 +46,27 @@ const roleConfig = {
 
 export default function AdminUsersView() {
   const [search, setSearch] = useState('')
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const [userList, setUserList] = useState(users)
+
+  const userToDelete = userList.find((u) => u.email === confirmId)
+
+  const filteredUsers = userList.filter((u) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      u.name.toLowerCase().includes(q) ||
+      u.email.toLowerCase().includes(q) ||
+      u.tenant.toLowerCase().includes(q)
+    )
+  })
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scroll">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[#e8e8e8]">
-        <h1 className="text-lg font-semibold text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           Пользователи
         </h1>
         <p className="text-sm text-[#737373] mt-0.5">
@@ -65,12 +82,13 @@ export default function AdminUsersView() {
             <input
               type="text"
               placeholder="Поиск пользователей..."
+              aria-label="Поиск"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 rounded-lg border border-[#e8e8e8] bg-white text-sm outline-none focus:border-[#737373] transition-colors placeholder:text-[#a8a8a8] text-[#171717]"
+              className="w-full h-9 pl-9 pr-3 rounded-lg border border-[#e8e8e8] bg-white text-sm outline-none focus:border-[#737373] transition-colors placeholder:text-[#737373] text-[#171717]"
             />
           </div>
-          <Button className="h-9 rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2">
+          <Button onClick={() => toast.success('Пользователь добавлен')} className="h-9 rounded-[10px] bg-[#0d0d0d] hover:bg-[#262626] text-white text-[13px] gap-2">
             <Plus className="w-4 h-4" />
             Добавить пользователя
           </Button>
@@ -105,7 +123,7 @@ export default function AdminUsersView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((u) => {
+              {filteredUsers.map((u) => {
                 const cfg = roleConfig[u.role]
                 return (
                   <TableRow
@@ -142,14 +160,14 @@ export default function AdminUsersView() {
                           className={`text-[13px] ${
                             u.status === 'active'
                               ? 'text-[#525252]'
-                              : 'text-[#a8a8a8]'
+                              : 'text-[#737373]'
                           }`}
                         >
                           {u.status === 'active' ? 'Активен' : 'Неактивен'}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-[13px] text-[#a8a8a8]">
+                    <TableCell className="text-[13px] text-[#737373]">
                       {u.lastLogin}
                     </TableCell>
                     <TableCell className="text-right">
@@ -157,6 +175,7 @@ export default function AdminUsersView() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Изменить"
                           className="h-8 w-8 text-[#a8a8a8] hover:text-[#171717]"
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -164,7 +183,9 @@ export default function AdminUsersView() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Удалить"
                           className="h-8 w-8 text-[#a8a8a8] hover:text-[#dc2626]"
+                          onClick={() => setConfirmId(u.email)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
@@ -177,6 +198,21 @@ export default function AdminUsersView() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить пользователя?"
+        description={userToDelete ? `Пользователь «${userToDelete.name}» будет удалён безвозвратно.` : 'Пользователь будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            setUserList((prev) => prev.filter((u) => u.email !== confirmId))
+            toast.success('Пользователь удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

@@ -258,7 +258,7 @@ export default function InboxView() {
   return (
     <div className="flex h-full text-[13.5px] text-[#171717] font-[family-name:var(--font-geist-sans)] rounded-[10px] border border-[#e8e8e8] overflow-hidden bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]">
       {/* Left panel: Email list */}
-      <div className="w-[320px] border-r border-[#e8e8e8] flex flex-col bg-white shrink-0">
+      <div className="w-[280px] lg:w-[320px] border-r border-[#e8e8e8] flex flex-col bg-white shrink-0">
         {/* Header */}
         <div className="p-4 border-b border-[#e8e8e8]">
           <div className="flex items-center justify-between mb-3">
@@ -325,20 +325,20 @@ export default function InboxView() {
                         className={`text-[11px] shrink-0 ml-2 ${
                           item.unread
                             ? 'text-[#0d0d0d] font-medium'
-                            : 'text-[#a3a3a3]'
+                            : 'text-[#737373]'
                         }`}
                       >
                         {item.time}
                       </span>
                     </div>
-                    <p className="text-[12px] text-[#a3a3a3] truncate mb-0.5">
+                    <p className="text-[12px] text-[#737373] truncate mb-0.5">
                       {item.sender.company}
                     </p>
                     <p
                       className={`text-[12.5px] truncate ${
                         item.unread
                           ? 'text-[#404040]'
-                          : 'text-[#a3a3a3]'
+                          : 'text-[#737373]'
                       }`}
                     >
                       {item.preview}
@@ -378,7 +378,7 @@ export default function InboxView() {
                   <p className="text-[13.5px] font-medium text-[#0d0d0d]">
                     {selectedEmail.sender.name}
                   </p>
-                  <p className="text-[12px] text-[#a3a3a3]">
+                  <p className="text-[12px] text-[#737373]">
                     {selectedEmail.sender.company} &middot;{' '}
                     {selectedEmail.sender.email}
                   </p>
@@ -414,17 +414,17 @@ export default function InboxView() {
                             {msg.from.name}
                           </span>
                           {!isMe && (
-                            <span className="text-[12px] text-[#a3a3a3]">
+                            <span className="text-[12px] text-[#737373]">
                               {msg.from.company}
                             </span>
                           )}
                           {isMe && (
-                            <span className="text-[12px] text-[#a3a3a3]">
+                            <span className="text-[12px] text-[#737373]">
                               мне
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] text-[#a3a3a3]">
+                        <span className="text-[11px] text-[#737373]">
                           {msg.time}
                         </span>
                       </div>
@@ -446,6 +446,7 @@ export default function InboxView() {
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Напишите ответ..."
+                  aria-label="Ответ"
                   rows={3}
                   className="w-full px-4 py-3 text-[13px] text-[#171717] placeholder:text-[#a3a3a3] resize-none outline-none bg-transparent"
                 />
@@ -482,7 +483,7 @@ export default function InboxView() {
       </div>
 
       {/* Right panel: RAG / AI assistant */}
-      <div className="w-[280px] border-l border-[#e8e8e8] flex flex-col bg-[#fafafa] shrink-0">
+      <div className="hidden lg:flex w-[280px] border-l border-[#e8e8e8] flex-col bg-[#fafafa] shrink-0">
         <div className="p-4 border-b border-[#e8e8e8]">
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-[#0d0d0d]" />
@@ -525,7 +526,7 @@ export default function InboxView() {
                   style={{ width: `${confidence}%` }}
                 />
               </div>
-              <p className="text-[11px] text-[#a3a3a3] mt-1.5">
+              <p className="text-[11px] text-[#737373] mt-1.5">
                 {confidence >= 80
                   ? 'Высокая уверенность в данных'
                   : confidence >= 50
@@ -555,7 +556,7 @@ export default function InboxView() {
                       <p className="text-[12px] font-medium text-[#0d0d0d] truncate">
                         {source.name}
                       </p>
-                      <p className="text-[11px] text-[#a3a3a3]">
+                      <p className="text-[11px] text-[#737373]">
                         Релевантность: {source.relevance}%
                       </p>
                     </div>

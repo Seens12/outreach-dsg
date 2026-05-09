@@ -77,7 +77,7 @@ const plans: Plan[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: '$299',
+    price: '$249',
     period: '/мес',
     description: 'Для крупных компаний',
     features: [
@@ -154,7 +154,7 @@ export default function BillingView() {
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#0d0d0d]">Биллинг</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Биллинг</h1>
         <p className="text-sm text-[#737373]">Управление подпиской и оплатами</p>
       </div>
 
@@ -271,7 +271,7 @@ export default function BillingView() {
                 ) : (
                   <Button
                     size="sm"
-                    className="w-full bg-[#2563eb] hover:bg-[#2563eb]/90 text-white"
+                    className="w-full bg-[#0d0d0d] hover:bg-[#262626] text-white"
                   >
                     Выбрать
                   </Button>

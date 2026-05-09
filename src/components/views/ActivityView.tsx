@@ -14,6 +14,7 @@ import {
   Filter,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/shared/EmptyState'
 
 type ActivityType =
   | 'email_sent'
@@ -199,7 +200,7 @@ export default function ActivityView() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold text-[#0d0d0d]">Активность</h1>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Активность</h1>
         <p className="text-[13px] text-[#737373]">История всех действий</p>
       </div>
 
@@ -231,6 +232,14 @@ export default function ActivityView() {
       {/* Activity timeline */}
       <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-5">
         <div className="relative flex flex-col">
+          {filteredActivities.length === 0 ? (
+            <EmptyState
+              icon={Activity}
+              title="Нет активности"
+              description="Нет записей для выбранного фильтра"
+            />
+          ) : (
+          <>
           {filteredActivities.map((item, idx) => {
             const config = activityTypeConfig[item.type]
             const Icon = config.icon
@@ -277,6 +286,8 @@ export default function ActivityView() {
               </div>
             )
           })}
+          </>
+          )}
         </div>
       </div>
     </div>

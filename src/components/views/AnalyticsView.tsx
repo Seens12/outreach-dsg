@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Send,
   MailOpen,
@@ -26,8 +26,12 @@ import {
   Pie,
   Cell,
 } from 'recharts'
+import { Skeleton } from '@/components/ui/skeleton'
 
 // ── Demo Data ──────────────────────────────────────────────────────────────
+
+const sentValues = [110, 125, 118, 142, 135, 160, 148, 172, 155, 180, 165, 190, 175, 195, 185, 210, 200, 225, 215, 230, 220, 245, 235, 250, 240, 260, 255, 270, 265, 280]
+const replyValues = [10, 12, 11, 14, 13, 16, 15, 17, 16, 18, 17, 19, 18, 20, 19, 22, 21, 23, 22, 24, 23, 25, 24, 26, 25, 27, 26, 28, 27, 29]
 
 const areaChartData = Array.from({ length: 30 }, (_, i) => {
   const date = new Date()
@@ -36,8 +40,8 @@ const areaChartData = Array.from({ length: 30 }, (_, i) => {
   const month = date.getMonth() + 1
   return {
     name: `${day}.${month}`,
-    sent: Math.floor(100 + Math.random() * 80 + (i > 10 ? 30 : 0)),
-    replies: Math.floor(8 + Math.random() * 15 + (i > 15 ? 5 : 0)),
+    sent: sentValues[i],
+    replies: replyValues[i],
   }
 })
 
@@ -205,13 +209,19 @@ function renderCustomLabel({
 
 export default function AnalyticsView() {
   const [activePeriod, setActivePeriod] = useState('30 дней')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <div className="flex-1 overflow-y-auto custom-scroll">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-[-0.02em] text-[#0d0d0d]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
             Аналитика
           </h1>
           <p className="text-sm text-[#737373] mt-1">
@@ -238,7 +248,11 @@ export default function AnalyticsView() {
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {metricCards.map((m) => {
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-[100px] rounded-[10px]" />
+              ))
+            : metricCards.map((m) => {
             const Icon = m.icon
             return (
               <div
@@ -282,6 +296,10 @@ export default function AnalyticsView() {
 
         {/* Area Chart */}
         <div className="bg-white border border-[#e8e8e8] rounded-[10px] p-5">
+          {loading ? (
+            <Skeleton className="h-[240px] rounded-[10px]" />
+          ) : (
+          <>
           <h3 className="text-[15px] font-semibold text-[#0d0d0d] mb-4">
             Динамика отправок и ответов
           </h3>
@@ -340,6 +358,8 @@ export default function AnalyticsView() {
               />
             </AreaChart>
           </ResponsiveContainer>
+          </>
+          )}
         </div>
 
         {/* Two-column: Funnel + Heatmap */}

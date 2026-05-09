@@ -14,6 +14,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,6 +75,9 @@ const statusConfig: Record<FileStatus, { color: string; icon: React.ElementType 
 export default function KnowledgeBaseView() {
   const [fileList, setFileList] = useState(files)
   const [hoveredFile, setHoveredFile] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const fileToDelete = fileList.find((f) => f.id === confirmId)
 
   const handleDelete = (id: string) => {
     setFileList((prev) => prev.filter((f) => f.id !== id))
@@ -82,7 +87,7 @@ export default function KnowledgeBaseView() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[18px] font-bold tracking-[-0.02em] text-[#171717]">
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
           База знаний
         </h1>
         <p className="text-[13px] text-[#737373] font-medium mt-1">
@@ -169,7 +174,7 @@ export default function KnowledgeBaseView() {
             >
               {/* Delete button (visible on hover) */}
               <button
-                onClick={() => handleDelete(file.id)}
+                onClick={() => setConfirmId(file.id)}
                 className={cn(
                   'absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#dc2626]/10 hover:text-[#dc2626] transition-all duration-150 cursor-pointer',
                   isHovered ? 'opacity-100' : 'opacity-0'
@@ -238,6 +243,21 @@ export default function KnowledgeBaseView() {
           </div>
         </button>
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить файл?"
+        description={fileToDelete ? `Файл «${fileToDelete.name}» будет удалён безвозвратно.` : 'Файл будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId)
+            toast.success('Файл удалён')
+            setConfirmId(null)
+          }
+        }}
+      />
     </div>
   )
 }

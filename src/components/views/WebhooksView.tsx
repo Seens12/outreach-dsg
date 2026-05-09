@@ -11,10 +11,14 @@ import {
   XCircle,
   Clock,
   Activity,
+  Link,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
 interface WebhookData {
   id: string;
@@ -62,17 +66,24 @@ const eventColors: Record<string, string> = {
 };
 
 export default function WebhooksView() {
-  const [webhooks] = useState<WebhookData[]>(mockWebhooks);
+  const [webhooks, setWebhooks] = useState<WebhookData[]>(mockWebhooks);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  const webhookToDelete = webhooks.find((w) => w.id === confirmId);
+
+  const handleDelete = (id: string) => {
+    setWebhooks((prev) => prev.filter((w) => w.id !== id));
+  };
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#0d0d0d]">Вебхуки</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Вебхуки</h1>
           <p className="text-sm text-[#737373]">Управление вебхук-интеграциями</p>
         </div>
-        <Button className="mt-3 sm:mt-0 bg-[#2563eb] hover:bg-[#2563eb]/90 text-white">
+        <Button onClick={() => toast.success('Вебхук добавлен')} className="mt-3 sm:mt-0 bg-[#0d0d0d] hover:bg-[#262626] text-white">
           <Plus className="size-4" />
           Добавить вебхук
         </Button>
@@ -80,6 +91,15 @@ export default function WebhooksView() {
 
       {/* Webhook Cards */}
       <div className="grid gap-4">
+        {webhooks.length === 0 ? (
+          <EmptyState
+            icon={Link}
+            title="Нет вебхуков"
+            description="Добавьте первый вебхук для интеграции"
+            action={{ label: 'Добавить вебхук', onClick: () => toast.success('Вебхук добавлен') }}
+          />
+        ) : (
+        <>
         {webhooks.map((webhook) => (
           <Card
             key={webhook.id}
@@ -157,15 +177,15 @@ export default function WebhooksView() {
 
               {/* Actions */}
               <div className="flex items-center gap-2 border-t border-[#f5f5f5] pt-3">
-                <Button variant="outline" size="sm" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
+                <Button variant="outline" size="sm" aria-label="Тест" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
                   <Play className="size-3.5" />
                   Тест
                 </Button>
-                <Button variant="outline" size="sm" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
+                <Button variant="outline" size="sm" aria-label="Изменить" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
                   <Pencil className="size-3.5" />
                   Изменить
                 </Button>
-                <Button variant="outline" size="sm" className="border-[#e8e8e8] text-[#dc2626] hover:text-[#dc2626] hover:border-[#dc2626]/30 hover:bg-[#dc2626]/5">
+                <Button variant="outline" size="sm" aria-label="Удалить" className="border-[#e8e8e8] text-[#dc2626] hover:text-[#dc2626] hover:border-[#dc2626]/30 hover:bg-[#dc2626]/5" onClick={() => setConfirmId(webhook.id)}>
                   <Trash2 className="size-3.5" />
                   Удалить
                 </Button>
@@ -173,7 +193,24 @@ export default function WebhooksView() {
             </CardContent>
           </Card>
         ))}
+        </>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => !open && setConfirmId(null)}
+        title="Удалить вебхук?"
+        description={webhookToDelete ? `Вебхук «${webhookToDelete.url}» будет удалён безвозвратно.` : 'Вебхук будет удалён безвозвратно.'}
+        confirmLabel="Удалить"
+        onConfirm={() => {
+          if (confirmId) {
+            handleDelete(confirmId);
+            toast.success('Вебхук удалён');
+            setConfirmId(null);
+          }
+        }}
+      />
     </div>
   );
 }
