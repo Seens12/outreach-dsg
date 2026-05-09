@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/lib/store'
 import { FilterPills } from '@/components/shared/FilterPills'
+import { Checkbox } from '@/components/ui/checkbox'
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -139,10 +140,9 @@ export default function LeadsView() {
           <thead>
             <tr className="bg-[#fafafa]">
               <th className="w-9 px-3 py-2.5 text-left">
-                <input
-                  type="checkbox"
-                  className="w-3.5 h-3.5 rounded border-[#d4d4d4] accent-[#0d0d0d] cursor-pointer"
+                <Checkbox
                   aria-label="Выбрать всех"
+                  className="border-[#d4d4d4] data-[state=checked]:bg-[#0d0d0d] data-[state=checked]:border-[#0d0d0d]"
                 />
               </th>
               <th className="px-4 py-2.5 text-left text-[12px] font-semibold uppercase tracking-[0.04em] text-[#737373]">
@@ -183,10 +183,9 @@ export default function LeadsView() {
                     className="border-b border-[#e8e8e8] last:border-b-0 hover:bg-[#fafafa] transition-colors cursor-pointer"
                   >
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        className="w-3.5 h-3.5 rounded border-[#d4d4d4] accent-[#0d0d0d] cursor-pointer"
+                      <Checkbox
                         aria-label={`Выбрать ${lead.name}`}
+                        className="border-[#d4d4d4] data-[state=checked]:bg-[#0d0d0d] data-[state=checked]:border-[#0d0d0d]"
                       />
                     </td>
                     <td className="px-4 py-3 text-[13px] text-[#171717] font-semibold whitespace-nowrap">

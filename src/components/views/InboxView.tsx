@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { Switch } from '@/components/ui/switch'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -163,24 +164,15 @@ export default function InboxView() {
           <div className="flex items-center gap-2 mb-3">
             <GraduationCap className="size-3.5 text-[#737373]" />
             <span className="text-[12px] font-medium text-[#525252]">Режим обучения</span>
-            <button
-              onClick={() => {
-                setLearningMode(!learningMode)
-                toast.success(learningMode ? 'Режим обучения выключен' : 'Режим обучения включен')
+            <Switch
+              checked={learningMode}
+              onCheckedChange={(v) => {
+                setLearningMode(v)
+                toast.success(v ? 'Режим обучения включен' : 'Режим обучения выключен')
               }}
-              className={cn(
-                'relative ml-auto w-8 h-[18px] rounded-full transition-colors duration-200 cursor-pointer',
-                learningMode ? 'bg-[#0d0d0d]' : 'bg-[#e8e8e8]'
-              )}
+              className="ml-auto"
               aria-label="Переключить режим обучения"
-            >
-              <span
-                className={cn(
-                  'absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full bg-white shadow-sm transition-transform duration-200',
-                  learningMode && 'translate-x-[14px]'
-                )}
-              />
-            </button>
+            />
           </div>
 
           {/* Filter pills */}

@@ -46,7 +46,7 @@ interface NavGroup {
   items: { id: ViewId; icon: React.ElementType; badge?: number }[]
 }
 
-const COLLAPSIBLE_LABELS = new Set(['Настройка', 'Аккаунт'])
+const DEFAULT_COLLAPSED = new Set(['Администрирование'])
 
 const navGroups: NavGroup[] = [
   {
@@ -127,7 +127,7 @@ const navGroups: NavGroup[] = [
 
 export function Sidebar() {
   const { view, mode, setView, setMode, sidebarOpen, toggleSidebar } = useAppStore()
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set(DEFAULT_COLLAPSED))
 
   const toggleGroup = (label: string) => {
     setCollapsed((prev) => {
@@ -164,33 +164,26 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 py-2.5 px-2 overflow-y-auto custom-scroll">
         {navGroups.map((group) => {
-          const isCollapsible = COLLAPSIBLE_LABELS.has(group.label)
           const isCollapsed = collapsed.has(group.label)
           return (
           <div key={group.label} className="mb-4">
-            {isCollapsible ? (
-              <button
-                onClick={() => toggleGroup(group.label)}
-                className="w-full flex items-center justify-between px-2 mb-1 cursor-pointer group/label"
-              >
-                <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] group-hover/label:text-[#525252] transition-colors">
-                  {group.label}
-                </span>
-                <ChevronDown
-                  className={cn(
-                    'w-3 h-3 text-[#737373] transition-transform duration-300',
-                    isCollapsed && '-rotate-90'
-                  )}
-                />
-              </button>
-            ) : (
-              <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] px-2 mb-1">
+            <button
+              onClick={() => toggleGroup(group.label)}
+              className="w-full flex items-center justify-between px-2 mb-1 cursor-pointer group/label"
+            >
+              <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] group-hover/label:text-[#525252] transition-colors">
                 {group.label}
-              </div>
-            )}
+              </span>
+              <ChevronDown
+                className={cn(
+                  'w-3 h-3 text-[#737373] transition-transform duration-300',
+                  isCollapsed && '-rotate-90'
+                )}
+              />
+            </button>
             <div
               className={cn(
-                'overflow-hidden transition-all duration-300',
+                'overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
                 isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[500px] opacity-100'
               )}
             >
@@ -203,7 +196,7 @@ export function Sidebar() {
                     onClick={() => setView(item.id)}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      'w-full flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
+                      'w-full flex items-center gap-2 pl-4 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
                       isActive
                         ? 'bg-[#0d0d0d] text-white'
                         : 'text-[#525252] hover:bg-[#0d0d0d] hover:text-white'

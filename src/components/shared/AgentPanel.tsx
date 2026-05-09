@@ -15,9 +15,11 @@ import {
   MicOff,
   Loader2,
   X,
+  Paperclip,
 } from 'lucide-react'
-import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { VoiceWave } from '@/components/shared/VoiceWave'
+import { useVoiceRecording } from '@/lib/useVoiceRecording'
 
 interface AgentMessage {
   id: number
@@ -132,265 +134,31 @@ function renderContent(content: string) {
   })
 }
 
-/* ─── Voice Wave Component (ChatGPT-style) ─── */
-function VoiceWave({ analyser, isActive }: { analyser: AnalyserNode | null; isActive: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const animFrameRef = useRef<number>(0)
-  const sizeRef = useRef({ w: 0, h: 0 })
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const container = containerRef.current
-    if (!canvas || !container) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    // Measure container and set canvas size
-    const measure = () => {
-      const rect = container.getBoundingClientRect()
-      if (rect.width === 0 || rect.height === 0) return
-      sizeRef.current = { w: rect.width, h: rect.height }
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    // Observe container size changes
-    const ro = new ResizeObserver(() => measure())
-    ro.observe(container)
-
-    // Initial measure with a small delay to ensure layout is settled
-    const t0 = setTimeout(measure, 10)
-    const t1 = setTimeout(measure, 100)
-
-    const barCount = 36
-    const barWidth = 2.5
-    const gap = 3.5
-    const maxBarHeight = 20 // fixed px, not relative to container
-
-    let time = 0
-
-    const draw = () => {
-      const { w, h } = sizeRef.current
-      if (w === 0 || h === 0) {
-        time++
-        animFrameRef.current = requestAnimationFrame(draw)
-        return
-      }
-
-      ctx.clearRect(0, 0, w, h)
-
-      let dataArray: Uint8Array | null = null
-      let hasRealData = false
-
-      if (analyser && isActive) {
-        dataArray = new Uint8Array(analyser.frequencyBinCount)
-        analyser.getByteFrequencyData(dataArray)
-        for (let i = 0; i < Math.min(20, dataArray.length); i++) {
-          if (dataArray[i] > 5) {
-            hasRealData = true
-            break
-          }
-        }
-      }
-
-      const totalWidth = barCount * (barWidth + gap) - gap
-      const startX = (w - totalWidth) / 2
-      const centerY = h / 2
-
-      for (let i = 0; i < barCount; i++) {
-        const x = startX + i * (barWidth + gap)
-        let barHeight: number
-
-        if (hasRealData && dataArray) {
-          const dataIndex = Math.floor((i / barCount) * (dataArray.length * 0.6))
-          const value = dataArray[dataIndex] || 0
-          barHeight = Math.max(3, (value / 255) * maxBarHeight)
-        } else {
-          const wave = Math.sin((time * 0.04) + (i * 0.3)) * 0.5 + 0.5
-          const wave2 = Math.sin((time * 0.025) + (i * 0.15)) * 0.3 + 0.5
-          barHeight = Math.max(3, (wave * 0.6 + wave2 * 0.4) * maxBarHeight * 0.6)
-        }
-
-        const distanceFromCenter = Math.abs(i - barCount / 2) / (barCount / 2)
-        const alpha = 0.3 + (1 - distanceFromCenter) * 0.5
-        ctx.fillStyle = `rgba(13, 13, 13, ${alpha})`
-
-        const halfBar = barHeight / 2
-        const radius = Math.min(1.5, halfBar)
-        ctx.beginPath()
-        ctx.roundRect(x, centerY - halfBar, barWidth, barHeight, radius)
-        ctx.fill()
-      }
-
-      time++
-      animFrameRef.current = requestAnimationFrame(draw)
-    }
-
-    draw()
-
-    return () => {
-      cancelAnimationFrame(animFrameRef.current)
-      clearTimeout(t0)
-      clearTimeout(t1)
-      ro.disconnect()
-    }
-  }, [analyser, isActive])
-
-  return (
-    <div ref={containerRef} className="w-full h-full">
-      <canvas
-        ref={canvasRef}
-        className="block"
-        style={{ width: '100%', height: '100%' }}
-      />
-    </div>
-  )
-}
-
 /* ─── Main Agent Panel ─── */
 export function AgentPanel() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages)
   const [input, setInput] = useState('')
-
-  // Voice state
-  const [isRecording, setIsRecording] = useState(false)
-  const [isTranscribing, setIsTranscribing] = useState(false)
-  const [voicePhase, setVoicePhase] = useState<'idle' | 'recording' | 'transcribing' | 'done'>('idle')
   const [transcribedText, setTranscribedText] = useState('')
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null)
 
   const chatEndRef = useRef<HTMLDivElement>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const audioChunksRef = useRef<Blob[]>([])
-  const streamRef = useRef<MediaStream | null>(null)
+
+  const handleTranscribed = useCallback((text: string) => {
+    setInput(prev => prev ? `${prev} ${text}` : text)
+    setTranscribedText(text)
+  }, [])
+
+  const {
+    isRecording,
+    voicePhase,
+    analyserNode,
+    handleMicClick,
+    cancelRecording,
+  } = useVoiceRecording({ onTranscribed: handleTranscribed })
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isOpen])
-
-  const cleanupStream = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop())
-      streamRef.current = null
-    }
-    setAnalyserNode(null)
-    mediaRecorderRef.current = null
-    audioChunksRef.current = []
-  }, [])
-
-  const startRecording = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      streamRef.current = stream
-
-      // Create analyser for real-time frequency data
-      const audioCtx = new AudioContext()
-      const source = audioCtx.createMediaStreamSource(stream)
-      const analyser = audioCtx.createAnalyser()
-      analyser.fftSize = 256
-      source.connect(analyser)
-      setAnalyserNode(analyser)
-
-      // Create MediaRecorder
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      audioChunksRef.current = []
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          audioChunksRef.current.push(e.data)
-        }
-      }
-
-      mediaRecorder.onstop = async () => {
-        // Stop all tracks
-        stream.getTracks().forEach(t => t.stop())
-        streamRef.current = null
-
-        // Close audio context
-        try { audioCtx.close() } catch { /* ignore */ }
-
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
-        if (blob.size < 100) {
-          setIsRecording(false)
-          setVoicePhase('idle')
-          return
-        }
-
-        // Start transcription
-        setVoicePhase('transcribing')
-        setIsTranscribing(true)
-
-        try {
-          const reader = new FileReader()
-          reader.onloadend = async () => {
-            const base64 = (reader.result as string).split(',')[1]
-            const res = await fetch('/api/transcribe', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ audio: base64 }),
-            })
-            const data = await res.json()
-
-            if (data.text) {
-              setTranscribedText(data.text)
-              setInput(prev => prev ? `${prev} ${data.text}` : data.text)
-              setVoicePhase('done')
-
-              // Return to idle after showing "done" briefly
-              setTimeout(() => {
-                setVoicePhase('idle')
-                setIsTranscribing(false)
-              }, 800)
-            } else {
-              toast.error('Не удалось распознать речь')
-              setVoicePhase('idle')
-              setIsTranscribing(false)
-            }
-          }
-          reader.readAsDataURL(blob)
-        } catch {
-          toast.error('Ошибка транскрипции')
-          setVoicePhase('idle')
-          setIsTranscribing(false)
-        }
-      }
-
-      mediaRecorder.start(100)
-      setIsRecording(true)
-      setVoicePhase('recording')
-    } catch {
-      toast.error('Нет доступа к микрофону')
-    }
-  }, [])
-
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
-    }
-    setIsRecording(false)
-    // Keep voicePhase as 'recording' until onstop fires
-  }, [])
-
-  const cancelRecording = useCallback(() => {
-    cleanupStream()
-    setIsRecording(false)
-    setVoicePhase('idle')
-    setIsTranscribing(false)
-  }, [cleanupStream])
-
-  const handleMicClick = useCallback(() => {
-    if (isTranscribing) return
-    if (isRecording) {
-      stopRecording()
-    } else {
-      startRecording()
-    }
-  }, [isRecording, isTranscribing, stopRecording, startRecording])
 
   const handleSend = () => {
     if (!input.trim()) return
@@ -402,11 +170,6 @@ export function AgentPanel() {
   const handleSuggestion = (label: string) => {
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: label }])
   }
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => cleanupStream()
-  }, [cleanupStream])
 
   return (
     <div
@@ -531,6 +294,14 @@ export function AgentPanel() {
             ) : (
               /* Normal Input Mode */
               <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 py-2">
+                {/* Paperclip attachment */}
+                <button
+                  className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#f5f5f5]"
+                  aria-label="Прикрепить файл"
+                >
+                  <Paperclip className="w-3.5 h-3.5 text-[#737373]" />
+                </button>
+
                 <Sparkles className="w-4 h-4 text-[#737373]" />
                 <input
                   type="text"

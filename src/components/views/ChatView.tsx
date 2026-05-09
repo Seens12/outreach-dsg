@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Zap,
   Megaphone,
@@ -11,14 +11,16 @@ import {
   Bot,
   User,
   ExternalLink,
-  Building2,
-  Globe,
-  Users,
-  DollarSign,
   ArrowRight,
   Sparkles,
-  FileUp,
+  Mic,
+  MicOff,
+  Loader2,
+  X,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { VoiceWave } from '@/components/shared/VoiceWave'
+import { useVoiceRecording } from '@/lib/useVoiceRecording'
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -176,6 +178,20 @@ export default function ChatView() {
     }
   }
 
+  const handleTranscribed = useCallback((text: string) => {
+    setInput(prev => prev ? `${prev} ${text}` : text)
+  }, [])
+
+  const {
+    isRecording,
+    isTranscribing,
+    voicePhase,
+    transcribedText,
+    analyserNode,
+    handleMicClick,
+    cancelRecording,
+  } = useVoiceRecording({ onTranscribed: handleTranscribed })
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, screen])
@@ -298,44 +314,87 @@ export default function ChatView() {
       {/* ── Input Area ───────────────────────────────────── */}
       <div className="border-t border-[#e8e8e8] bg-white px-6 py-4">
         <div className="max-w-[680px] mx-auto">
-          <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 focus-within:border-[#737373] focus-within:bg-white transition-colors">
-            {/* Attachment */}
-            <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
-              <Paperclip className="w-4 h-4 text-[#737373]" />
-            </button>
+          {/* Voice Recording Mode */}
+          {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
+            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-4 py-3 overflow-hidden">
+              {/* Cancel button */}
+              <button
+                onClick={cancelRecording}
+                className="w-7 h-7 rounded-lg bg-white border border-[#e8e8e8] flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer flex-shrink-0"
+                aria-label="Отменить запись"
+              >
+                <X className="w-3.5 h-3.5 text-[#525252]" />
+              </button>
 
-            {/* Textarea */}
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Напишите сообщение..."
-              rows={1}
-              className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[120px] py-1.5 leading-[1.5]"
-            />
+              {/* Wave animation area */}
+              <div className={cn(
+                'flex-1 relative min-h-[32px] h-[32px]',
+                voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
+              )}>
+                {voicePhase === 'transcribing' ? (
+                  <div className="flex items-center justify-center gap-1.5 h-full">
+                    <Loader2 className="w-4 h-4 text-[#737373] animate-spin" />
+                    <span className="text-[12px] text-[#a3a3a3]">Распознавание...</span>
+                  </div>
+                ) : (
+                  <VoiceWave analyser={analyserNode} isActive={isRecording} />
+                )}
+              </div>
 
-            {/* File upload */}
-            <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
-              <FileUp className="w-4 h-4 text-[#737373]" />
-            </button>
-
-            {/* Autonomy pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-[3px] rounded-[6px] bg-[#f0fdf4] border border-[#bbf7d0] shrink-0">
-              <span className="status-pulse w-[6px] h-[6px] rounded-full bg-[#16a34a] inline-block" />
-              <span className="text-[12px] text-[#16a34a] whitespace-nowrap">
-                Autopilot
-              </span>
+              {/* Mic button (stop) */}
+              <div className="relative flex-shrink-0">
+                {/* Ripple ring */}
+                <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
+                <button
+                  onClick={handleMicClick}
+                  className="relative w-9 h-9 rounded-lg bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center transition-colors cursor-pointer mic-glow"
+                  aria-label="Остановить запись"
+                >
+                  <MicOff className="w-4 h-4 text-white" />
+                </button>
+              </div>
             </div>
+          ) : (
+            /* Normal Input Mode */
+            <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 focus-within:border-[#737373] focus-within:bg-white transition-colors">
+              {/* Attachment */}
+              <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
+                <Paperclip className="w-4 h-4 text-[#737373]" />
+              </button>
 
-            {/* Send */}
-            <button
-              onClick={handleSend}
-              disabled={!input.trim()}
-              className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] transition-colors shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <SendHorizontal className="w-4 h-4 text-white" />
-            </button>
-          </div>
+              {/* Textarea */}
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Напишите сообщение..."
+                rows={1}
+                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[120px] py-1.5 leading-[1.5]"
+              />
+
+              {/* Mic button */}
+              <button
+                onClick={handleMicClick}
+                className={cn(
+                  'w-8 h-8 rounded-[8px] flex items-center justify-center transition-all shrink-0',
+                  'border border-[#e8e8e8] hover:bg-[#f0f0f0] hover:border-[#d4d4d4]',
+                  transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
+                )}
+                aria-label="Голосовой ввод"
+              >
+                <Mic className="w-4 h-4 text-[#737373]" />
+              </button>
+
+              {/* Send */}
+              <button
+                onClick={handleSend}
+                disabled={!input.trim()}
+                className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] transition-colors shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <SendHorizontal className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          )}
           {/* Keyboard shortcuts hint */}
           <div className="flex items-center justify-center mt-2">
             <div style={{ fontSize: '12px', color: '#a8a8a8', display: 'flex', alignItems: 'center', gap: '6px' }}>

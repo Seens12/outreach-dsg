@@ -66,7 +66,7 @@ export function Topbar() {
           <button
             onClick={() => setMode('chat')}
             className={cn(
-              'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms]',
+              'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms] transition-shadow duration-200',
               isChat
                 ? 'anim-scale-in bg-white text-[#171717] shadow-card font-semibold'
                 : 'bg-transparent text-[#737373] hover:text-[#171717]'
@@ -78,7 +78,7 @@ export function Topbar() {
           <button
             onClick={() => setMode('expanded')}
             className={cn(
-              'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms]',
+              'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms] transition-shadow duration-200',
               !isChat
                 ? 'anim-scale-in bg-white text-[#171717] shadow-card font-semibold'
                 : 'bg-transparent text-[#737373] hover:text-[#171717]'
