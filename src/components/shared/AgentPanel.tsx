@@ -270,11 +270,8 @@ export function AgentPanel() {
 
           {/* ─── Input Area ─── */}
           <div className="px-4 py-3 border-t border-[#f5f5f5]">
-          {/* Fixed height for voice, auto-expanding for text */}
-          <div>
             {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-[48px] overflow-hidden">
-                {/* Cancel button */}
+              <div className="flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-[44px] overflow-hidden">
                 <button
                   onClick={cancelRecording}
                   className="w-7 h-7 rounded-lg bg-white border border-[#e8e8e8] flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer flex-shrink-0"
@@ -282,8 +279,6 @@ export function AgentPanel() {
                 >
                   <X className="w-3.5 h-3.5 text-[#525252]" />
                 </button>
-
-                {/* Wave animation area */}
                 <div className={cn(
                   'flex-1 relative h-[20px]',
                   voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
@@ -297,10 +292,7 @@ export function AgentPanel() {
                     <VoiceWave analyser={analyserNode} isActive={isRecording} />
                   )}
                 </div>
-
-                {/* Mic button (stop) */}
                 <div className="relative flex-shrink-0">
-                  {/* Ripple ring */}
                   <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
                   <button
                     onClick={handleMicClick}
@@ -312,50 +304,49 @@ export function AgentPanel() {
                 </div>
               </div>
             ) : (
-              /* Normal Input Mode — auto-expanding */
-              <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 min-h-[48px]">
-                {/* Paperclip attachment */}
-                <button
-                  className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#f5f5f5]"
-                  aria-label="Прикрепить файл"
-                >
-                  <Paperclip className="w-3.5 h-3.5 text-[#737373]" />
-                </button>
-
-                <div className="flex items-center justify-center w-7 h-7 shrink-0">
-                  <Sparkles className="w-4 h-4 text-[#737373]" />
-                </div>
+              /* Normal Input — textarea on top, icons below */
+              <div className="flex flex-col bg-[#fafafa] border border-[#e8e8e8] rounded-xl overflow-hidden">
                 <textarea
                   ref={textareaRef}
                   placeholder="Спросить AI..."
                   value={input}
                   onChange={handleInputChange}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-                  rows={1}
-                  className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3] resize-none min-h-[32px] max-h-[200px] py-1.5 leading-[1.5]"
+                  rows={3}
+                  className="w-full bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3] resize-none px-3 pt-2.5 pb-1.5 leading-[1.5] max-h-[200px]"
                 />
-                {/* Mic button */}
-                <button
-                  onClick={handleMicClick}
-                  className={cn(
-                    'w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer',
-                    'bg-transparent border border-[#e8e8e8] hover:bg-[#f5f5f5] hover:border-[#d4d4d4]',
-                    transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
-                  )}
-                  aria-label="Голосовой ввод"
-                >
-                  <Mic className="w-3.5 h-3.5 text-[#737373]" />
-                </button>
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim()}
-                  className="w-7 h-7 rounded-md bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center disabled:opacity-30 transition-colors cursor-pointer"
-                >
-                  <Send className="w-3.5 h-3.5 text-white" />
-                </button>
+                <div className="flex items-center gap-1.5 px-2.5 pb-2 pt-0.5">
+                  <button
+                    className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#ebebeb]"
+                    aria-label="Прикрепить файл"
+                  >
+                    <Paperclip className="w-[16px] h-[16px] text-[#737373]" />
+                  </button>
+                  <div className="flex items-center justify-center w-7 h-7">
+                    <Sparkles className="w-[16px] h-[16px] text-[#737373]" />
+                  </div>
+                  <div className="flex-1" />
+                  <button
+                    onClick={handleMicClick}
+                    className={cn(
+                      'w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer',
+                      'bg-transparent border border-[#e8e8e8] hover:bg-[#ebebeb] hover:border-[#d4d4d4]',
+                      transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
+                    )}
+                    aria-label="Голосовой ввод"
+                  >
+                    <Mic className="w-[16px] h-[16px] text-[#737373]" />
+                  </button>
+                  <button
+                    onClick={handleSend}
+                    disabled={!input.trim()}
+                    className="w-7 h-7 rounded-md bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center disabled:opacity-30 transition-colors cursor-pointer"
+                  >
+                    <Send className="w-[16px] h-[16px] text-white" />
+                  </button>
+                </div>
               </div>
             )}
-          </div>
           </div>
         </>
       )}

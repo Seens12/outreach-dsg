@@ -359,11 +359,9 @@ export default function ChatView() {
               </button>
             </div>
           </div>
-          {/* Input area — auto-expanding textarea, fixed height for voice mode */}
-          <div>
+          {/* Input area */}
           {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 h-[48px] overflow-hidden">
-              {/* Cancel button */}
+            <div className="flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 h-[44px] overflow-hidden">
               <button
                 onClick={cancelRecording}
                 className="w-7 h-7 rounded-lg bg-white border border-[#e8e8e8] flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer flex-shrink-0"
@@ -371,8 +369,6 @@ export default function ChatView() {
               >
                 <X className="w-3.5 h-3.5 text-[#525252]" />
               </button>
-
-              {/* Wave animation area */}
               <div className={cn(
                 'flex-1 relative h-[20px]',
                 voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
@@ -386,10 +382,7 @@ export default function ChatView() {
                   <VoiceWave analyser={analyserNode} isActive={isRecording} />
                 )}
               </div>
-
-              {/* Mic button (stop) */}
               <div className="relative flex-shrink-0">
-                {/* Ripple ring */}
                 <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
                 <button
                   onClick={handleMicClick}
@@ -401,53 +394,48 @@ export default function ChatView() {
               </div>
             </div>
           ) : (
-            /* Normal Input Mode — auto-expanding */
-            <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 min-h-[48px]">
-              {/* Attachment */}
-              <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
-                <Paperclip className="w-4 h-4 text-[#737373]" />
-              </button>
-
-              {/* Sparkles AI icon */}
-              <div className="flex items-center justify-center w-8 h-8 shrink-0">
-                <Sparkles className="w-4 h-4 text-[#737373]" />
-              </div>
-
-              {/* Textarea — auto-expanding up to ~10 lines */}
+            /* Normal Input — textarea on top, icons below */
+            <div className="flex flex-col bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] overflow-hidden">
+              {/* Textarea block — 5 lines default, grows to ~10 max */}
               <textarea
                 ref={textareaRef}
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Напишите сообщение..."
-                rows={1}
-                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[200px] py-1.5 leading-[1.5]"
+                rows={5}
+                className="w-full bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#a3a3a3] resize-none outline-none px-4 pt-3 pb-2 leading-[1.5] max-h-[200px]"
               />
-
-              {/* Mic button */}
-              <button
-                onClick={handleMicClick}
-                className={cn(
-                  'w-8 h-8 rounded-[8px] flex items-center justify-center transition-all shrink-0',
-                  'border border-[#e8e8e8] hover:bg-[#f0f0f0] hover:border-[#d4d4d4]',
-                  transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
-                )}
-                aria-label="Голосовой ввод"
-              >
-                <Mic className="w-4 h-4 text-[#737373]" />
-              </button>
-
-              {/* Send */}
-              <button
-                onClick={handleSend}
-                disabled={!input.trim()}
-                className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] transition-colors shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <SendHorizontal className="w-4 h-4 text-white" />
-              </button>
+              {/* Icons toolbar — separate block below */}
+              <div className="flex items-center gap-1.5 px-3 pb-2.5 pt-0.5">
+                <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#ebebeb] transition-colors cursor-pointer" aria-label="Прикрепить файл">
+                  <Paperclip className="w-[18px] h-[18px] text-[#737373]" />
+                </button>
+                <div className="flex items-center justify-center w-8 h-8">
+                  <Sparkles className="w-[18px] h-[18px] text-[#737373]" />
+                </div>
+                <div className="flex-1" />
+                <button
+                  onClick={handleMicClick}
+                  className={cn(
+                    'w-8 h-8 rounded-[8px] flex items-center justify-center transition-all cursor-pointer',
+                    'border border-[#e8e8e8] hover:bg-[#ebebeb] hover:border-[#d4d4d4]',
+                    transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
+                  )}
+                  aria-label="Голосовой ввод"
+                >
+                  <Mic className="w-[18px] h-[18px] text-[#737373]" />
+                </button>
+                <button
+                  onClick={handleSend}
+                  disabled={!input.trim()}
+                  className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <SendHorizontal className="w-[18px] h-[18px] text-white" />
+                </button>
+              </div>
             </div>
           )}
-          </div>
           {/* Keyboard shortcuts hint */}
           <div className="flex items-center justify-center mt-2">
             <div style={{ fontSize: '12px', color: '#a8a8a8', display: 'flex', alignItems: 'center', gap: '6px' }}>
