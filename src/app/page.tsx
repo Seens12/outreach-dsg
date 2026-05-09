@@ -101,7 +101,7 @@ export default function Home() {
           {showAgent && (
             <div
               className={cn(
-                'absolute inset-0 z-10 transition-opacity duration-200',
+                'absolute inset-0 z-10 bg-black/25 transition-opacity duration-200',
                 agentOpen
                   ? 'opacity-100 cursor-pointer'
                   : 'opacity-0 pointer-events-none',
