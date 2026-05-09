@@ -313,3 +313,33 @@ Work Log:
 Stage Summary:
 - All 6 tasks completed and lint-clean
 - Files modified: globals.css, Sidebar.tsx, ChatView.tsx, AgentPanel.tsx, AiDemoView.tsx
+
+---
+Task ID: status-pills-pastel
+Agent: Main Agent
+Task: Color all status pills (not filter pills) across the project in pastel tones
+
+Work Log:
+- Searched all 32 views + shared components for status pills/badges (statusConfig, priorityConfig, roleConfig, statusStyles, etc.)
+- Identified 5 files with ALL-GRAY status pills that needed coloring:
+  1. InboxView.tsx — leadStatusConfig (hot/warm/cold) + emailStateConfig (draft/training/ai-reply/urgent)
+  2. KnowledgeBaseView.tsx — statusStyles (Активен/Устаревает/Черновик)
+  3. AbTestingView.tsx — statusConfig (active/completed/draft)
+  4. AdminTenantsView.tsx — statusConfig (active/trial/suspended)
+  5. AdminBillingView.tsx — paymentStatusConfig (paid/pending/failed)
+- Identified 15+ files that already had proper pastel-colored pills (no changes needed)
+- Applied consistent pastel colors using existing system palette:
+  - Green: bg-[#dcfce7] text-[#15803d] (active, verified, ready, paid)
+  - Blue: bg-[#dbeafe] text-[#3b82f6] (new, cold, draft)
+  - Pink: bg-[#fce7f3] text-[#be123c] (hot, error, danger)
+  - Amber: bg-[#fafafa] text-[#a16207] (warm, warning, pending)
+  - Purple: bg-[#ede9fe] text-[#7c3aed] (AI, trial, admin)
+  - Cyan: bg-[#cffafe] text-[#0891b2] (training, learning)
+  - Red: bg-[#fee2e2] text-[#be123c] (urgent, failed, suspended)
+- Pushed commit 6fea20e
+
+Stage Summary:
+- 5 files changed, 19 insertions, 19 deletions
+- All status pills across the project now use pastel color tones
+- Colors are consistent with the existing system palette — no new colors invented
+- InboxView main target: Горячий=pink, Тёплый=amber, Холодный=blue, Черновик=gray, На обучении=cyan, AI-ответ=purple, Срочно=red
