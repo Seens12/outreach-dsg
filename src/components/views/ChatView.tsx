@@ -336,6 +336,15 @@ export default function ChatView() {
               <SendHorizontal className="w-4 h-4 text-white" />
             </button>
           </div>
+          {/* Keyboard shortcuts hint */}
+          <div className="flex items-center justify-center mt-2">
+            <div style={{ fontSize: '12px', color: '#a8a8a8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <kbd className="px-1.5 py-0.5 rounded bg-[#f5f5f5] border border-[#e8e8e8] text-[11px] font-mono">Enter</kbd>
+              отправить ·
+              <kbd className="px-1.5 py-0.5 rounded bg-[#f5f5f5] border border-[#e8e8e8] text-[11px] font-mono">Shift+Enter</kbd>
+              новая строка
+            </div>
+          </div>
         </div>
       </div>
     </div>

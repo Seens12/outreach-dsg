@@ -146,7 +146,7 @@ const metricCards = [
   },
 ]
 
-const periods = ['7 дней', '30 дней', '90 дней', 'Год']
+const periods = ['7д', '30д', '90д', 'Всё']
 
 // ── Tooltip Style ──────────────────────────────────────────────────────────
 
@@ -208,7 +208,7 @@ function renderCustomLabel({
 // ── Component ──────────────────────────────────────────────────────────────
 
 export default function AnalyticsView() {
-  const [activePeriod, setActivePeriod] = useState('30 дней')
+  const [activePeriod, setActivePeriod] = useState('30д')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -219,31 +219,33 @@ export default function AnalyticsView() {
   return (
     <div className="flex-1 overflow-y-auto custom-scroll">
       <div className="p-6 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
-            Аналитика
-          </h1>
-          <p className="text-sm text-[#737373] mt-1">
-            Подробная аналитика вашей outreach-активности
-          </p>
-        </div>
+        {/* Header with Period Selector */}
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+              Аналитика
+            </h1>
+            <p className="text-sm text-[#737373] mt-1">
+              Подробная аналитика вашей outreach-активности
+            </p>
+          </div>
 
-        {/* Period Selector */}
-        <div className="flex items-center gap-1 bg-[#fafafa] rounded-[10px] p-1 w-fit">
-          {periods.map((p) => (
-            <button
-              key={p}
-              onClick={() => setActivePeriod(p)}
-              className={`px-4 py-2 text-sm font-medium rounded-[8px] transition-all duration-150 cursor-pointer ${
-                activePeriod === p
-                  ? 'bg-white text-[#0d0d0d] shadow-card'
-                  : 'text-[#737373] hover:text-[#0d0d0d]'
-              }`}
-            >
-              {p}
-            </button>
-          ))}
+          {/* Period Selector */}
+          <div className="rounded-full bg-[#f5f5f5] p-[3px] flex gap-[2px]">
+            {periods.map((p) => (
+              <button
+                key={p}
+                onClick={() => setActivePeriod(p)}
+                className={`px-3.5 py-1.5 text-[13px] font-medium rounded-full transition-all duration-150 cursor-pointer ${
+                  activePeriod === p
+                    ? 'bg-white text-[#0d0d0d] shadow-card'
+                    : 'text-[#737373] hover:text-[#0d0d0d]'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Metric Cards */}
@@ -534,6 +536,35 @@ export default function AnalyticsView() {
                 )
               })}
             </div>
+          </div>
+        </div>
+        {/* Campaign Comparison */}
+        <div className="bg-white border border-[#e8e8e8] rounded-[10px] p-5">
+          <h3 className="text-[15px] font-semibold text-[#0d0d0d] mb-4">
+            Сравнение кампаний
+          </h3>
+          <div className="flex flex-col gap-3.5">
+            {[
+              { name: 'IT-Москва', open: 38, reply: 11.2, fill: 'bg-[#0d0d0d]' },
+              { name: 'Финтех — CFO', open: 42, reply: 13.8, fill: 'bg-[#0d0d0d]' },
+              { name: 'E-commerce', open: 28, reply: 7.1, fill: 'bg-[#737373]', underperforming: true },
+            ].map((c) => (
+              <div key={c.name}>
+                <div className="flex items-center justify-between text-[12.5px] mb-1.5">
+                  <span className="font-semibold text-[#0d0d0d]">{c.name}</span>
+                  <span className="text-[#737373]">
+                    Open: <strong className={c.underperforming ? 'text-[#737373]' : 'text-[#0d0d0d]'}>{c.open}%</strong> · Reply:{' '}
+                    <strong className={c.underperforming ? 'text-[#737373]' : 'text-[#0d0d0d]'}>{c.reply}%</strong>
+                  </span>
+                </div>
+                <div className="w-full h-[6px] bg-[#fafafa] rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${c.fill} transition-all duration-500`}
+                    style={{ width: `${c.open}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
