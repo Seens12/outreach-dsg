@@ -80,7 +80,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-white">
-      {!isChat && <Sidebar />}
+      <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar />
         <main className="flex-1 overflow-hidden relative mx-auto w-full max-w-[1400px]">

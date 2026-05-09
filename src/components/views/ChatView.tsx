@@ -17,6 +17,7 @@ import {
   MicOff,
   Loader2,
   X,
+  FileSpreadsheet,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { VoiceWave } from '@/components/shared/VoiceWave'
@@ -314,9 +315,22 @@ export default function ChatView() {
       {/* ── Input Area ───────────────────────────────────── */}
       <div className="border-t border-[#e8e8e8] bg-white px-6 py-4">
         <div className="max-w-[680px] mx-auto">
+          {/* Hardcoded attached file preview */}
+          <div className="flex items-center gap-2.5 mb-2 p-2 rounded-[8px] bg-[#f5f5f5] border border-[#e8e8e8]">
+            <div className="w-9 h-9 rounded-[6px] bg-[#dcfce7] flex items-center justify-center shrink-0">
+              <FileSpreadsheet className="w-4 h-4 text-[#16a34a]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[12.5px] font-medium text-[#171717] truncate">Компании_для_outreach.xlsx</div>
+              <div className="text-[11px] text-[#a3a3a3]">245 КБ</div>
+            </div>
+            <button className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-[#e8e8e8] transition-colors cursor-pointer">
+              <X className="w-3 h-3 text-[#737373]" />
+            </button>
+          </div>
           {/* Voice Recording Mode */}
           {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-4 py-3 overflow-hidden">
+            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 overflow-hidden" style={{ height: 40 }}>
               {/* Cancel button */}
               <button
                 onClick={cancelRecording}
@@ -328,7 +342,7 @@ export default function ChatView() {
 
               {/* Wave animation area */}
               <div className={cn(
-                'flex-1 relative min-h-[32px] h-[32px]',
+                'flex-1 relative h-[24px]',
                 voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
               )}>
                 {voicePhase === 'transcribing' ? (
@@ -356,11 +370,14 @@ export default function ChatView() {
             </div>
           ) : (
             /* Normal Input Mode */
-            <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 focus-within:border-[#737373] focus-within:bg-white transition-colors">
+            <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 py-2 transition-colors">
               {/* Attachment */}
               <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
                 <Paperclip className="w-4 h-4 text-[#737373]" />
               </button>
+
+              {/* Sparkles AI icon */}
+              <Sparkles className="w-4 h-4 text-[#737373] shrink-0" />
 
               {/* Textarea */}
               <textarea
@@ -369,7 +386,7 @@ export default function ChatView() {
                 onKeyDown={handleKeyDown}
                 placeholder="Напишите сообщение..."
                 rows={1}
-                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[120px] py-1.5 leading-[1.5]"
+                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[32px] py-1.5 leading-[1.5]"
               />
 
               {/* Mic button */}

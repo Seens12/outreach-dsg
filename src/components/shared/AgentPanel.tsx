@@ -253,7 +253,7 @@ export function AgentPanel() {
           <div className="px-4 py-3 border-t border-[#f5f5f5]">
             {/* Voice Recording Mode */}
             {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-4 py-3 overflow-hidden">
+              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 py-2 overflow-hidden" style={{ height: 36 }}>
                 {/* Cancel button */}
                 <button
                   onClick={cancelRecording}
@@ -265,7 +265,7 @@ export function AgentPanel() {
 
                 {/* Wave animation area */}
                 <div className={cn(
-                  'flex-1 relative min-h-[32px] h-[32px]',
+                  'flex-1 relative h-[20px]',
                   voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
                 )}>
                   {voicePhase === 'transcribing' ? (
