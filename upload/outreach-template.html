@@ -1,0 +1,3107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OutreachAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0d0d0d;
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-150: #efefef;
+  --gray-200: #e8e8e8;
+  --gray-300: #d1d1d1;
+  --gray-400: #a8a8a8;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --purple: #7c3aed;
+  --purple-light: #faf5ff;
+
+  --sidebar-w: 232px;
+  --topbar-h: 52px;
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.10);
+  --t: 160ms cubic-bezier(.4,0,.2,1);
+  --t-slow: 280ms cubic-bezier(.4,0,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--gray-900);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ═══ LAYOUT ═══ */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--gray-50);
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width var(--t-slow), opacity var(--t-slow);
+  overflow: hidden;
+  z-index: 40;
+}
+
+.sidebar.hidden { width: 0; opacity: 0; pointer-events: none; }
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logo-mark {
+  width: 26px;
+  height: 26px;
+  background: var(--black);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-mark svg { width: 14px; height: 14px; }
+
+.logo-text {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+}
+
+.mode-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--black);
+  color: var(--white);
+}
+
+.sidebar-nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+
+.nav-group { margin-bottom: 18px; }
+
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--gray-400);
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6.5px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--gray-600);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all var(--t);
+  position: relative;
+  margin-bottom: 1px;
+}
+
+.nav-item:hover { background: var(--gray-150); color: var(--gray-900); }
+.nav-item.active { background: var(--white); color: var(--gray-900); box-shadow: var(--shadow-sm); }
+.nav-item.active .nav-dot { background: var(--green); }
+
+.nav-item svg {
+  width: 15px; height: 15px;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--gray-200);
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-item.active .nav-badge { background: var(--black); color: var(--white); }
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  margin-left: auto;
+  transition: background var(--t);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--gray-200);
+  padding: 10px 12px;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 6px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--t);
+}
+
+.user-row:hover { background: var(--gray-150); }
+
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  font-size: 10.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar.sm { width: 24px; height: 24px; font-size: 9px; }
+
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-plan { font-size: 11px; color: var(--gray-400); }
+
+/* ═══ MAIN ═══ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+  height: var(--topbar-h);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 10px;
+  flex-shrink: 0;
+  background: var(--white);
+  z-index: 30;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 8px; }
+
+.toggle-btn {
+  width: 30px; height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all var(--t);
+}
+
+.toggle-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+.toggle-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+
+.breadcrumb { display: flex; align-items: center; gap: 5px; font-size: 12.5px; }
+.bc-sep { color: var(--gray-300); }
+.bc-current { font-weight: 600; color: var(--gray-900); }
+
+.topbar-center { flex: 1; display: flex; justify-content: center; }
+
+.mode-switcher {
+  display: flex;
+  align-items: center;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-btn {
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all var(--t);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mode-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+.mode-btn.active { background: var(--white); color: var(--gray-900); box-shadow: var(--shadow-sm); font-weight: 600; }
+
+.topbar-right { display: flex; align-items: center; gap: 4px; }
+
+.icon-btn {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--gray-400);
+  transition: all var(--t);
+  position: relative;
+}
+
+.icon-btn:hover { background: var(--gray-100); color: var(--gray-700); }
+.icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.notif-dot {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 1.5px solid var(--white);
+}
+
+/* ═══ CONTENT ═══ */
+.content { flex: 1; overflow: hidden; display: flex; position: relative; }
+
+.view { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+.view.active { display: flex; }
+
+/* ═══════════════════════════════════════
+   CHAT VIEW — ГЛАВНЫЙ ЭКРАН
+═══════════════════════════════════════ */
+
+#view-chat {
+  background: var(--white);
+}
+
+/* Онбординг-экран (до начала диалога) */
+.chat-welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 60px;
+  text-align: center;
+}
+
+.chat-welcome.hidden { display: none; }
+
+.welcome-icon {
+  width: 52px; height: 52px;
+  background: var(--black);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+.welcome-icon svg { width: 26px; height: 26px; }
+
+.welcome-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: var(--gray-500);
+  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.welcome-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 580px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.welcome-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--t);
+  background: var(--white);
+}
+
+.welcome-card:hover {
+  border-color: var(--gray-400);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.wc-icon {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.wc-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.wc-desc {
+  font-size: 11.5px;
+  color: var(--gray-500);
+  line-height: 1.4;
+}
+
+/* Агент-статус */
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--gray-200);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-600);
+  margin-bottom: 20px;
+  background: var(--white);
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 2px rgba(22,163,74,.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 2px rgba(22,163,74,.2)} 50%{box-shadow:0 0 0 4px rgba(22,163,74,.1)} }
+
+/* Чат-лента */
+.chat-stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+  display: none;
+  flex-direction: column;
+  gap: 0;
+}
+
+.chat-stream.active { display: flex; }
+
+.chat-msg-wrap {
+  display: flex;
+  padding: 6px 24px;
+  gap: 12px;
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  animation: fadeSlideIn .25s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg-wrap.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.msg-avatar.ai { background: var(--black); color: var(--white); }
+.msg-avatar.user { background: var(--gray-200); color: var(--gray-700); }
+
+.msg-bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.chat-msg-wrap.ai .msg-bubble {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-900);
+}
+
+.chat-msg-wrap.user .msg-bubble {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* Специальные блоки агента */
+.agent-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 8px;
+  max-width: 460px;
+}
+
+.agent-card-header {
+  padding: 10px 14px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agent-card-body { padding: 12px 14px; }
+
+.agent-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 12.5px;
+}
+
+.agent-card-row:last-child { border-bottom: none; padding-bottom: 0; }
+.acr-label { color: var(--gray-500); }
+.acr-val { font-weight: 600; }
+
+.agent-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.aa-btn {
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--t);
+  color: var(--gray-700);
+}
+
+.aa-btn:hover { border-color: var(--gray-400); background: var(--gray-50); }
+.aa-btn.primary { background: var(--black); color: var(--white); border-color: var(--black); }
+.aa-btn.primary:hover { opacity: .85; }
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.typing-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gray-400);
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: .15s; }
+.typing-dot:nth-child(3) { animation-delay: .3s; }
+
+@keyframes typingBounce {
+  0%,100%{transform:translateY(0);opacity:.4}
+  50%{transform:translateY(-4px);opacity:1}
+}
+
+/* ═══ CHAT INPUT (универсальный) ═══ */
+.chat-input-area {
+  padding: 14px 24px 20px;
+  border-top: 1px solid var(--gray-150);
+  background: var(--white);
+  flex-shrink: 0;
+}
+
+.chat-input-inner {
+  max-width: 812px;
+  margin: 0 auto;
+}
+
+.input-box {
+  border: 1.5px solid var(--gray-250, #ddd);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  transition: border-color var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.input-box:focus-within {
+  border-color: var(--gray-500);
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+
+.input-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--gray-900);
+  outline: none;
+  resize: none;
+  padding: 13px 16px 0;
+  min-height: 44px;
+  max-height: 140px;
+  line-height: 1.5;
+}
+
+.input-textarea::placeholder { color: var(--gray-400); }
+
+.input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 10px;
+}
+
+.input-tools { display: flex; align-items: center; gap: 3px; }
+
+.input-tool-btn {
+  width: 28px; height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--gray-400);
+  transition: all var(--t);
+}
+
+.input-tool-btn:hover { background: var(--gray-100); color: var(--gray-700); }
+.input-tool-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.input-right { display: flex; align-items: center; gap: 8px; }
+
+.autonomy-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--gray-200);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all var(--t);
+  background: var(--gray-50);
+  user-select: none;
+}
+
+.autonomy-pill:hover { border-color: var(--gray-400); }
+.autonomy-pill .a-dot { width: 6px; height: 6px; border-radius: 50%; }
+.autonomy-pill.observe .a-dot { background: var(--red); }
+.autonomy-pill.assist .a-dot { background: var(--amber); }
+.autonomy-pill.autopilot .a-dot { background: var(--green); }
+
+.send-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--t);
+  flex-shrink: 0;
+}
+
+.send-btn:hover { opacity: .8; }
+.send-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.input-hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 8px;
+}
+
+.input-hint kbd {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  font-size: 10.5px;
+  font-family: 'Geist Mono', monospace;
+}
+
+/* ═══════════════════════════════════════
+   OVERVIEW / DASHBOARD
+═══════════════════════════════════════ */
+
+#view-overview { overflow-y: auto; }
+
+.page-body { padding: 24px 28px; }
+
+.page-header { margin-bottom: 22px; }
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin-bottom: 3px;
+}
+
+.page-desc { font-size: 13px; color: var(--gray-500); }
+
+/* Метрики */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  background: var(--white);
+  transition: all var(--t);
+  cursor: default;
+}
+
+.metric-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+
+.metric-label { font-size: 11.5px; color: var(--gray-500); margin-bottom: 6px; font-weight: 500; }
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.metric-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.metric-change.up { color: var(--green); }
+.metric-change.down { color: var(--red); }
+.metric-change.neutral { color: var(--gray-500); }
+
+.spark {
+  height: 32px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.spark-bar {
+  flex: 1;
+  background: var(--gray-200);
+  border-radius: 2px 2px 0 0;
+  min-height: 3px;
+  transition: background var(--t);
+}
+
+.spark-bar.hi { background: var(--black); }
+.metric-card:hover .spark-bar { background: var(--gray-300); }
+.metric-card:hover .spark-bar.hi { background: var(--black); }
+
+/* Нужно внимания */
+.attention-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 16px;
+  background: var(--amber-light);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.attention-bar svg { width: 15px; height: 15px; stroke: var(--amber); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+
+.attention-items { display: flex; flex-direction: column; gap: 4px; }
+
+.attention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray-700);
+}
+
+.attention-link {
+  font-weight: 600;
+  color: var(--amber);
+  text-decoration: underline;
+  cursor: pointer;
+  text-underline-offset: 2px;
+}
+
+/* Двухколоночная сетка */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+.card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--gray-150);
+}
+
+.card-title { font-size: 13px; font-weight: 600; }
+
+.card-action {
+  font-size: 12px;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: color var(--t);
+}
+
+.card-action:hover { color: var(--gray-900); }
+
+/* Таблица активности */
+.activity-list { }
+
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  transition: background var(--t);
+  cursor: pointer;
+}
+
+.activity-row:last-child { border-bottom: none; }
+.activity-row:hover { background: var(--gray-50); }
+
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.a-sent { background: var(--blue); }
+.a-replied { background: var(--green); }
+.a-hot { background: var(--red); }
+.a-warn { background: var(--amber); }
+.a-info { background: var(--gray-400); }
+
+.activity-text { flex: 1; font-size: 12.5px; color: var(--gray-700); }
+.activity-text strong { color: var(--gray-900); font-weight: 600; }
+.activity-time { font-size: 11.5px; color: var(--gray-400); white-space: nowrap; }
+
+/* Лиды */
+.lead-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background var(--t);
+}
+
+.lead-row:last-child { border-bottom: none; }
+.lead-row:hover { background: var(--gray-50); }
+
+.lead-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lead-info { flex: 1; min-width: 0; }
+.lead-name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lead-company { font-size: 11.5px; color: var(--gray-500); }
+.lead-status { flex-shrink: 0; }
+
+/* ═══════════════════════════════════════
+   CAMPAIGNS
+═══════════════════════════════════════ */
+
+#view-campaigns { overflow-y: auto; }
+
+.campaign-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  background: var(--white);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.campaign-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+
+.campaign-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.campaign-name { font-size: 14px; font-weight: 600; }
+
+.campaign-stats {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 12px;
+}
+
+.cs-item { }
+.cs-val { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+.cs-lbl { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+
+.campaign-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--gray-150);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--black);
+  border-radius: 2px;
+  transition: width .6s ease;
+}
+
+.progress-pct { font-size: 11.5px; color: var(--gray-400); white-space: nowrap; }
+
+.campaign-meta { font-size: 11.5px; color: var(--gray-400); display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.meta-sep { color: var(--gray-300); }
+
+/* ═══════════════════════════════════════
+   INBOX
+═══════════════════════════════════════ */
+
+#view-inbox { flex-direction: row; }
+
+.inbox-list {
+  width: 320px;
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.inbox-list-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inbox-list-title { font-size: 13.5px; font-weight: 700; }
+
+.inbox-count {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--red);
+  color: var(--white);
+}
+
+.inbox-filters {
+  display: flex;
+  gap: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gray-150);
+}
+
+.inbox-filter {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all var(--t);
+}
+
+.inbox-filter.active { background: var(--black); color: var(--white); }
+.inbox-filter:hover:not(.active) { background: var(--gray-100); }
+
+.inbox-items { flex: 1; overflow-y: auto; }
+
+.inbox-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background var(--t);
+}
+
+.inbox-item:hover { background: var(--gray-50); }
+.inbox-item.active { background: var(--gray-100); }
+.inbox-item.unread { border-left: 2px solid var(--black); }
+
+.inbox-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.inbox-sender { font-size: 12.5px; font-weight: 600; }
+.inbox-time { font-size: 11px; color: var(--gray-400); }
+.inbox-company { font-size: 11.5px; color: var(--gray-500); margin-bottom: 4px; }
+.inbox-preview { font-size: 12px; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Inbox detail */
+.inbox-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inbox-detail-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+.inbox-detail-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.inbox-detail-meta { font-size: 12px; color: var(--gray-500); display: flex; gap: 8px; }
+
+.thread-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.email-block {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.email-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  cursor: pointer;
+}
+
+.email-block-from { font-size: 12.5px; font-weight: 600; }
+.email-block-time { font-size: 11.5px; color: var(--gray-400); }
+.email-block-body { padding: 14px; font-size: 13px; line-height: 1.7; color: var(--gray-800); }
+
+/* RAG-панель */
+.rag-panel {
+  width: 280px;
+  border-left: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+  background: var(--gray-50);
+}
+
+.rag-section { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); }
+.rag-section:last-child { border-bottom: none; }
+
+.rag-section-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rag-section-title svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+.confidence-bar {
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.confidence-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+.confidence-fill.high { background: var(--green); }
+.confidence-fill.mid { background: var(--amber); }
+.confidence-fill.low { background: var(--red); }
+
+.confidence-label { font-size: 11.5px; color: var(--gray-500); }
+.confidence-pct { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+
+.rag-source {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all var(--t);
+  font-size: 11.5px;
+}
+
+.rag-source:hover { border-color: var(--gray-400); }
+.rag-source-icon { width: 24px; height: 24px; border-radius: 6px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rag-source-icon svg { width: 12px; height: 12px; stroke: var(--gray-600); fill: none; stroke-width: 2; }
+.rag-source-info { flex: 1; min-width: 0; }
+.rag-source-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rag-source-pct { font-size: 10.5px; color: var(--green); font-weight: 600; }
+
+.rag-warn {
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: var(--amber-light);
+  border: 1px solid #fde68a;
+  font-size: 11.5px;
+  color: var(--gray-700);
+  margin-bottom: 6px;
+}
+
+.rag-action-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.rag-btn {
+  padding: 7px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--t);
+  text-align: center;
+  color: var(--gray-700);
+}
+
+.rag-btn:hover { border-color: var(--gray-400); }
+.rag-btn.primary { background: var(--black); color: var(--white); border-color: var(--black); grid-column: 1/-1; }
+
+/* Черновик */
+.draft-area { padding: 14px 20px; border-top: 1px solid var(--gray-200); background: var(--white); flex-shrink: 0; }
+.draft-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-400); margin-bottom: 8px; }
+.draft-text { font-size: 13px; line-height: 1.6; color: var(--gray-800); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 12px 14px; background: var(--gray-50); margin-bottom: 10px; }
+.draft-actions { display: flex; gap: 8px; }
+
+/* ═══════════════════════════════════════
+   LEADS
+═══════════════════════════════════════ */
+
+#view-leads { overflow-y: auto; }
+
+/* ═══════════════════════════════════════
+   KNOWLEDGE BASE
+═══════════════════════════════════════ */
+
+#view-kb { overflow-y: auto; }
+
+.kb-readiness {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 20px;
+  background: var(--white);
+}
+
+.kb-readiness-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.kb-readiness-title { font-size: 13.5px; font-weight: 700; }
+.kb-readiness-pct { font-size: 24px; font-weight: 700; letter-spacing: -.03em; }
+
+.kb-coverage-bar {
+  height: 6px;
+  background: var(--gray-150);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.kb-coverage-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width .6s ease; }
+
+.kb-topics { display: flex; flex-direction: column; gap: 8px; }
+
+.kb-topic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.kb-topic-name { width: 180px; color: var(--gray-700); }
+.kb-topic-bar { flex: 1; height: 4px; background: var(--gray-150); border-radius: 2px; overflow: hidden; }
+.kb-topic-fill { height: 100%; border-radius: 2px; }
+.kb-topic-fill.ok { background: var(--green); }
+.kb-topic-fill.mid { background: var(--amber); }
+.kb-topic-fill.low { background: var(--red); }
+.kb-topic-pct { font-size: 11.5px; font-weight: 600; color: var(--gray-600); width: 30px; text-align: right; }
+
+.kb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.kb-file-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: var(--white);
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.kb-file-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+.kb-file-card.dashed { border-style: dashed; }
+
+.kb-file-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.kb-file-icon svg { width: 18px; height: 18px; stroke: var(--gray-600); fill: none; stroke-width: 1.8; }
+.kb-file-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.kb-file-meta { font-size: 11.5px; color: var(--gray-400); line-height: 1.4; }
+
+.kb-file-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-100);
+}
+
+/* ═══════════════════════════════════════
+   ANALYTICS — НОВЫЙ ДИЗАЙН
+═══════════════════════════════════════ */
+
+#view-analytics { overflow-y: auto; }
+
+.analytics-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.analytics-period {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.period-btn {
+  padding: 5px 12px;
+  border: none;
+  border-right: 1px solid var(--gray-200);
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all var(--t);
+}
+
+.period-btn:last-child { border-right: none; }
+.period-btn:hover { background: var(--gray-50); }
+.period-btn.active { background: var(--black); color: var(--white); }
+
+/* Воронка */
+.funnel-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.funnel-body { padding: 20px 24px; }
+
+.funnel-stages { display: flex; align-items: stretch; gap: 0; }
+
+.funnel-stage {
+  flex: 1;
+  position: relative;
+}
+
+.funnel-bar-wrap {
+  display: flex;
+  align-items: flex-end;
+  height: 120px;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.funnel-bar {
+  width: 100%;
+  background: var(--black);
+  border-radius: 3px 3px 0 0;
+  transition: opacity var(--t);
+  opacity: 1;
+}
+
+.funnel-stage:nth-child(2) .funnel-bar { opacity: .75; }
+.funnel-stage:nth-child(3) .funnel-bar { opacity: .55; }
+.funnel-stage:nth-child(4) .funnel-bar { opacity: .35; }
+.funnel-stage:nth-child(5) .funnel-bar { opacity: .2; }
+
+.funnel-connector {
+  position: absolute;
+  right: -1px;
+  bottom: 0;
+  width: 2px;
+  background: var(--gray-200);
+  top: 0;
+  z-index: 1;
+}
+
+.funnel-val { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.funnel-lbl { font-size: 11.5px; color: var(--gray-400); }
+.funnel-rate { font-size: 11px; color: var(--green); font-weight: 600; margin-top: 2px; }
+
+/* Тепловая карта */
+.heatmap-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.heatmap-body { padding: 16px 20px 20px; }
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 40px repeat(24, 1fr);
+  gap: 2px;
+  font-size: 9px;
+}
+
+.hm-time-label { color: var(--gray-400); display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; height: 22px; }
+.hm-day-label { color: var(--gray-400); text-align: center; padding-bottom: 4px; }
+
+.hm-cell {
+  height: 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: transform var(--t);
+}
+
+.hm-cell:hover { transform: scale(1.2); z-index: 1; position: relative; }
+.hm-0 { background: var(--gray-100); }
+.hm-1 { background: #d1fae5; }
+.hm-2 { background: #6ee7b7; }
+.hm-3 { background: #34d399; }
+.hm-4 { background: #10b981; }
+.hm-5 { background: #059669; }
+
+/* Инсайты */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.insight-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: var(--white);
+}
+
+.insight-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.insight-text { font-size: 12.5px; color: var(--gray-700); line-height: 1.5; }
+.insight-text strong { color: var(--gray-900); }
+
+/* ═══════════════════════════════════════
+   DOMAINS / MAILBOXES
+═══════════════════════════════════════ */
+
+#view-domains, #view-mailboxes { overflow-y: auto; }
+
+.domain-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  background: var(--white);
+  margin-bottom: 10px;
+  transition: all var(--t);
+}
+
+.domain-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+
+.domain-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.domain-name { font-size: 14px; font-weight: 700; font-family: 'Geist Mono', monospace; }
+
+.dns-checks { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+.dns-check {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: var(--radius-full);
+}
+
+.dns-ok { background: var(--green-light); color: var(--green); }
+.dns-fail { background: var(--red-light); color: var(--red); }
+.dns-warn { background: var(--amber-light); color: var(--amber); }
+.dns-check svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+.warmup-row { display: flex; align-items: center; gap: 10px; }
+.warmup-label { font-size: 11.5px; color: var(--gray-500); width: 80px; flex-shrink: 0; }
+.warmup-track { flex: 1; height: 4px; background: var(--gray-150); border-radius: 2px; overflow: hidden; }
+.warmup-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+.warmup-days { font-size: 11.5px; color: var(--gray-500); white-space: nowrap; }
+
+/* ═══════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════ */
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.badge-success { background: var(--green-light); color: var(--green); }
+.badge-warning { background: var(--amber-light); color: var(--amber); }
+.badge-error { background: var(--red-light); color: var(--red); }
+.badge-info { background: var(--blue-light); color: var(--blue); }
+.badge-neutral { background: var(--gray-100); color: var(--gray-600); }
+.badge-black { background: var(--black); color: var(--white); }
+
+.badge::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Таблица */
+.table-wrap {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--white);
+}
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.data-table thead { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+
+.data-table th {
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--gray-400);
+  white-space: nowrap;
+}
+
+.data-table tbody tr { border-bottom: 1px solid var(--gray-100); transition: background var(--t); cursor: pointer; }
+.data-table tbody tr:last-child { border-bottom: none; }
+.data-table tbody tr:hover { background: var(--gray-50); }
+.data-table td { padding: 10px 14px; vertical-align: middle; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--t);
+  white-space: nowrap;
+}
+
+.btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.btn-primary { background: var(--black); color: var(--white); border-color: var(--black); }
+.btn-primary:hover { opacity: .85; }
+
+.btn-secondary { background: var(--white); color: var(--gray-700); border-color: var(--gray-200); }
+.btn-secondary:hover { background: var(--gray-50); border-color: var(--gray-300); }
+
+.btn-ghost { background: transparent; color: var(--gray-600); }
+.btn-ghost:hover { background: var(--gray-100); color: var(--gray-900); }
+
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbar-spacer { flex: 1; }
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  background: var(--white);
+  transition: border-color var(--t);
+}
+
+.search-box:focus-within { border-color: var(--gray-400); }
+.search-box svg { width: 13px; height: 13px; stroke: var(--gray-400); fill: none; stroke-width: 2; flex-shrink: 0; }
+.search-box input { border: none; background: transparent; font-size: 13px; font-family: inherit; color: var(--gray-900); outline: none; width: 180px; }
+.search-box input::placeholder { color: var(--gray-400); }
+
+/* Tabs */
+.tabs { display: flex; border-bottom: 1px solid var(--gray-200); margin-bottom: 18px; }
+.tab { padding: 8px 14px; font-size: 12.5px; font-weight: 500; color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all var(--t); white-space: nowrap; }
+.tab:hover { color: var(--gray-700); }
+.tab.active { color: var(--gray-900); border-bottom-color: var(--black); }
+
+/* Toast */
+.toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column-reverse; gap: 8px; pointer-events: none; }
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--black);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+  min-width: 240px;
+  max-width: 360px;
+  font-size: 13px;
+  pointer-events: all;
+  animation: toastIn .25s ease;
+}
+
+.toast.out { animation: toastOut .25s ease forwards; }
+
+@keyframes toastIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes toastOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(10px)} }
+
+.toast-icon { width: 14px; height: 14px; flex-shrink: 0; }
+.toast-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.25);
+  z-index: 200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  opacity: 0; visibility: hidden;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+
+.modal-bg.open { opacity: 1; visibility: visible; }
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  width: 500px;
+  max-width: 90vw;
+  box-shadow: 0 16px 56px rgba(0,0,0,.15);
+  transform: scale(.97);
+  transition: transform .2s ease;
+  overflow: hidden;
+}
+
+.modal-bg.open .modal-box { transform: scale(1); }
+
+.modal-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-search-row svg { width: 15px; height: 15px; stroke: var(--gray-400); fill: none; stroke-width: 2; flex-shrink: 0; }
+.modal-search-row input { flex: 1; border: none; background: transparent; font-size: 14px; font-family: inherit; color: var(--gray-900); outline: none; }
+.modal-search-row input::placeholder { color: var(--gray-400); }
+
+.modal-results { padding: 6px; max-height: 300px; overflow-y: auto; }
+
+.modal-group { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-400); padding: 6px 8px 3px; }
+
+.modal-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--gray-700);
+  transition: background var(--t);
+}
+
+.modal-item:hover { background: var(--gray-100); color: var(--gray-900); }
+.modal-item svg { width: 14px; height: 14px; stroke: var(--gray-400); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+
+.modal-footer {
+  display: flex;
+  gap: 14px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--gray-200);
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+.modal-footer kbd { padding: 1px 5px; border-radius: 4px; background: var(--gray-100); border: 1px solid var(--gray-200); font-size: 10.5px; font-family: 'Geist Mono', monospace; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-250, #ddd); border-radius: 2px; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .rag-panel { display: none; }
+  .insights-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .kb-grid { grid-template-columns: 1fr 1fr; }
+  .welcome-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L17 6V14L10 18L3 14V6L10 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="10" cy="10" r="2" fill="white"/>
+        </svg>
+      </div>
+      <span class="logo-text">OutreachAI</span>
+    </div>
+    <span class="mode-badge" id="modeBadge">Чат</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-item active" data-view="chat" onclick="switchView('chat')">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Агент
+        <div class="nav-dot" style="background:var(--green)"></div>
+      </div>
+    </div>
+
+    <div class="nav-group" id="advNav" style="display:none">
+      <div class="nav-group-label">Главное</div>
+      <div class="nav-item" data-view="overview" onclick="switchView('overview')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Обзор
+      </div>
+      <div class="nav-item" data-view="campaigns" onclick="switchView('campaigns')">
+        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Кампании
+        <span class="nav-badge">3</span>
+      </div>
+      <div class="nav-item" data-view="inbox" onclick="switchView('inbox')">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Входящие
+        <span class="nav-badge" style="background:var(--red);color:white">5</span>
+      </div>
+      <div class="nav-item" data-view="leads" onclick="switchView('leads')">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Лиды
+      </div>
+    </div>
+
+    <div class="nav-group" id="advNav2" style="display:none">
+      <div class="nav-group-label">Данные</div>
+      <div class="nav-item" data-view="kb" onclick="switchView('kb')">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        База знаний
+      </div>
+      <div class="nav-item" data-view="analytics" onclick="switchView('analytics')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="18" y1="10" x2="18" y2="10"/></svg>
+        Аналитика
+      </div>
+    </div>
+
+    <div class="nav-group" id="advNav3" style="display:none">
+      <div class="nav-group-label">Инфраструктура</div>
+      <div class="nav-item" data-view="mailboxes" onclick="switchView('mailboxes')">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Ящики
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" data-view="domains" onclick="switchView('domains')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Домены
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">АМ</div>
+      <div class="user-info">
+        <div class="user-name">Александр М.</div>
+        <div class="user-plan">Тариф Рост</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="toggleSidebar()" title="Скрыть/показать меню">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="breadcrumb">
+        <span style="color:var(--gray-400)">OutreachAI</span>
+        <span class="bc-sep">/</span>
+        <span class="bc-current" id="bc">Агент</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="mode-switcher">
+        <button class="mode-btn active" id="modeChat" onclick="setMode('chat')">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Режим агента
+        </button>
+        <button class="mode-btn" id="modeDash" onclick="setMode('dashboard')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Расширенный режим
+        </button>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="openSearch()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="icon-btn" onclick="showToast('3 новых уведомления')">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+      <div class="avatar sm" style="margin-left:4px;cursor:pointer" onclick="showToast('Профиль')">АМ</div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ CHAT VIEW ═══ -->
+    <div class="view active" id="view-chat" style="flex-direction:column">
+
+      <!-- Welcome screen -->
+      <div class="chat-welcome" id="chatWelcome">
+        <div class="agent-status">
+          <div class="status-dot"></div>
+          Агент активен · Observe режим
+        </div>
+
+        <div class="welcome-icon">
+          <svg viewBox="0 0 28 28" fill="none">
+            <path d="M14 4a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V8a4 4 0 0 1 4-4z" stroke="white" stroke-width="1.5"/>
+            <path d="M20 18H8a4 4 0 0 0-4 4v1h20v-1a4 4 0 0 0-4-4z" stroke="white" stroke-width="1.5"/>
+          </svg>
+        </div>
+
+        <div class="welcome-title">Добрый день, Александр</div>
+        <div class="welcome-subtitle">Я ваш AI-агент по продажам. Готов запустить кампанию, ответить лиду, проанализировать результаты или настроить домен.</div>
+
+        <div class="welcome-cards">
+          <div class="welcome-card" onclick="sendQuick('Запусти новую кампанию для IT-компаний в Москве')">
+            <div class="wc-icon">🚀</div>
+            <div class="wc-title">Запустить кампанию</div>
+            <div class="wc-desc">Новый аутрич за 3 минуты</div>
+          </div>
+          <div class="welcome-card" onclick="sendQuick('Покажи статистику по всем кампаниям за эту неделю')">
+            <div class="wc-icon">📊</div>
+            <div class="wc-title">Статистика</div>
+            <div class="wc-desc">Открытия, ответы, лиды</div>
+          </div>
+          <div class="welcome-card" onclick="sendQuick('Загрузи контакты и помоги подготовить персонализированные письма')">
+            <div class="wc-icon">📋</div>
+            <div class="wc-title">Загрузить контакты</div>
+            <div class="wc-desc">CSV или Excel, я разберусь</div>
+          </div>
+          <div class="welcome-card" onclick="sendQuick('Проверь состояние доменов и репутацию ящиков')">
+            <div class="wc-icon">🔍</div>
+            <div class="wc-title">Проверить домены</div>
+            <div class="wc-desc">SPF, DKIM, spam rate</div>
+          </div>
+          <div class="welcome-card" onclick="sendQuick('Есть горячие лиды которые ждут ответа?')">
+            <div class="wc-icon">🔥</div>
+            <div class="wc-title">Горячие лиды</div>
+            <div class="wc-desc">Кто готов к разговору</div>
+          </div>
+          <div class="welcome-card" onclick="sendQuick('Составь follow-up для тех кто не ответил 3 дня назад')">
+            <div class="wc-icon">✉️</div>
+            <div class="wc-title">Follow-up</div>
+            <div class="wc-desc">Вернуть молчащих лидов</div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--gray-400);display:flex;align-items:center;gap:6px">
+          <kbd style="padding:2px 6px;border-radius:4px;background:var(--gray-100);border:1px solid var(--gray-200);font-size:11px;font-family:'Geist Mono',monospace">Enter</kbd>
+          отправить ·
+          <kbd style="padding:2px 6px;border-radius:4px;background:var(--gray-100);border:1px solid var(--gray-200);font-size:11px;font-family:'Geist Mono',monospace">Shift+Enter</kbd>
+          новая строка
+        </div>
+      </div>
+
+      <!-- Chat stream -->
+      <div class="chat-stream" id="chatStream"></div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="chat-input-inner">
+          <div class="input-box">
+            <textarea class="input-textarea" id="chatInput" placeholder="Напишите задачу для агента…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <div class="input-footer">
+              <div class="input-tools">
+                <button class="input-tool-btn" title="Прикрепить файл" onclick="showToast('Прикрепление файла')">
+                  <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </button>
+                <button class="input-tool-btn" title="Загрузить контакты" onclick="showToast('Загрузка CSV')">
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </button>
+              </div>
+              <div class="input-right">
+                <div class="autonomy-pill observe" id="autonomyPill" onclick="cycleAutonomy()">
+                  <div class="a-dot"></div>
+                  <span id="autonomyLabel">Observe</span>
+                </div>
+                <button class="send-btn" onclick="sendMessage()">
+                  <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="input-hint">
+            Агент работает с вашими доменами и базой знаний · <span style="color:var(--gray-600);font-weight:500">Observe</span> — все действия через подтверждение
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="view" id="view-overview">
+      <div class="page-body">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Обзор</div>
+            <div class="page-desc">Сегодня, 9 мая 2026</div>
+          </div>
+          <button class="btn btn-primary" onclick="setMode('chat');showToast('Переход к агенту')">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Спросить агента
+          </button>
+        </div>
+
+        <div class="attention-bar">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="attention-items">
+            <div class="attention-item">
+              🔥 <strong>3 горячих лида</strong> ждут ответа — <span class="attention-link" onclick="switchView('inbox')">открыть входящие</span>
+            </div>
+            <div class="attention-item">
+              ⚠️ Домен <strong>outreach2.ru</strong> — DKIM не настроен — <span class="attention-link" onclick="switchView('domains')">исправить</span>
+            </div>
+            <div class="attention-item">
+              📚 Агент не нашёл ответ по <strong>безопасности данных</strong> — <span class="attention-link" onclick="switchView('kb')">добавить в KB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Отправлено сегодня</div>
+            <div class="metric-value">186</div>
+            <div class="metric-change up">↑ 12% к вчера</div>
+            <div class="spark">
+              <div class="spark-bar" style="height:40%"></div>
+              <div class="spark-bar" style="height:55%"></div>
+              <div class="spark-bar" style="height:45%"></div>
+              <div class="spark-bar" style="height:70%"></div>
+              <div class="spark-bar" style="height:60%"></div>
+              <div class="spark-bar hi" style="height:85%"></div>
+              <div class="spark-bar" style="height:78%"></div>
+              <div class="spark-bar hi" style="height:100%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Open Rate (7 дней)</div>
+            <div class="metric-value">38.4%</div>
+            <div class="metric-change up">↑ 6% к прошлой неделе</div>
+            <div class="spark">
+              <div class="spark-bar" style="height:60%"></div>
+              <div class="spark-bar" style="height:65%"></div>
+              <div class="spark-bar" style="height:55%"></div>
+              <div class="spark-bar" style="height:75%"></div>
+              <div class="spark-bar hi" style="height:80%"></div>
+              <div class="spark-bar" style="height:78%"></div>
+              <div class="spark-bar hi" style="height:85%"></div>
+              <div class="spark-bar hi" style="height:90%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Горячих лидов</div>
+            <div class="metric-value" style="color:var(--red)">3</div>
+            <div class="metric-change neutral">+1 за сегодня</div>
+            <div class="spark">
+              <div class="spark-bar" style="height:20%"></div>
+              <div class="spark-bar" style="height:15%"></div>
+              <div class="spark-bar" style="height:30%"></div>
+              <div class="spark-bar" style="height:25%"></div>
+              <div class="spark-bar hi" style="height:50%"></div>
+              <div class="spark-bar" style="height:40%"></div>
+              <div class="spark-bar hi" style="height:65%"></div>
+              <div class="spark-bar hi" style="height:80%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Reply Rate</div>
+            <div class="metric-value">11.2%</div>
+            <div class="metric-change up">↑ 2.4% к прошлой неделе</div>
+            <div class="spark">
+              <div class="spark-bar" style="height:55%"></div>
+              <div class="spark-bar" style="height:50%"></div>
+              <div class="spark-bar" style="height:60%"></div>
+              <div class="spark-bar" style="height:65%"></div>
+              <div class="spark-bar" style="height:70%"></div>
+              <div class="spark-bar hi" style="height:75%"></div>
+              <div class="spark-bar" style="height:72%"></div>
+              <div class="spark-bar hi" style="height:85%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Последняя активность</div>
+              <div class="card-action" onclick="switchView('inbox')">Все →</div>
+            </div>
+            <div class="activity-list">
+              <div class="activity-row"><div class="activity-dot a-hot"></div><div class="activity-text"><strong>Иван Петров</strong> (DataPro) — горячий ответ, просит демо</div><div class="activity-time">14 мин</div></div>
+              <div class="activity-row"><div class="activity-dot a-sent"></div><div class="activity-text">Отправлено <strong>24 письма</strong> в кампании «IT-Москва»</div><div class="activity-time">43 мин</div></div>
+              <div class="activity-row"><div class="activity-dot a-replied"></div><div class="activity-text"><strong>Мария Соколова</strong> (CloudBase) ответила, интересуется ценами</div><div class="activity-time">1.5 ч</div></div>
+              <div class="activity-row"><div class="activity-dot a-warn"></div><div class="activity-text">Spam rate домена <strong>outreach2.ru</strong> вырос до 0.4%</div><div class="activity-time">2 ч</div></div>
+              <div class="activity-row"><div class="activity-dot a-info"></div><div class="activity-text">Агент добавил <strong>2 ответа</strong> в базу знаний</div><div class="activity-time">3 ч</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Горячие лиды</div>
+              <div class="card-action" onclick="switchView('leads')">Все лиды →</div>
+            </div>
+            <div class="lead-row" onclick="switchView('inbox')">
+              <div class="lead-avatar" style="background:#fef3c7;color:#92400e">ИП</div>
+              <div class="lead-info"><div class="lead-name">Иван Петров</div><div class="lead-company">DataPro · CTO</div></div>
+              <span class="badge badge-error">Горячий</span>
+            </div>
+            <div class="lead-row" onclick="switchView('inbox')">
+              <div class="lead-avatar" style="background:#f0fdf4;color:#166534">МС</div>
+              <div class="lead-info"><div class="lead-name">Мария Соколова</div><div class="lead-company">CloudBase · CEO</div></div>
+              <span class="badge badge-warning">Тёплый</span>
+            </div>
+            <div class="lead-row" onclick="switchView('inbox')">
+              <div class="lead-avatar" style="background:#eff6ff;color:#1e40af">ДК</div>
+              <div class="lead-info"><div class="lead-name">Дмитрий Козлов</div><div class="lead-company">NovaSoft · VP Sales</div></div>
+              <span class="badge badge-error">Горячий</span>
+            </div>
+            <div class="lead-row" onclick="switchView('inbox')">
+              <div class="lead-avatar" style="background:#faf5ff;color:#6d28d9">АВ</div>
+              <div class="lead-info"><div class="lead-name">Анна Власова</div><div class="lead-company">TechCorp · Marketing</div></div>
+              <span class="badge badge-warning">Тёплый</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CAMPAIGNS ═══ -->
+    <div class="view" id="view-campaigns">
+      <div class="page-body">
+        <div class="page-header">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div class="page-title">Кампании</div><div class="page-desc">3 активные · 1 на паузе · 1 черновик</div></div>
+            <button class="btn btn-primary" onclick="showToast('Создание кампании через агента'); setMode(\'chat\'); setTimeout(()=>fillInput(\'Создай новую кампанию\'),300)">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Новая кампания
+            </button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,event)">Все (5)</div>
+          <div class="tab" onclick="switchTab(this,event)">Активные (3)</div>
+          <div class="tab" onclick="switchTab(this,event)">На паузе (1)</div>
+          <div class="tab" onclick="switchTab(this,event)">Черновики (1)</div>
+        </div>
+
+        <div class="campaign-card" onclick="showToast('Открыть кампанию')">
+          <div class="campaign-top">
+            <div class="campaign-name">Q2 Outreach — IT-компании Москва</div>
+            <span class="badge badge-success">Активна</span>
+          </div>
+          <div class="campaign-meta"><span>Запущена 3 мая</span><span class="meta-sep">·</span><span>3 шага</span><span class="meta-sep">·</span><span>AI-агент</span><span class="meta-sep">·</span><span>outreach1.ru</span></div>
+          <div class="campaign-stats">
+            <div class="cs-item"><div class="cs-val">342</div><div class="cs-lbl">Отправлено</div></div>
+            <div class="cs-item"><div class="cs-val">38%</div><div class="cs-lbl">Open rate</div></div>
+            <div class="cs-item"><div class="cs-val">12</div><div class="cs-lbl">Ответов</div></div>
+            <div class="cs-item"><div class="cs-val">3</div><div class="cs-lbl">Горячих</div></div>
+            <div class="cs-item"><div class="cs-val">₽182</div><div class="cs-lbl">Стоим. лида</div></div>
+          </div>
+          <div class="campaign-progress-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:68%"></div></div>
+            <span class="progress-pct">68% · 342 из 500</span>
+          </div>
+        </div>
+
+        <div class="campaign-card" onclick="showToast('Открыть кампанию')">
+          <div class="campaign-top">
+            <div class="campaign-name">Финтех сегмент — CFO и финдиректора</div>
+            <span class="badge badge-success">Активна</span>
+          </div>
+          <div class="campaign-meta"><span>Запущена 28 апр</span><span class="meta-sep">·</span><span>5 шагов</span><span class="meta-sep">·</span><span>AI-агент</span><span class="meta-sep">·</span><span>outreach1.ru</span></div>
+          <div class="campaign-stats">
+            <div class="cs-item"><div class="cs-val">156</div><div class="cs-lbl">Отправлено</div></div>
+            <div class="cs-item"><div class="cs-val">42%</div><div class="cs-lbl">Open rate</div></div>
+            <div class="cs-item"><div class="cs-val">8</div><div class="cs-lbl">Ответов</div></div>
+            <div class="cs-item"><div class="cs-val">2</div><div class="cs-lbl">Горячих</div></div>
+            <div class="cs-item"><div class="cs-val">₽214</div><div class="cs-lbl">Стоим. лида</div></div>
+          </div>
+          <div class="campaign-progress-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:52%"></div></div>
+            <span class="progress-pct">52% · 156 из 300</span>
+          </div>
+        </div>
+
+        <div class="campaign-card" onclick="showToast('Открыть кампанию')">
+          <div class="campaign-top">
+            <div class="campaign-name">E-commerce — операционный директор</div>
+            <span class="badge badge-warning">На паузе</span>
+          </div>
+          <div class="campaign-meta"><span>Запущена 15 апр</span><span class="meta-sep">·</span><span>3 шага</span><span class="meta-sep">·</span><span>Ручной</span><span class="meta-sep">·</span><span>outreach2.ru</span></div>
+          <div class="campaign-stats">
+            <div class="cs-item"><div class="cs-val">89</div><div class="cs-lbl">Отправлено</div></div>
+            <div class="cs-item"><div class="cs-val">28%</div><div class="cs-lbl">Open rate</div></div>
+            <div class="cs-item"><div class="cs-val">3</div><div class="cs-lbl">Ответов</div></div>
+          </div>
+          <div class="campaign-progress-wrap">
+            <div class="progress-track"><div class="progress-fill" style="width:30%;background:var(--amber)"></div></div>
+            <span class="progress-pct">Паузе · Spam rate вырос</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ INBOX ═══ -->
+    <div class="view" id="view-inbox">
+      <div class="inbox-list">
+        <div class="inbox-list-header">
+          <div class="inbox-list-title">Входящие</div>
+          <span class="inbox-count">5</span>
+        </div>
+        <div class="inbox-filters">
+          <div class="inbox-filter active" onclick="filterInbox(this)">Все</div>
+          <div class="inbox-filter" onclick="filterInbox(this)">Горячие</div>
+          <div class="inbox-filter" onclick="filterInbox(this)">Ждут</div>
+        </div>
+        <div class="inbox-items">
+          <div class="inbox-item unread active" onclick="selectInbox(this)">
+            <div class="inbox-item-top"><span class="inbox-sender">Иван Петров</span><span class="inbox-time">14 мин</span></div>
+            <div class="inbox-company">DataPro · CTO</div>
+            <div class="inbox-preview">Интересно, когда можно созвониться?</div>
+            <div style="margin-top:6px"><span class="badge badge-error">Горячий</span></div>
+          </div>
+          <div class="inbox-item unread" onclick="selectInbox(this)">
+            <div class="inbox-item-top"><span class="inbox-sender">Мария Соколова</span><span class="inbox-time">1.5 ч</span></div>
+            <div class="inbox-company">CloudBase · CEO</div>
+            <div class="inbox-preview">Расскажите подробнее о ценах...</div>
+            <div style="margin-top:6px"><span class="badge badge-warning">Тёплый</span></div>
+          </div>
+          <div class="inbox-item" onclick="selectInbox(this)">
+            <div class="inbox-item-top"><span class="inbox-sender">Алексей Громов</span><span class="inbox-time">3 ч</span></div>
+            <div class="inbox-company">TechStart · VP</div>
+            <div class="inbox-preview">Спасибо, буду иметь в виду</div>
+            <div style="margin-top:6px"><span class="badge badge-neutral">Холодный</span></div>
+          </div>
+          <div class="inbox-item unread" onclick="selectInbox(this)">
+            <div class="inbox-item-top"><span class="inbox-sender">Дмитрий Козлов</span><span class="inbox-time">5 ч</span></div>
+            <div class="inbox-company">NovaSoft · VP Sales</div>
+            <div class="inbox-preview">Нас интересует интеграция с 1С...</div>
+            <div style="margin-top:6px"><span class="badge badge-error">Горячий</span></div>
+          </div>
+          <div class="inbox-item unread" onclick="selectInbox(this)">
+            <div class="inbox-item-top"><span class="inbox-sender">Анна Власова</span><span class="inbox-time">7 ч</span></div>
+            <div class="inbox-company">TechCorp · Marketing</div>
+            <div class="inbox-preview">Можно ли получить демо-доступ?</div>
+            <div style="margin-top:6px"><span class="badge badge-warning">Тёплый</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inbox-detail">
+        <div class="inbox-detail-header">
+          <div class="inbox-detail-name">Иван Петров</div>
+          <div class="inbox-detail-meta">
+            <span>DataPro · CTO</span>
+            <span>·</span>
+            <span>ivan.petrov@datapro.io</span>
+            <span>·</span>
+            <span>Кампания: IT-Москва</span>
+          </div>
+        </div>
+
+        <div class="thread-body">
+          <div class="email-block">
+            <div class="email-block-header">
+              <div class="email-block-from">Агент → ivan.petrov@datapro.io</div>
+              <div class="email-block-time">7 мая, 10:14</div>
+            </div>
+            <div class="email-block-body">
+              Иван, вижу что DataPro активно набирает команду разработки — значит вы масштабируетесь. Мы помогли CloudBase в похожей ситуации сократить цикл привлечения клиентов на 40% через AI-аутрич.<br><br>
+              Есть 15 минут обсудить — актуально?
+            </div>
+          </div>
+
+          <div class="email-block">
+            <div class="email-block-header" style="background:var(--green-light)">
+              <div class="email-block-from">ivan.petrov@datapro.io</div>
+              <div class="email-block-time">9 мая, 09:51</div>
+            </div>
+            <div class="email-block-body">
+              Да, интересно. Расскажите подробнее. Когда можно созвониться? У меня есть время завтра с 14 до 16.
+            </div>
+          </div>
+        </div>
+
+        <div class="draft-area">
+          <div class="draft-label">Черновик агента · Confidence 91%</div>
+          <div class="draft-text">
+            Иван, отлично! Завтра в 14:00 подходит — ставлю в календарь. Пришлю ссылку на звонок отдельным письмом. Заодно расскажу как мы помогли NovaSoft удвоить конверсию за 3 месяца — думаю, будет полезно.
+          </div>
+          <div class="draft-actions">
+            <button class="btn btn-primary btn-sm" onclick="showToast('Письмо отправлено')">
+              <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Отправить
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Редактирование черновика')">Редактировать</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Передано менеджеру')">Передать менеджеру</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rag-panel">
+        <div class="rag-section">
+          <div class="rag-section-title">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Намерение
+          </div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--gray-900);margin-bottom:4px">Запрос на встречу</div>
+          <div style="font-size:11.5px;color:var(--gray-500)">Клиент готов к разговору, указал конкретное время</div>
+        </div>
+
+        <div class="rag-section">
+          <div class="rag-section-title">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Уверенность агента
+          </div>
+          <div class="confidence-pct">91%</div>
+          <div class="confidence-bar"><div class="confidence-fill high" style="width:91%"></div></div>
+          <div class="confidence-label">Высокая · Автоотправка разрешена</div>
+        </div>
+
+        <div class="rag-section">
+          <div class="rag-section-title">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Источники KB
+          </div>
+          <div class="rag-source">
+            <div class="rag-source-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>
+            <div class="rag-source-info">
+              <div class="rag-source-name">Кейс_CloudBase.pdf</div>
+              <div class="rag-source-pct">Совпадение 88%</div>
+            </div>
+          </div>
+          <div class="rag-source">
+            <div class="rag-source-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="rag-source-info">
+              <div class="rag-source-name">Прайс_май_2025.pdf</div>
+              <div class="rag-source-pct">Совпадение 72%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rag-section">
+          <div class="rag-section-title">Действия</div>
+          <div class="rag-action-btns">
+            <div class="rag-btn primary" onclick="showToast('Письмо отправлено')">Отправить</div>
+            <div class="rag-btn" onclick="showToast('Редактирование')">Редакт.</div>
+            <div class="rag-btn" onclick="showToast('Горячий лид в CRM')">→ CRM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LEADS ═══ -->
+    <div class="view" id="view-leads">
+      <div class="page-body">
+        <div class="toolbar">
+          <div class="page-title" style="font-size:16px">Лиды</div>
+          <div class="toolbar-spacer"></div>
+          <div class="search-box">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Поиск…">
+          </div>
+          <button class="btn btn-secondary btn-sm">Экспорт</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Загрузка через агента')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить
+          </button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,event)">Все (248)</div>
+          <div class="tab" onclick="switchTab(this,event)">🔥 Горячие (3)</div>
+          <div class="tab" onclick="switchTab(this,event)">Тёплые (28)</div>
+          <div class="tab" onclick="switchTab(this,event)">В работе</div>
+          <div class="tab" onclick="switchTab(this,event)">Холодные</div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:36px"><input type="checkbox"></th>
+                <th>Имя</th>
+                <th>Компания</th>
+                <th>Должность</th>
+                <th>Статус</th>
+                <th>Кампания</th>
+                <th>Дата</th>
+                <th style="width:32px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="switchView('inbox')">
+                <td><input type="checkbox"></td>
+                <td><strong>Иван Петров</strong></td>
+                <td>DataPro</td>
+                <td style="color:var(--gray-500)">CTO</td>
+                <td><span class="badge badge-error">Горячий</span></td>
+                <td style="color:var(--gray-500);font-size:12px">IT-Москва</td>
+                <td style="color:var(--gray-400);font-size:12px">9 мая</td>
+                <td><button class="btn btn-ghost btn-sm" style="width:28px;height:28px;padding:0" onclick="event.stopPropagation()">⋯</button></td>
+              </tr>
+              <tr onclick="switchView('inbox')">
+                <td><input type="checkbox"></td>
+                <td><strong>Мария Соколова</strong></td>
+                <td>CloudBase</td>
+                <td style="color:var(--gray-500)">CEO</td>
+                <td><span class="badge badge-warning">Тёплый</span></td>
+                <td style="color:var(--gray-500);font-size:12px">IT-Москва</td>
+                <td style="color:var(--gray-400);font-size:12px">9 мая</td>
+                <td><button class="btn btn-ghost btn-sm" style="width:28px;height:28px;padding:0" onclick="event.stopPropagation()">⋯</button></td>
+              </tr>
+              <tr onclick="showToast('Карточка лида')">
+                <td><input type="checkbox"></td>
+                <td><strong>Дмитрий Козлов</strong></td>
+                <td>NovaSoft</td>
+                <td style="color:var(--gray-500)">VP Sales</td>
+                <td><span class="badge badge-error">Горячий</span></td>
+                <td style="color:var(--gray-500);font-size:12px">Финтех</td>
+                <td style="color:var(--gray-400);font-size:12px">8 мая</td>
+                <td><button class="btn btn-ghost btn-sm" style="width:28px;height:28px;padding:0" onclick="event.stopPropagation()">⋯</button></td>
+              </tr>
+              <tr onclick="showToast('Карточка лида')">
+                <td><input type="checkbox"></td>
+                <td><strong>Анна Власова</strong></td>
+                <td>TechCorp</td>
+                <td style="color:var(--gray-500)">Marketing Dir.</td>
+                <td><span class="badge badge-warning">Тёплый</span></td>
+                <td style="color:var(--gray-500);font-size:12px">IT-Москва</td>
+                <td style="color:var(--gray-400);font-size:12px">8 мая</td>
+                <td><button class="btn btn-ghost btn-sm" style="width:28px;height:28px;padding:0" onclick="event.stopPropagation()">⋯</button></td>
+              </tr>
+              <tr onclick="showToast('Карточка лида')">
+                <td><input type="checkbox"></td>
+                <td><strong>Сергей Морозов</strong></td>
+                <td>PixelForge</td>
+                <td style="color:var(--gray-500)">COO</td>
+                <td><span class="badge badge-neutral">Холодный</span></td>
+                <td style="color:var(--gray-500);font-size:12px">E-com</td>
+                <td style="color:var(--gray-400);font-size:12px">7 мая</td>
+                <td><button class="btn btn-ghost btn-sm" style="width:28px;height:28px;padding:0" onclick="event.stopPropagation()">⋯</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--gray-150);font-size:12px;color:var(--gray-400)">
+            <span>5 из 248 лидов</span>
+            <div style="display:flex;gap:4px">
+              <button style="padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;font-size:12px">‹</button>
+              <button style="padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;background:var(--black);color:white;cursor:pointer;font-size:12px;font-weight:600">1</button>
+              <button style="padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;font-size:12px">2</button>
+              <button style="padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;font-size:12px">3</button>
+              <button style="padding:4px 8px;border:1px solid var(--gray-200);border-radius:6px;background:white;cursor:pointer;font-size:12px">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ KNOWLEDGE BASE ═══ -->
+    <div class="view" id="view-kb">
+      <div class="page-body">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px">
+          <div><div class="page-title">База знаний</div><div class="page-desc">Обучайте агента на данных вашей компании</div></div>
+          <button class="btn btn-primary" onclick="showToast('Добавление источника')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить
+          </button>
+        </div>
+
+        <div class="kb-readiness">
+          <div class="kb-readiness-top">
+            <div>
+              <div class="kb-readiness-title">Готовность агента</div>
+              <div style="font-size:12.5px;color:var(--gray-500);margin-top:2px">Агент может обработать 68% входящих самостоятельно</div>
+            </div>
+            <div class="kb-readiness-pct" style="color:var(--amber)">68%</div>
+          </div>
+          <div class="kb-coverage-bar"><div class="kb-coverage-fill" style="width:68%;background:var(--amber)"></div></div>
+
+          <div style="font-size:11.5px;color:var(--gray-500);margin-bottom:10px">Покрытие возражений:</div>
+          <div class="kb-topics">
+            <div class="kb-topic"><div class="kb-topic-name">💰 «Дорого / не хватает бюджета»</div><div class="kb-topic-bar"><div class="kb-topic-fill ok" style="width:90%"></div></div><div class="kb-topic-pct">90%</div></div>
+            <div class="kb-topic"><div class="kb-topic-name">🔄 «Уже есть поставщик»</div><div class="kb-topic-bar"><div class="kb-topic-fill ok" style="width:80%"></div></div><div class="kb-topic-pct">80%</div></div>
+            <div class="kb-topic"><div class="kb-topic-name">⏳ «Не сейчас»</div><div class="kb-topic-bar"><div class="kb-topic-fill mid" style="width:60%"></div></div><div class="kb-topic-pct">60%</div></div>
+            <div class="kb-topic"><div class="kb-topic-name">🔐 «Безопасность данных»</div><div class="kb-topic-bar"><div class="kb-topic-fill low" style="width:30%"></div></div><div class="kb-topic-pct">30%</div></div>
+            <div class="kb-topic"><div class="kb-topic-name">🔧 «Интеграция с 1С»</div><div class="kb-topic-bar"><div class="kb-topic-fill low" style="width:0%"></div></div><div class="kb-topic-pct" style="color:var(--red)">0%</div></div>
+          </div>
+        </div>
+
+        <div class="kb-grid">
+          <div class="kb-file-card" onclick="showToast('Открыт файл')">
+            <div class="kb-file-icon" style="background:#eff6ff"><svg viewBox="0 0 24 24" stroke="#2563eb"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+            <div class="kb-file-name">Сайт компании</div>
+            <div class="kb-file-meta">23 страницы · Обновлено 3 мая</div>
+            <div class="kb-file-footer"><span class="badge badge-success">Активен</span><span style="font-size:11px;color:var(--gray-400)">TTL: нет</span></div>
+          </div>
+          <div class="kb-file-card" onclick="showToast('Открыт файл')">
+            <div class="kb-file-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" stroke="#92400e"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="kb-file-name">Прайс-лист</div>
+            <div class="kb-file-meta">Версия 2.1 · Действителен до 1 сент</div>
+            <div class="kb-file-footer"><span class="badge badge-success">Активен</span><span style="font-size:11px;color:var(--amber)">TTL: 115 дней</span></div>
+          </div>
+          <div class="kb-file-card" onclick="showToast('Открыт файл')">
+            <div class="kb-file-icon" style="background:#f0fdf4"><svg viewBox="0 0 24 24" stroke="#16a34a"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>
+            <div class="kb-file-name">Кейсы клиентов</div>
+            <div class="kb-file-meta">8 кейсов · 4 отрасли</div>
+            <div class="kb-file-footer"><span class="badge badge-success">Активен</span><span style="font-size:11px;color:var(--gray-400)">TTL: нет</span></div>
+          </div>
+          <div class="kb-file-card" onclick="showToast('Открыт файл')">
+            <div class="kb-file-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="kb-file-name">FAQ — возражения</div>
+            <div class="kb-file-meta">47 вопросов и ответов</div>
+            <div class="kb-file-footer"><span class="badge badge-success">Активен</span><span style="font-size:11px;color:var(--gray-400)">TTL: нет</span></div>
+          </div>
+          <div class="kb-file-card" onclick="showToast('Открыт файл')">
+            <div class="kb-file-icon" style="background:#fef2f2"><svg viewBox="0 0 24 24" stroke="#dc2626"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="kb-file-name">Скрипты продаж</div>
+            <div class="kb-file-meta">Версия 1.3 · Нужно обновить</div>
+            <div class="kb-file-footer"><span class="badge badge-warning">Устаревает</span><span style="font-size:11px;color:var(--red)">TTL: 7 дней</span></div>
+          </div>
+          <div class="kb-file-card dashed" onclick="showToast('Добавление источника')">
+            <div class="kb-file-icon" style="background:var(--gray-50);color:var(--gray-400)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+            <div class="kb-file-name" style="color:var(--gray-500)">Добавить источник</div>
+            <div class="kb-file-meta">PDF, DOCX, URL, Notion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ANALYTICS ═══ -->
+    <div class="view" id="view-analytics">
+      <div class="page-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div><div class="page-title">Аналитика</div><div class="page-desc">Эффективность аутрич-кампаний</div></div>
+          <div class="analytics-period">
+            <button class="period-btn" onclick="switchPeriod(this)">7д</button>
+            <button class="period-btn active" onclick="switchPeriod(this)">30д</button>
+            <button class="period-btn" onclick="switchPeriod(this)">90д</button>
+            <button class="period-btn" onclick="switchPeriod(this)">Всё</button>
+          </div>
+        </div>
+
+        <!-- Funnel -->
+        <div class="funnel-card">
+          <div class="card-header"><div class="card-title">Воронка конверсии</div><span style="font-size:12px;color:var(--gray-400)">30 дней</span></div>
+          <div class="funnel-body">
+            <div class="funnel-stages">
+              <div class="funnel-stage">
+                <div class="funnel-bar-wrap"><div class="funnel-bar" style="height:100%"></div></div>
+                <div class="funnel-val">1,247</div>
+                <div class="funnel-lbl">Отправлено</div>
+              </div>
+              <div class="funnel-stage">
+                <div class="funnel-bar-wrap"><div class="funnel-bar" style="height:38%"></div></div>
+                <div class="funnel-val">479</div>
+                <div class="funnel-lbl">Открыли</div>
+                <div class="funnel-rate">↑ 38.4%</div>
+              </div>
+              <div class="funnel-stage">
+                <div class="funnel-bar-wrap"><div class="funnel-bar" style="height:11%"></div></div>
+                <div class="funnel-val">140</div>
+                <div class="funnel-lbl">Ответили</div>
+                <div class="funnel-rate">↑ 11.2%</div>
+              </div>
+              <div class="funnel-stage">
+                <div class="funnel-bar-wrap"><div class="funnel-bar" style="height:4.5%"></div></div>
+                <div class="funnel-val">56</div>
+                <div class="funnel-lbl">Тёплые</div>
+                <div class="funnel-rate">4.5%</div>
+              </div>
+              <div class="funnel-stage">
+                <div class="funnel-bar-wrap"><div class="funnel-bar" style="height:1.2%"></div></div>
+                <div class="funnel-val">15</div>
+                <div class="funnel-lbl">Горячие</div>
+                <div class="funnel-rate" style="color:var(--red)">1.2%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="heatmap-card">
+          <div class="card-header"><div class="card-title">Тепловая карта ответов</div><span style="font-size:12px;color:var(--gray-400)">по дням и часам</span></div>
+          <div class="heatmap-body">
+            <div style="display:grid;grid-template-columns:40px repeat(7,1fr);gap:3px;margin-bottom:4px">
+              <div></div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Пн</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Вт</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Ср</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Чт</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Пт</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Сб</div>
+              <div style="font-size:10px;color:var(--gray-400);text-align:center">Вс</div>
+            </div>
+            <div id="heatmap"></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:12px;font-size:11px;color:var(--gray-400)">
+              <span>Меньше</span>
+              <div style="width:14px;height:14px;border-radius:3px;background:#f0fdf4"></div>
+              <div style="width:14px;height:14px;border-radius:3px;background:#6ee7b7"></div>
+              <div style="width:14px;height:14px;border-radius:3px;background:#34d399"></div>
+              <div style="width:14px;height:14px;border-radius:3px;background:#10b981"></div>
+              <div style="width:14px;height:14px;border-radius:3px;background:#059669"></div>
+              <span>Больше</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights -->
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;letter-spacing:-.01em">Инсайты агента</div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-icon">⏰</div>
+            <div class="insight-text">Лучшее время отправки — <strong>вторник 10:00–12:00</strong>. Open rate +31% выше среднего. Перенести следующую кампанию.</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">✉️</div>
+            <div class="insight-text">Шаблон с триггером «вакансии HH.ru» даёт <strong>reply rate 17%</strong> против 8% у стандартного. Рекомендую расширить использование.</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">📉</div>
+            <div class="insight-text">Конверсия в горячих лидов упала на 2% — вероятно устаревший скрипт продаж. <strong>Обновить KB</strong> до 16 мая.</div>
+          </div>
+        </div>
+
+        <!-- Campaign comparison -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Сравнение кампаний</div></div>
+          <div style="padding:16px 20px">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px">
+                  <span style="font-weight:600">IT-Москва</span>
+                  <span style="color:var(--gray-500)">Open: <strong style="color:var(--gray-900)">38%</strong> · Reply: <strong style="color:var(--gray-900)">11.2%</strong></span>
+                </div>
+                <div class="progress-track" style="height:6px"><div class="progress-fill" style="width:38%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px">
+                  <span style="font-weight:600">Финтех — CFO</span>
+                  <span style="color:var(--gray-500)">Open: <strong style="color:var(--gray-900)">42%</strong> · Reply: <strong style="color:var(--gray-900)">13.8%</strong></span>
+                </div>
+                <div class="progress-track" style="height:6px"><div class="progress-fill" style="width:42%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px">
+                  <span style="font-weight:600">E-commerce</span>
+                  <span style="color:var(--gray-500)">Open: <strong style="color:var(--amber)">28%</strong> · Reply: <strong style="color:var(--amber)">7.1%</strong></span>
+                </div>
+                <div class="progress-track" style="height:6px"><div class="progress-fill" style="width:28%;background:var(--amber)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MAILBOXES ═══ -->
+    <div class="view" id="view-mailboxes">
+      <div class="page-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+          <div><div class="page-title">Почтовые ящики</div><div class="page-desc">Ящики подключены с ваших доменов</div></div>
+          <button class="btn btn-primary" onclick="showToast('Подключение ящика')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Подключить ящик
+          </button>
+        </div>
+
+        <div class="table-wrap" style="margin-bottom:20px">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Провайдер</th>
+                <th>Статус</th>
+                <th>Прогрев</th>
+                <th>Spam rate</th>
+                <th>Отправлено сегодня</th>
+                <th>Лимит/день</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="showToast('Настройки ящика')">
+                <td style="font-family:'Geist Mono',monospace;font-size:12.5px">hello@outreach1.ru</td>
+                <td>Яндекс Почта</td>
+                <td><span class="badge badge-success">Активен</span></td>
+                <td><span style="font-size:12px;color:var(--green);font-weight:600">✓ Прогрет</span></td>
+                <td><span style="font-weight:600;color:var(--green)">0.04%</span></td>
+                <td>38</td>
+                <td>50</td>
+              </tr>
+              <tr onclick="showToast('Настройки ящика')">
+                <td style="font-family:'Geist Mono',monospace;font-size:12.5px">sales@outreach1.ru</td>
+                <td>Яндекс Почта</td>
+                <td><span class="badge badge-success">Активен</span></td>
+                <td><span style="font-size:12px;color:var(--green);font-weight:600">✓ Прогрет</span></td>
+                <td><span style="font-weight:600;color:var(--green)">0.02%</span></td>
+                <td>42</td>
+                <td>50</td>
+              </tr>
+              <tr onclick="showToast('Настройки ящика')">
+                <td style="font-family:'Geist Mono',monospace;font-size:12.5px">outreach@outreach1.ru</td>
+                <td>Gmail</td>
+                <td><span class="badge" style="background:#dbeafe;color:var(--blue)">Прогрев</span></td>
+                <td><span style="font-size:12px;color:var(--blue)">День 14 из 21</span></td>
+                <td><span style="font-weight:600;color:var(--amber)">0.31%</span></td>
+                <td>12</td>
+                <td>15</td>
+              </tr>
+              <tr onclick="showToast('Настройки ящика')">
+                <td style="font-family:'Geist Mono',monospace;font-size:12.5px">info@outreach2.ru</td>
+                <td>Exchange</td>
+                <td><span class="badge badge-error">Пауза</span></td>
+                <td><span style="font-size:12px;color:var(--green);font-weight:600">✓ Прогрет</span></td>
+                <td><span style="font-weight:600;color:var(--red)">0.92%</span></td>
+                <td>0</td>
+                <td>40</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="padding:12px 16px;background:var(--red-light);border:1px solid #fca5a5;border-radius:var(--radius-md);font-size:13px;color:var(--gray-800);display:flex;gap:10px;align-items:flex-start">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>Ящик <strong>info@outreach2.ru</strong> приостановлен автоматически: spam rate 0.92% (порог 0.5%). Рекомендации: проверить список получателей, снизить дневной лимит. <span style="color:var(--red);font-weight:600;cursor:pointer" onclick="showToast('Агент анализирует проблему')">Попросить агента разобраться →</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DOMAINS ═══ -->
+    <div class="view" id="view-domains">
+      <div class="page-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+          <div><div class="page-title">Домены</div><div class="page-desc">Управление доменами для аутрича</div></div>
+          <button class="btn btn-primary" onclick="showToast('Добавление домена')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить домен
+          </button>
+        </div>
+
+        <div class="domain-card">
+          <div class="domain-header">
+            <div class="domain-name">outreach1.ru</div>
+            <span class="badge badge-success">Здоров</span>
+          </div>
+          <div class="dns-checks">
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SPF</div>
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> DKIM</div>
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> DMARC</div>
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> MX</div>
+          </div>
+          <div style="display:flex;gap:24px;font-size:12.5px;color:var(--gray-500)">
+            <span>Ящиков: <strong style="color:var(--gray-900)">2</strong></span>
+            <span>Inbox rate: <strong style="color:var(--green)">96%</strong></span>
+            <span>Репутация: <strong style="color:var(--green)">Отличная</strong></span>
+          </div>
+        </div>
+
+        <div class="domain-card">
+          <div class="domain-header">
+            <div class="domain-name">outreach2.ru</div>
+            <span class="badge badge-warning">Внимание</span>
+          </div>
+          <div class="dns-checks">
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SPF</div>
+            <div class="dns-check dns-fail"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> DKIM</div>
+            <div class="dns-check dns-warn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> DMARC</div>
+            <div class="dns-check dns-ok"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> MX</div>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="padding:10px 12px;background:var(--amber-light);border:1px solid #fde68a;border-radius:var(--radius);font-size:12px;color:var(--gray-700)">
+              ⚠️ DKIM не настроен — это снижает доставляемость писем. <span style="color:var(--amber);font-weight:600;cursor:pointer" onclick="showToast('Инструкция по DKIM')">Показать инструкцию →</span>
+            </div>
+          </div>
+          <div class="warmup-row">
+            <div class="warmup-label" style="font-size:12px;color:var(--gray-500)">Прогрев:</div>
+            <div class="warmup-track"><div class="warmup-fill" style="width:57%;background:var(--amber)"></div></div>
+            <div class="warmup-days">День 12 из 21</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- SEARCH MODAL -->
+<div class="modal-bg" id="searchModal" onclick="closeSearch(event)">
+  <div class="modal-box">
+    <div class="modal-search-row">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Поиск по разделам, кампаниям, лидам…" oninput="filterSearch(this)">
+    </div>
+    <div class="modal-results">
+      <div class="modal-group">Разделы</div>
+      <div class="modal-item" onclick="switchView('chat');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Агент</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('overview');closeSearchF()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Обзор</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('campaigns');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Кампании</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('inbox');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Входящие</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('leads');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Лиды</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('kb');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>База знаний</div>
+      <div class="modal-item" onclick="setMode('dashboard');switchView('analytics');closeSearchF()"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</div>
+      <div class="modal-group" style="margin-top:4px">Быстрые действия</div>
+      <div class="modal-item" onclick="setMode('chat');fillInput('Создай новую кампанию для IT-компаний');closeSearchF()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая кампания</div>
+      <div class="modal-item" onclick="setMode('chat');fillInput('Загрузи список контактов');closeSearchF()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Загрузить контакты</div>
+    </div>
+    <div class="modal-footer">
+      <span><kbd>↑↓</kbd> навигация</span>
+      <span><kbd>↵</kbd> открыть</span>
+      <span><kbd>esc</kbd> закрыть</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ═══ STATE ═══
+let currentMode = 'chat'; // 'chat' | 'dashboard'
+let currentView = 'chat';
+let chatMessages = 0;
+let autonomyMode = 0;
+const autonomyModes = [
+  {id:'observe', label:'Observe', cls:'observe'},
+  {id:'assist', label:'Assist', cls:'assist'},
+  {id:'autopilot', label:'Autopilot', cls:'autopilot'}
+];
+
+const AI_RESPONSES = [
+  {text:'Отлично! Загружено <strong>247 контактов</strong>. Разбил по сегментам:<br>• IT-компании: 89 (email + должность)<br>• Консалтинг: 73 (дополню должности)<br>• Производство: 52<br>• Не определено: 33<br><br>Топ-3 по ICP: TechSoft 94%, DataPro 89%, CloudBase 85%.<br>Запустить кампанию с шаблоном «Холодный IT»?', actions:['Запустить', 'Показать шаблон', 'Создать новый']},
+  {text:'Вот статистика за последние 7 дней:<br>• Отправлено: <strong>840 писем</strong><br>• Open rate: <strong>38.4%</strong> (+6% к прошлой неделе)<br>• Reply rate: <strong>11.2%</strong><br>• Горячих лидов: <strong>7</strong> (3 ждут ответа)<br><br>Лучший день — вторник, лучшее время — 10:00–12:00.', actions:['Открыть инбокс', 'Детальная аналитика']},
+  {text:'Проверил домены и ящики.<br>✅ <strong>outreach1.ru</strong> — всё в порядке, inbox rate 96%<br>⚠️ <strong>outreach2.ru</strong> — DKIM не настроен, spam rate 0.4%<br><br>Хотите я автоматически пересоздам DKIM-записи через Cloudflare API?', actions:['Настроить через Cloudflare', 'Показать инструкцию', 'Позже']},
+  {text:'Сгенерировал 3 варианта персонализированного письма на основе вашей базы знаний и данных сайта компании.<br><br>Лучший вариант (по историческим данным) — тот, где используется триггер с вакансиями HH.ru. Reply rate таких писем на 47% выше среднего.<br><br>Запустить A/B тест?', actions:['A/B тест', 'Отправить вариант 1', 'Редактировать']},
+  {text:'Обнаружил 3 горячих лида, которые ответили и ждут реакции:<br>🔥 <strong>Иван Петров</strong> (DataPro) — просит демо завтра 14:00<br>🔥 <strong>Дмитрий Козлов</strong> (NovaSoft) — спрашивает про 1С<br>🌡️ <strong>Мария Соколова</strong> (CloudBase) — интересуется ценами<br><br>Открыть входящие и ответить?', actions:['Открыть входящие', 'Ответить всем', 'Показать по одному']},
+];
+
+let aiIdx = 0;
+
+// ═══ MODE ═══
+function setMode(mode) {
+  currentMode = mode;
+  const isChat = mode === 'chat';
+
+  document.getElementById('modeChat').classList.toggle('active', isChat);
+  document.getElementById('modeDash').classList.toggle('active', !isChat);
+  document.getElementById('modeBadge').textContent = isChat ? 'Чат' : 'Расширенный';
+
+  // nav groups
+  ['advNav','advNav2','advNav3'].forEach(id => {
+    document.getElementById(id).style.display = isChat ? 'none' : 'block';
+  });
+
+  if (isChat) {
+    switchViewInternal('chat');
+  } else {
+    if (currentView === 'chat') {
+      switchViewInternal('overview');
+    }
+  }
+}
+
+// ═══ VIEW ═══
+function switchView(id) {
+  if (id === 'chat') {
+    setMode('chat'); return;
+  }
+  if (currentMode === 'chat') {
+    setMode('dashboard');
+  }
+  switchViewInternal(id);
+}
+
+function switchViewInternal(id) {
+  currentView = id;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + id);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-view="${id}"]`);
+  if (navItem) navItem.classList.add('active');
+
+  const names = {chat:'Агент',overview:'Обзор',campaigns:'Кампании',inbox:'Входящие',leads:'Лиды',kb:'База знаний',analytics:'Аналитика',mailboxes:'Ящики',domains:'Домены'};
+  document.getElementById('bc').textContent = names[id] || id;
+}
+
+// ═══ SIDEBAR ═══
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('hidden');
+}
+
+// ═══ TABS ═══
+function switchTab(el, e) {
+  if (e) e.stopPropagation();
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ═══ AUTONOMY ═══
+function cycleAutonomy() {
+  autonomyMode = (autonomyMode + 1) % 3;
+  const m = autonomyModes[autonomyMode];
+  const pill = document.getElementById('autonomyPill');
+  pill.className = 'autonomy-pill ' + m.cls;
+  document.getElementById('autonomyLabel').textContent = m.label;
+  showToast('Режим: ' + m.label);
+}
+
+// ═══ CHAT ═══
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  appendChat(text, 'user');
+  scheduleAI();
+}
+
+function sendQuick(text) {
+  fillInput(text);
+  sendMessage();
+}
+
+function fillInput(text) {
+  const inp = document.getElementById('chatInput');
+  inp.value = text;
+  inp.focus();
+}
+
+function appendChat(text, role) {
+  const stream = document.getElementById('chatStream');
+  const welcome = document.getElementById('chatWelcome');
+
+  if (chatMessages === 0) {
+    welcome.classList.add('hidden');
+    stream.classList.add('active');
+  }
+  chatMessages++;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg-wrap ' + role;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar ' + role;
+
+  if (role === 'ai') {
+    avatar.innerHTML = `<svg width="13" height="13" viewBox="0 0 28 28" fill="none"><path d="M14 4a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V8a4 4 0 0 1 4-4z" stroke="white" stroke-width="1.5"/><path d="M20 18H8a4 4 0 0 0-4 4v1h20v-1a4 4 0 0 0-4-4z" stroke="white" stroke-width="1.5"/></svg>`;
+  } else {
+    avatar.textContent = 'АМ';
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.innerHTML = role === 'ai' ? text : escHtml(text);
+
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  stream.appendChild(wrap);
+  stream.scrollTop = stream.scrollHeight;
+  return wrap;
+}
+
+function scheduleAI() {
+  // Typing indicator
+  const stream = document.getElementById('chatStream');
+  const typingWrap = document.createElement('div');
+  typingWrap.className = 'chat-msg-wrap ai';
+  typingWrap.id = 'typing';
+  typingWrap.innerHTML = `<div class="msg-avatar ai"><svg width="13" height="13" viewBox="0 0 28 28" fill="none"><path d="M14 4a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V8a4 4 0 0 1 4-4z" stroke="white" stroke-width="1.5"/><path d="M20 18H8a4 4 0 0 0-4 4v1h20v-1a4 4 0 0 0-4-4z" stroke="white" stroke-width="1.5"/></svg></div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  stream.appendChild(typingWrap);
+  stream.scrollTop = stream.scrollHeight;
+
+  setTimeout(() => {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+
+    const resp = AI_RESPONSES[aiIdx % AI_RESPONSES.length];
+    aiIdx++;
+
+    const msgWrap = appendChat(resp.text, 'ai');
+
+    if (resp.actions && resp.actions.length) {
+      const actDiv = document.createElement('div');
+      actDiv.className = 'agent-actions';
+      resp.actions.forEach((a, i) => {
+        const btn = document.createElement('button');
+        btn.className = i === 0 ? 'aa-btn primary' : 'aa-btn';
+        btn.textContent = a;
+        btn.onclick = () => { showToast(a); btn.disabled = true; btn.style.opacity = '.5'; };
+        actDiv.appendChild(btn);
+      });
+      msgWrap.querySelector('.msg-bubble').appendChild(actDiv);
+    }
+
+    stream.scrollTop = stream.scrollHeight;
+  }, 900 + Math.random() * 700);
+}
+
+function escHtml(t) {
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+// ═══ INBOX ═══
+function selectInbox(el) {
+  document.querySelectorAll('.inbox-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function filterInbox(el) {
+  el.parentElement.querySelectorAll('.inbox-filter').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ═══ ANALYTICS ═══
+function switchPeriod(el) {
+  el.parentElement.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Данные за ' + el.textContent);
+}
+
+// Генерация тепловой карты
+function buildHeatmap() {
+  const container = document.getElementById('heatmap');
+  if (!container) return;
+
+  const hours = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
+  const weights = [
+    [1,2,2,3,4,5,4,3,2,1], // Пн
+    [1,3,4,5,4,5,5,4,3,2], // Вт (лучший)
+    [1,2,3,4,3,4,4,3,2,1], // Ср
+    [1,2,3,4,4,4,3,3,2,1], // Чт
+    [1,2,3,3,3,3,2,2,1,0], // Пт
+    [0,0,1,1,1,0,0,0,0,0], // Сб
+    [0,0,0,0,0,0,0,0,0,0], // Вс
+  ];
+
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:40px repeat(7,1fr);gap:3px';
+
+  hours.forEach((h, hi) => {
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:10px;color:var(--gray-400);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;height:22px';
+    label.textContent = h + ':00';
+    grid.appendChild(label);
+
+    for (let di = 0; di < 7; di++) {
+      const cell = document.createElement('div');
+      const val = weights[di][hi];
+      cell.style.cssText = `height:22px;border-radius:3px;cursor:pointer;transition:transform 160ms ease`;
+      const classes = ['hm-0','hm-1','hm-2','hm-3','hm-4','hm-5'];
+      cell.className = 'hm-cell ' + classes[val];
+      cell.title = `${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][di]} ${h}:00`;
+      cell.onclick = () => showToast(`${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][di]} ${h}:00 — ${['0','1–2','3–5','6–10','11–20','20+'][val]} ответов`);
+      grid.appendChild(cell);
+    }
+  });
+
+  container.appendChild(grid);
+}
+
+// ═══ SEARCH ═══
+function openSearch() {
+  document.getElementById('searchModal').classList.add('open');
+  setTimeout(() => document.querySelector('#searchModal input').focus(), 100);
+}
+
+function closeSearch(e) {
+  if (e.target === document.getElementById('searchModal')) closeSearchF();
+}
+
+function closeSearchF() {
+  document.getElementById('searchModal').classList.remove('open');
+}
+
+function filterSearch(inp) {
+  const q = inp.value.toLowerCase();
+  document.querySelectorAll('.modal-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+  });
+}
+
+// ═══ TOAST ═══
+function showToast(msg) {
+  const wrap = document.getElementById('toastWrap');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<div class="toast-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>${escHtml(msg)}</div>`;
+  wrap.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 250);
+  }, 3200);
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchModal').classList.contains('open') ? closeSearchF() : openSearch();
+  }
+  if (e.key === 'Escape') closeSearchF();
+});
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded', () => {
+  buildHeatmap();
+  setTimeout(() => showToast('Агент готов к работе'), 600);
+});
+</script>
+</body>
+</html>
