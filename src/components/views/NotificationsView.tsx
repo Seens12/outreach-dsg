@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { FilterRow } from '@/components/shared/FilterRow'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -196,13 +197,13 @@ export default function NotificationsView() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-2 mb-5">
+      <FilterRow className="mb-5">
         {filterTabs.map((f) => (
           <button
             key={f.key}
             onClick={() => setActiveFilter(f.key)}
             className={cn(
-              'h-[32px] px-3 rounded-full text-[12.5px] font-medium transition-all duration-150 cursor-pointer border',
+              'shrink-0 h-[32px] px-3 rounded-full text-[12.5px] font-medium transition-all duration-150 cursor-pointer border',
               activeFilter === f.key
                 ? 'bg-[#0d0d0d] text-white border-[#0d0d0d]'
                 : 'bg-white text-[#525252] border-[#e8e8e8] hover:bg-[#f5f5f5] hover:text-[#171717]'
@@ -211,7 +212,7 @@ export default function NotificationsView() {
             {f.label}
           </button>
         ))}
-      </div>
+      </FilterRow>
 
       {/* Notification list */}
       <div className="flex flex-col gap-3">

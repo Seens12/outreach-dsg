@@ -371,6 +371,45 @@ export function Sidebar() {
         )}
       </nav>
 
+      {/* Credits bar — only in Chat mode */}
+      {isChat && (
+        <div className="border-t border-[#e8e8e8]">
+          {sidebarOpen ? (
+            <div className="px-3 py-2.5">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3.5 h-3.5 rounded-[4px] bg-[#0d0d0d] flex items-center justify-center">
+                    <Zap className="w-2 h-2 text-white" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#525252] uppercase tracking-[0.04em]">AI кредиты</span>
+                </div>
+                <button
+                  onClick={() => { setView('billing'); toast.success('Управление кредитами') }}
+                  className="text-[10.5px] font-medium text-[#0d0d0d] hover:underline cursor-pointer"
+                >
+                  Пополнить
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-1.5 rounded-full bg-[#f0f0f0] overflow-hidden">
+                  <div className="h-full rounded-full bg-[#0d0d0d]" style={{ width: '37%' }} />
+                </div>
+                <span className="text-[11px] font-semibold text-[#171717] shrink-0">3 700</span>
+                <span className="text-[10px] text-[#a3a3a3] shrink-0">/ 10 000</span>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => { setView('billing'); toast.success('Управление кредитами') }}
+              className="w-full flex items-center justify-center py-2 cursor-pointer text-[#737373] hover:bg-[#0d0d0d] hover:text-white transition-all duration-[160ms]"
+              title="AI кредиты: 3 700 / 10 000"
+            >
+              <Zap className="w-4 h-4" strokeWidth={1.8} />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* User */}
       <div className="border-t border-[#e8e8e8] px-2 py-2.5">
         {sidebarOpen ? (

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import { toast } from 'sonner'
+import { FilterRow } from '@/components/shared/FilterRow'
 
 /* ── Data ──────────────────────────────────────────────── */
 
@@ -275,20 +276,22 @@ export default function DashboardView() {
         </div>
 
         {/* Filter pills */}
-        <div className="flex gap-2 px-5 py-3 border-b border-[#f5f5f5]">
-          {activityFilters.map((f) => (
-            <button
-              key={f}
-              onClick={() => setActivityFilter(f)}
-              className={`h-7 px-3 rounded-full text-[12px] font-medium transition-colors cursor-pointer ${
-                activityFilter === f
-                  ? 'bg-[#0d0d0d] text-white'
-                  : 'bg-[#f5f5f5] text-[#525252] hover:bg-[#e8e8e8]'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
+        <div className="px-5 py-3 border-b border-[#f5f5f5]">
+          <FilterRow>
+            {activityFilters.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActivityFilter(f)}
+                className={`shrink-0 h-7 px-3 rounded-full text-[12px] font-medium transition-colors cursor-pointer ${
+                  activityFilter === f
+                    ? 'bg-[#0d0d0d] text-white'
+                    : 'bg-[#f5f5f5] text-[#525252] hover:bg-[#e8e8e8]'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </FilterRow>
         </div>
 
         {/* Items */}

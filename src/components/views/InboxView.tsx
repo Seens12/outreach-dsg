@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
+import { FilterRow } from '@/components/shared/FilterRow'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -176,13 +177,13 @@ export default function InboxView() {
           </div>
 
           {/* Filter pills */}
-          <div className="flex items-center gap-1.5">
+          <FilterRow>
             {filterTabs.map((f) => (
               <button
                 key={f.key}
                 onClick={() => setActiveFilter(f.key)}
                 className={cn(
-                  'px-2.5 py-1 rounded-full text-[12px] font-medium transition-colors cursor-pointer',
+                  'shrink-0 px-2.5 py-1 rounded-full text-[12px] font-medium transition-colors cursor-pointer',
                   activeFilter === f.key
                     ? 'bg-[#0d0d0d] text-white'
                     : 'bg-[#f5f5f5] text-[#737373] hover:bg-[#e8e8e8]'
@@ -192,7 +193,7 @@ export default function InboxView() {
                 <span className="ml-1 text-[10px] opacity-70">{f.count}</span>
               </button>
             ))}
-          </div>
+          </FilterRow>
         </div>
 
         {/* Email list */}

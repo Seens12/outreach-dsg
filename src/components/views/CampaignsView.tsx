@@ -17,6 +17,7 @@ import {
   Target,
   Zap,
 } from 'lucide-react';
+import { FilterRow } from '@/components/shared/FilterRow';
 
 type CampaignStatus = 'active' | 'draft' | 'completed';
 type FilterKey = 'all' | 'active' | 'draft' | 'completed';
@@ -194,12 +195,12 @@ export default function CampaignsView() {
 
       {/* Filter row */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
+        <FilterRow className="flex-1 min-w-0">
           {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
-              className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
                 activeFilter === f.key
                   ? 'bg-[#0d0d0d] text-white'
                   : 'bg-[#f5f5f5] text-[#525252] hover:bg-[#e8e8e8]'
@@ -208,7 +209,7 @@ export default function CampaignsView() {
               {f.label}
             </button>
           ))}
-        </div>
+        </FilterRow>
         <button
           onClick={() => toast.success('Кампания создана')}
           className="inline-flex items-center gap-2 bg-[#0d0d0d] text-white px-4 py-2 rounded-[8px] text-[13px] font-medium hover:bg-[#262626] transition-colors cursor-pointer"

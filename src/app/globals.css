@@ -152,6 +152,15 @@
   background: transparent;
 }
 
+/* Hide scrollbar utility (for filter rows etc.) */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Spark bars animation */
 .spark-bar {
   transition: height 0.3s ease;

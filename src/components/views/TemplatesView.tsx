@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import { FilterRow } from '@/components/shared/FilterRow';
 
 type Category =
   | 'cold'
@@ -228,7 +229,7 @@ export default function TemplatesView() {
       </div>
 
       {/* Category pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <FilterRow>
         {categoryFilterKeys.map((key) => (
           <button
             key={key}
@@ -242,7 +243,7 @@ export default function TemplatesView() {
             {categoryFilterLabels[key]}
           </button>
         ))}
-      </div>
+      </FilterRow>
 
       {/* Template grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
