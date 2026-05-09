@@ -109,7 +109,7 @@ export default function AdminView() {
             return (
               <div
                 key={stat.label}
-                className="rounded-[10px] border border-[#e8e8e8] bg-white p-4"
+                className="rounded-[10px] border border-[#e8e8e8] bg-white p-5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[13px] text-[#737373]">
@@ -135,7 +135,7 @@ export default function AdminView() {
               Состояние системы
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {healthItems.map((item) => (
                 <div
@@ -164,7 +164,7 @@ export default function AdminView() {
               Последняя активность
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-4">
             <div className="space-y-0">
               {recentActivity.map((item, i) => {
                 const Icon = item.icon

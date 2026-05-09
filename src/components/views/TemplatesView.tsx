@@ -260,7 +260,7 @@ export default function TemplatesView() {
           filteredTemplates.map((template) => (
             <div
               key={template.id}
-              className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card hover:shadow-[0_1px_3px_0_rgba(0,0,0,0.06),0_1px_2px_-1px_rgba(0,0,0,0.06)] transition-shadow"
+              className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">

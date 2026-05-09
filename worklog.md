@@ -199,3 +199,26 @@ Stage Summary:
 - 3 git pushes: initial, agent-panel+sidebar, template-alignment
 - 0 lint errors throughout all changes
 - All views now closely match the original HTML template design
+---
+Task ID: 1
+Agent: Main
+Task: Remove emojis, fix shadows, fix input focus/search, unify paddings, verify pages
+
+Work Log:
+- Found and removed all emojis: ⚡ in layout.tsx favicon (replaced with SVG lightning bolt), 🔥 in LeadsView.tsx filter label (replaced with plain text)
+- Updated .shadow-card from heavy shadow to subtle: `0 10px 65px -20px rgba(201,201,201,0.15), 0 3px 25px -30px rgba(213,213,213,0)`
+- Removed "Taller inputs" global min-height rule that was making search bar too tall
+- Changed input focus from heavy shadow to subtle: `0 0 0 2px rgba(13,13,13,0.08)`
+- Added missing `ai-demo` page to Sidebar navigation (Поддержка group)
+- Unified admin view paddings: AdminView stat cards p-4→p-5, AdminBillingView confirmed p-5, AdminView CardContent pt-2→pt-4
+- Cleaned up hover:shadow on CampaignsView and TemplatesView cards
+- Verified all 32 pages from URL list exist and are registered
+
+Stage Summary:
+- All emojis removed, replaced with SVG/icon
+- Subtle shadow system: .shadow-card class updated globally
+- Input focus is now subtle ring, not heavy shadow
+- Search bar in topbar back to natural height (no forced min-height)
+- Admin paddings unified to p-5 standard matching rest of app
+- All 32 pages verified present
+- 0 lint errors

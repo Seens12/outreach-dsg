@@ -33,7 +33,7 @@ const allLeads: Lead[] = [
 
 const filterOptions: { key: FilterKey; label: string }[] = [
   { key: 'all', label: 'Все (248)' },
-  { key: 'hot', label: '🔥 Горячие (3)' },
+  { key: 'hot', label: 'Горячие (3)' },
   { key: 'warm', label: 'Тёплые (28)' },
   { key: 'inwork', label: 'В работе' },
   { key: 'cold', label: 'Холодные' },

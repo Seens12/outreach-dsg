@@ -108,6 +108,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Поддержка',
     items: [
+      { id: 'ai-demo', icon: Bot },
       { id: 'help', icon: HelpCircle },
     ],
   },

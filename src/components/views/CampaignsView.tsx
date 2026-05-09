@@ -243,7 +243,7 @@ export default function CampaignsView() {
             return (
               <div
                 key={campaign.id}
-                className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card hover:shadow-[0_1px_3px_0_rgba(0,0,0,0.06),0_1px_2px_-1px_rgba(0,0,0,0.06)] transition-shadow"
+                className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow"
               >
                 {/* Top row: name + status + actions */}
                 <div className="flex items-center justify-between mb-4">
