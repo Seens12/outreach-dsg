@@ -82,12 +82,14 @@ export default function Home() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar />
-        <main className="flex-1 overflow-hidden relative mx-auto w-full max-w-[1400px]">
-          <Suspense fallback={<LoadingFallback />}>
-            {isChat ? <ChatViewLazy /> : <>{(() => { const V = views[view]; return <V /> })()}</>}
-          </Suspense>
+        <main className="flex-1 overflow-hidden relative mx-auto w-full max-w-[1400px] flex flex-col">
+          <div className="flex-1 overflow-hidden relative">
+            <Suspense fallback={<LoadingFallback />}>
+              {isChat ? <ChatViewLazy /> : <>{(() => { const V = views[view]; return <V /> })()}</>}
+            </Suspense>
+          </div>
+          {!isAuth && !isChat && <AgentPanel />}
         </main>
-        {!isAuth && !isChat && <AgentPanel />}
       </div>
     </div>
   )

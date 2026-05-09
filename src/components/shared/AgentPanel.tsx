@@ -7,19 +7,22 @@ import {
   ChevronUp,
   Sparkles,
   User,
-  Building2,
-  Mail,
-  Lightbulb,
-  Search,
+  GripHorizontal,
   Mic,
   MicOff,
   Loader2,
   X,
   Paperclip,
+  Settings,
+  FileBarChart,
+  Bug,
+  MessageCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { VoiceWave } from '@/components/shared/VoiceWave'
 import { useVoiceRecording } from '@/lib/useVoiceRecording'
+
+// ── Types ──────────────────────────────────────────────────
 
 interface AgentMessage {
   id: number
@@ -27,12 +30,20 @@ interface AgentMessage {
   content: string
 }
 
-const suggestions = [
-  { icon: Building2, label: 'Проанализируй компанию' },
-  { icon: Mail, label: 'Составь письмо' },
-  { icon: Lightbulb, label: 'Предложи стратегию' },
-  { icon: Search, label: 'Найди контакты' },
+// ── Rotating suggestions for collapsed bar ─────────────────
+
+const rotatingTips = [
+  { icon: Settings, text: 'Настройте кампанию автоматически' },
+  { icon: Bug, text: 'Исправьте ошибки в настройках' },
+  { icon: FileBarChart, text: 'Запросите отчёт по результатам' },
+  { icon: MessageCircle, text: 'Задайте вопрос по работе системы' },
+  { icon: Sparkles, text: 'Оптимизируйте воронку outreach' },
+  { icon: FileBarChart, text: 'Проверьте статус доставки писем' },
+  { icon: Settings, text: 'Подключите новый почтовый ящик' },
+  { icon: Bug, text: 'Найдите причину низкого Open Rate' },
 ]
+
+// ── Demo Data ──────────────────────────────────────────────
 
 const initialMessages: AgentMessage[] = [
   {
@@ -134,20 +145,68 @@ function renderContent(content: string) {
   })
 }
 
+// ── Constants ──────────────────────────────────────────────
+
+const MIN_HEIGHT = 44        // collapsed
+const DEFAULT_HEIGHT = 380   // opened default
+const MAX_HEIGHT = 70         // vh — max 70% of viewport
+
 /* ─── Main Agent Panel ─── */
 export function AgentPanel() {
   const [isOpen, setIsOpen] = useState(false)
+  const [panelHeight, setPanelHeight] = useState(DEFAULT_HEIGHT)
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [transcribedText, setTranscribedText] = useState('')
+  const [tipIndex, setTipIndex] = useState(0)
 
   const chatEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const isResizing = useRef(false)
+  const startY = useRef(0)
+  const startHeight = useRef(0)
 
+  // ── Rotating tips ──
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex(prev => (prev + 1) % rotatingTips.length)
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [])
+
+  // ── Resize handle ──
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    isResizing.current = true
+    startY.current = e.clientY
+    startHeight.current = panelHeight
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!isResizing.current) return
+      const delta = startY.current - ev.clientY // dragging up = positive delta
+      const maxH = window.innerHeight * 0.7
+      const newH = Math.max(DEFAULT_HEIGHT, Math.min(maxH, startHeight.current + delta))
+      setPanelHeight(newH)
+    }
+
+    const onMouseUp = () => {
+      isResizing.current = false
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+    document.body.style.cursor = 'ns-resize'
+    document.body.style.userSelect = 'none'
+  }, [panelHeight])
+
+  // ── Voice ──
   const handleTranscribed = useCallback((text: string) => {
     setInput(prev => prev ? `${prev} ${text}` : text)
     setTranscribedText(text)
-    // Trigger auto-resize after transcription
     requestAnimationFrame(() => {
       const ta = textareaRef.current
       if (ta) {
@@ -165,6 +224,7 @@ export function AgentPanel() {
     cancelRecording,
   } = useVoiceRecording({ onTranscribed: handleTranscribed })
 
+  // ── Chat ──
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isOpen])
@@ -179,10 +239,6 @@ export function AgentPanel() {
     }
   }
 
-  const handleSuggestion = (label: string) => {
-    setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: label }])
-  }
-
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
     const ta = e.target
@@ -190,166 +246,195 @@ export function AgentPanel() {
     ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
   }
 
+  const toggleOpen = () => {
+    if (isOpen) {
+      setIsOpen(false)
+    } else {
+      setPanelHeight(DEFAULT_HEIGHT)
+      setIsOpen(true)
+    }
+  }
+
+  // ── Render ──
+  const currentTip = rotatingTips[tipIndex]
+  const TipIcon = currentTip.icon
+
   return (
-    <div
-      className="flex flex-col border-t border-[#e8e8e8] bg-white flex-shrink-0 transition-all duration-300 ease-in-out"
-      style={{ height: isOpen ? 350 : 44 }}
-    >
-      {/* Toggle bar */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 h-[44px] flex-shrink-0 cursor-pointer hover:bg-[#f5f5f5] transition-colors"
+    <div className="flex-shrink-0 mx-3 mb-3">
+      <div
+        className={cn(
+          'flex flex-col bg-white border border-[#e8e8e8] shadow-card overflow-hidden transition-[height] duration-300 ease-in-out',
+          isOpen ? 'rounded-t-[12px] rounded-b-[6px]' : 'rounded-[10px]',
+        )}
+        style={{ height: isOpen ? panelHeight : MIN_HEIGHT }}
       >
-        <div className="w-6 h-6 rounded-md bg-[#0d0d0d] flex items-center justify-center">
-          <Bot className="w-3.5 h-3.5 text-white" />
-        </div>
-        <span className="text-[13px] font-medium text-[#171717]">AI Ассистент</span>
-        <ChevronUp
+        {/* ── Resize handle (only when open) ── */}
+        {isOpen && (
+          <div
+            onMouseDown={handleResizeStart}
+            className="flex items-center justify-center h-[10px] cursor-ns-resize hover:bg-[#f5f5f5] transition-colors select-none shrink-0"
+          >
+            <GripHorizontal className="w-4 h-4 text-[#c4c4c4]" />
+          </div>
+        )}
+
+        {/* ── Toggle bar ── */}
+        <button
+          onClick={toggleOpen}
           className={cn(
-            'w-4 h-4 text-[#737373] ml-auto transition-transform duration-300',
-            isOpen && 'rotate-180',
+            'flex items-center gap-2 px-4 shrink-0 cursor-pointer hover:bg-[#f5f5f5] transition-colors',
+            isOpen ? 'h-[40px]' : 'h-[44px]',
           )}
-        />
-      </button>
-
-      {/* Chat area (only when open) */}
-      {isOpen && (
-        <>
-          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 custom-scroll">
-            {/* Suggestion chips - only show at initial state */}
-            {messages.length === initialMessages.length && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {suggestions.map((s, i) => {
-                  const Icon = s.icon
-                  return (
-                    <button
-                      key={s.label}
-                      onClick={() => handleSuggestion(s.label)}
-                      className="anim-scale-in inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#e8e8e8] bg-white text-[12px] text-[#525252] hover:bg-[#fafafa] hover:border-[#d4d4d4] transition-colors cursor-pointer"
-                      style={{ animationDelay: `${i * 40}ms` }}
-                    >
-                      <Icon className="w-3.5 h-3.5 text-[#737373]" />
-                      {s.label}
-                    </button>
-                  )
-                })}
-              </div>
+        >
+          <div className="relative flex items-center justify-center w-6 h-6 rounded-md bg-[#0d0d0d] shrink-0">
+            <Bot className="w-3.5 h-3.5 text-white" />
+            {!isOpen && (
+              <span className="status-pulse absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#15803d] border border-white" />
             )}
+          </div>
 
-            {messages.map(msg => (
-              <div
-                key={msg.id}
-                className={cn('flex gap-2', msg.role === 'user' ? 'justify-end animate-message-send' : 'justify-start animate-message-receive')}
+          <span className="text-[13px] font-medium text-[#171717]">AI Ассистент</span>
+
+          {/* Rotating tip — only when collapsed */}
+          {!isOpen && (
+            <div className="flex items-center gap-1 ml-2 flex-1 min-w-0">
+              <span className="text-[12px] text-[#a3a3a3] flex-shrink-0">—</span>
+              <span
+                key={tipIndex}
+                className="text-[12px] text-[#737373] truncate anim-fade-in inline-flex items-center gap-1"
               >
-                {msg.role === 'ai' && (
-                  <div className="w-6 h-6 rounded-full bg-[#0d0d0d] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Bot className="w-3 h-3 text-white" />
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    'max-w-[80%] rounded-lg px-3 py-2 text-[13px] leading-relaxed',
-                    msg.role === 'user'
-                      ? 'bg-[#0d0d0d] text-white'
-                      : 'anim-fade-in bg-[#f5f5f5] text-[#171717]',
-                  )}
-                >
-                  <div className="whitespace-pre-wrap">
-                    {msg.role === 'ai' ? renderContent(msg.content) : msg.content}
-                  </div>
-                </div>
-                {msg.role === 'user' && (
-                  <div className="w-6 h-6 rounded-full bg-[#e8e8e8] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <User className="w-3 h-3 text-[#525252]" />
-                  </div>
-                )}
-              </div>
-            ))}
-            <div ref={chatEndRef} />
-          </div>
+                <TipIcon className="w-3 h-3 text-[#a3a3a3] shrink-0" />
+                {currentTip.text}
+              </span>
+            </div>
+          )}
 
-          {/* ─── Input Area ─── */}
-          <div className="px-4 py-3 border-t border-[#f5f5f5]">
-            {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-              <div className="flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-[44px] overflow-hidden">
-                <button
-                  onClick={cancelRecording}
-                  className="w-7 h-7 rounded-lg bg-white border border-[#e8e8e8] flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer flex-shrink-0"
-                  aria-label="Отменить запись"
+          <ChevronUp
+            className={cn(
+              'w-4 h-4 text-[#737373] shrink-0 transition-transform duration-300',
+              isOpen && 'rotate-180',
+            )}
+          />
+        </button>
+
+        {/* ── Chat content (only when open) ── */}
+        {isOpen && (
+          <>
+            <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 custom-scroll">
+              {messages.map(msg => (
+                <div
+                  key={msg.id}
+                  className={cn('flex gap-2', msg.role === 'user' ? 'justify-end animate-message-send' : 'justify-start animate-message-receive')}
                 >
-                  <X className="w-3.5 h-3.5 text-[#525252]" />
-                </button>
-                <div className={cn(
-                  'flex-1 relative h-[20px]',
-                  voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
-                )}>
-                  {voicePhase === 'transcribing' ? (
-                    <div className="flex items-center justify-center gap-1.5 h-full">
-                      <Loader2 className="w-4 h-4 text-[#737373] animate-spin" />
-                      <span className="text-[12px] text-[#a3a3a3]">Распознавание...</span>
+                  {msg.role === 'ai' && (
+                    <div className="w-6 h-6 rounded-full bg-[#0d0d0d] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Bot className="w-3 h-3 text-white" />
                     </div>
-                  ) : (
-                    <VoiceWave analyser={analyserNode} isActive={isRecording} />
+                  )}
+                  <div
+                    className={cn(
+                      'max-w-[80%] rounded-lg px-3 py-2 text-[13px] leading-relaxed',
+                      msg.role === 'user'
+                        ? 'bg-[#0d0d0d] text-white'
+                        : 'anim-fade-in bg-[#f5f5f5] text-[#171717]',
+                    )}
+                  >
+                    <div className="whitespace-pre-wrap">
+                      {msg.role === 'ai' ? renderContent(msg.content) : msg.content}
+                    </div>
+                  </div>
+                  {msg.role === 'user' && (
+                    <div className="w-6 h-6 rounded-full bg-[#e8e8e8] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <User className="w-3 h-3 text-[#525252]" />
+                    </div>
                   )}
                 </div>
-                <div className="relative flex-shrink-0">
-                  <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* ─── Input Area ─── */}
+            <div className="px-4 py-3 border-t border-[#f5f5f5]">
+              {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
+                <div className="flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-[44px] overflow-hidden">
                   <button
-                    onClick={handleMicClick}
-                    className="relative w-8 h-8 rounded-lg bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center transition-colors cursor-pointer mic-glow"
-                    aria-label="Остановить запись"
+                    onClick={cancelRecording}
+                    className="w-7 h-7 rounded-lg bg-white border border-[#e8e8e8] flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer flex-shrink-0"
+                    aria-label="Отменить запись"
                   >
-                    <MicOff className="w-4 h-4 text-white" />
+                    <X className="w-3.5 h-3.5 text-[#525252]" />
                   </button>
-                </div>
-              </div>
-            ) : (
-              /* Normal Input — textarea on top, icons below */
-              <div className="flex flex-col bg-[#fafafa] border border-[#e8e8e8] rounded-xl overflow-hidden">
-                <textarea
-                  ref={textareaRef}
-                  placeholder="Управляйте системой прямо здесь — настройте параметры, исправьте ошибки, запросите отчёты. Всё без перехода в расширенный режим."
-                  value={input}
-                  onChange={handleInputChange}
-                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-                  rows={3}
-                  className="w-full bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3] resize-none px-3 pt-2.5 pb-1.5 leading-[1.5] max-h-[200px]"
-                />
-                <div className="flex items-center gap-1.5 px-2.5 pb-2 pt-0.5">
-                  <button
-                    className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#ebebeb]"
-                    aria-label="Прикрепить файл"
-                  >
-                    <Paperclip className="w-[16px] h-[16px] text-[#737373]" />
-                  </button>
-                  <div className="flex items-center justify-center w-7 h-7">
-                    <Sparkles className="w-[16px] h-[16px] text-[#737373]" />
-                  </div>
-                  <div className="flex-1" />
-                  <button
-                    onClick={handleMicClick}
-                    className={cn(
-                      'w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer',
-                      'bg-transparent border border-[#e8e8e8] hover:bg-[#ebebeb] hover:border-[#d4d4d4]',
-                      transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
+                  <div className={cn(
+                    'flex-1 relative h-[20px]',
+                    voicePhase === 'recording' ? 'voice-wave-container' : 'voice-wave-container fading',
+                  )}>
+                    {voicePhase === 'transcribing' ? (
+                      <div className="flex items-center justify-center gap-1.5 h-full">
+                        <Loader2 className="w-4 h-4 text-[#737373] animate-spin" />
+                        <span className="text-[12px] text-[#a3a3a3]">Распознавание...</span>
+                      </div>
+                    ) : (
+                      <VoiceWave analyser={analyserNode} isActive={isRecording} />
                     )}
-                    aria-label="Голосовой ввод"
-                  >
-                    <Mic className="w-[16px] h-[16px] text-[#737373]" />
-                  </button>
-                  <button
-                    onClick={handleSend}
-                    disabled={!input.trim()}
-                    className="w-7 h-7 rounded-md bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center disabled:opacity-30 transition-colors cursor-pointer"
-                  >
-                    <Send className="w-[16px] h-[16px] text-white" />
-                  </button>
+                  </div>
+                  <div className="relative flex-shrink-0">
+                    <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
+                    <button
+                      onClick={handleMicClick}
+                      className="relative w-8 h-8 rounded-lg bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center transition-colors cursor-pointer mic-glow"
+                      aria-label="Остановить запись"
+                    >
+                      <MicOff className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+              ) : (
+                <div className="flex flex-col bg-[#fafafa] border border-[#e8e8e8] rounded-xl overflow-hidden">
+                  <textarea
+                    ref={textareaRef}
+                    placeholder="Управляйте системой прямо здесь — настройте параметры, исправьте ошибки, запросите отчёты. Всё без перехода в расширенный режим."
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+                    rows={3}
+                    className="w-full bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3] resize-none px-3 pt-2.5 pb-1.5 leading-[1.5] max-h-[200px]"
+                  />
+                  <div className="flex items-center gap-1.5 px-2.5 pb-2 pt-0.5">
+                    <button
+                      className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#ebebeb]"
+                      aria-label="Прикрепить файл"
+                    >
+                      <Paperclip className="w-[16px] h-[16px] text-[#737373]" />
+                    </button>
+                    <div className="flex items-center justify-center w-7 h-7">
+                      <Sparkles className="w-[16px] h-[16px] text-[#737373]" />
+                    </div>
+                    <div className="flex-1" />
+                    <button
+                      onClick={handleMicClick}
+                      className={cn(
+                        'w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer',
+                        'bg-transparent border border-[#e8e8e8] hover:bg-[#ebebeb] hover:border-[#d4d4d4]',
+                        transcribedText && 'border-[#0d0d0d]/10 bg-[#0d0d0d]/5',
+                      )}
+                      aria-label="Голосовой ввод"
+                    >
+                      <Mic className="w-[16px] h-[16px] text-[#737373]" />
+                    </button>
+                    <button
+                      onClick={handleSend}
+                      disabled={!input.trim()}
+                      className="w-7 h-7 rounded-md bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center disabled:opacity-30 transition-colors cursor-pointer"
+                    >
+                      <Send className="w-[16px] h-[16px] text-white" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   )
 }
