@@ -313,30 +313,30 @@ export default function ChatView() {
       {/* ── Input Area ───────────────────────────────────── */}
       <div className="border-t border-[#e8e8e8] bg-white px-6 py-4">
         <div className="max-w-[680px] mx-auto">
-          {/* Hardcoded attached file previews */}
-          <div className="flex gap-2 mb-2">
-            <div className="flex items-center gap-2 p-2 rounded-[8px] bg-[#f5f5f5] border border-[#e8e8e8] flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-[6px] bg-[#dcfce7] flex items-center justify-center shrink-0">
-                <FileSpreadsheet className="w-4 h-4 text-[#16a34a]" />
+          {/* Hardcoded attached file previews — compact square chips, flex-wrap for many files */}
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            <div className="group relative flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[#f5f5f5] border border-[#e8e8e8] hover:border-[#d4d4d4] transition-colors cursor-default max-w-[180px]">
+              <div className="w-6 h-6 rounded-[4px] bg-[#dcfce7] flex items-center justify-center shrink-0">
+                <FileSpreadsheet className="w-3.5 h-3.5 text-[#16a34a]" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[12px] font-medium text-[#171717] truncate">Компании_outreach.xlsx</div>
-                <div className="text-[10.5px] text-[#a3a3a3]">245 КБ</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[11.5px] font-medium text-[#171717] truncate leading-tight">Компании_outreach.xlsx</div>
+                <div className="text-[10px] text-[#a3a3a3] leading-tight">245 КБ</div>
               </div>
-              <button className="w-5 h-5 rounded flex items-center justify-center hover:bg-[#e8e8e8] transition-colors cursor-pointer shrink-0">
-                <X className="w-3 h-3 text-[#737373]" />
+              <button className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-sm">
+                <X className="w-2.5 h-2.5 text-[#737373]" />
               </button>
             </div>
-            <div className="flex items-center gap-2 p-2 rounded-[8px] bg-[#f5f5f5] border border-[#e8e8e8] flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-[6px] bg-[#dbeafe] flex items-center justify-center shrink-0">
-                <FileText className="w-4 h-4 text-[#2563eb]" />
+            <div className="group relative flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[#f5f5f5] border border-[#e8e8e8] hover:border-[#d4d4d4] transition-colors cursor-default max-w-[180px]">
+              <div className="w-6 h-6 rounded-[4px] bg-[#dbeafe] flex items-center justify-center shrink-0">
+                <FileText className="w-3.5 h-3.5 text-[#2563eb]" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[12px] font-medium text-[#171717] truncate">Контакты_IT_2024.csv</div>
-                <div className="text-[10.5px] text-[#a3a3a3]">128 КБ</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[11.5px] font-medium text-[#171717] truncate leading-tight">Контакты_IT_2024.csv</div>
+                <div className="text-[10px] text-[#a3a3a3] leading-tight">128 КБ</div>
               </div>
-              <button className="w-5 h-5 rounded flex items-center justify-center hover:bg-[#e8e8e8] transition-colors cursor-pointer shrink-0">
-                <X className="w-3 h-3 text-[#737373]" />
+              <button className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-sm">
+                <X className="w-2.5 h-2.5 text-[#737373]" />
               </button>
             </div>
           </div>

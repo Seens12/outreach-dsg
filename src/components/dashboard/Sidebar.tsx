@@ -330,7 +330,9 @@ export function Sidebar() {
                             </span>
                           )}
                           {!item.badge && isActive && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-white ml-auto" />
+                            <span className="min-w-[18px] h-[18px] flex items-center justify-center ml-auto">
+                              <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                            </span>
                           )}
                         </button>
                       ) : (
