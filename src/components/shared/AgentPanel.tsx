@@ -220,7 +220,7 @@ export function AgentPanel() {
             {messages.map(msg => (
               <div
                 key={msg.id}
-                className={cn('flex gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}
+                className={cn('flex gap-2', msg.role === 'user' ? 'justify-end animate-message-send' : 'justify-start animate-message-receive')}
               >
                 {msg.role === 'ai' && (
                   <div className="w-6 h-6 rounded-full bg-[#0d0d0d] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -251,9 +251,10 @@ export function AgentPanel() {
 
           {/* ─── Input Area ─── */}
           <div className="px-4 py-3 border-t border-[#f5f5f5]">
-            {/* Voice Recording Mode */}
+          {/* Fixed height container for smooth state transitions */}
+          <div className="h-[48px]">
             {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 py-2 overflow-hidden" style={{ height: 36 }}>
+              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-full overflow-hidden">
                 {/* Cancel button */}
                 <button
                   onClick={cancelRecording}
@@ -284,7 +285,7 @@ export function AgentPanel() {
                   <span className="absolute inset-0 rounded-lg bg-[#0d0d0d] mic-ripple" />
                   <button
                     onClick={handleMicClick}
-                    className="relative w-9 h-9 rounded-lg bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center transition-colors cursor-pointer mic-glow"
+                    className="relative w-8 h-8 rounded-lg bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center transition-colors cursor-pointer mic-glow"
                     aria-label="Остановить запись"
                   >
                     <MicOff className="w-4 h-4 text-white" />
@@ -293,7 +294,7 @@ export function AgentPanel() {
               </div>
             ) : (
               /* Normal Input Mode */
-              <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 h-full">
                 {/* Paperclip attachment */}
                 <button
                   className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#f5f5f5]"
@@ -332,6 +333,7 @@ export function AgentPanel() {
                 </button>
               </div>
             )}
+          </div>
           </div>
         </>
       )}

@@ -175,7 +175,7 @@ export default function AiDemoView() {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex gap-3 ${msg.role === 'user' ? 'justify-end animate-message-send' : 'justify-start animate-message-receive'}`}
           >
             {msg.role === 'ai' && (
               <div className="w-8 h-8 rounded-full bg-[#0d0d0d] flex items-center justify-center flex-shrink-0 mt-0.5">

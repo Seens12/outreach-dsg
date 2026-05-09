@@ -296,3 +296,20 @@ Stage Summary:
 - Mic button: dark bg-[#0d0d0d] with glow/ripple animations (no red)
 - Recording bar: [X cancel] [wave canvas / transcribing spinner] [stop mic button]
 - Text automatically inserted into input field after transcription
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix 6 UI issues: chat sidebar collapsed, file previews, voice input height, sub-item indicators, scrollbars, message animations
+
+Work Log:
+- **Task 1 (Chat sidebar collapsed)**: Updated Sidebar.tsx — when collapsed in chat mode, shows Plus icon (new chat) + Search icon + separator line + chat MessageSquare icons. Expanded mode also gets separator between New Chat/Search and chat list.
+- **Task 2 (File previews)**: ChatView.tsx — replaced single file preview with two files in a flex row. Both have square 8×8 icon containers (green for xlsx, blue for csv) with compact layout.
+- **Task 3 (Voice input height)**: Both ChatView.tsx and AgentPanel.tsx — wrapped voice/normal input modes in a fixed `h-[48px]` container. Both inner divs use `h-full`, eliminating height jump between states. Mic button standardized to w-8 h-8.
+- **Task 4 (Sub-item indicators)**: Sidebar.tsx — added `pr-2` to expanded sub-item buttons so badge numbers (3/12) and active dot align with parent group chevron position.
+- **Task 5 (Global scrollbars)**: globals.css — replaced `.custom-scroll`-specific rules with `*` global rules + Firefox `scrollbar-width: thin` and `scrollbar-color`. All scrollbars in the app now have consistent 3px thin design.
+- **Task 6 (Message animations)**: globals.css — added `animate-message-send` (translateY 12px + scale 0.96→1, 300ms cubic-bezier) and `animate-message-receive` (translateY 8px, 350ms ease-out). Applied to ChatView.tsx, AgentPanel.tsx, and AiDemoView.tsx messages.
+
+Stage Summary:
+- All 6 tasks completed and lint-clean
+- Files modified: globals.css, Sidebar.tsx, ChatView.tsx, AgentPanel.tsx, AiDemoView.tsx
