@@ -38,10 +38,10 @@ export function FilterRow({ children, className }: { children: React.ReactNode; 
           <div className="w-16 h-full bg-gradient-to-l from-white via-white/80 to-transparent" />
           <button
             onClick={scrollRight}
-            className="pointer-events-auto w-6 h-6 rounded-full bg-white border border-[#e0e0e0] shadow-sm flex items-center justify-center hover:bg-[#f5f5f5] transition-colors cursor-pointer -ml-3"
+            className="pointer-events-auto flex items-center justify-center w-6 h-6 -ml-3 cursor-pointer transition-colors text-[#737373] hover:text-[#525252]"
             aria-label="Показать ещё"
           >
-            <ChevronRight className="w-3 h-3 text-[#737373]" />
+            <ChevronRight className="w-3 h-3" strokeWidth={2.5} />
           </button>
         </div>
       )}
