@@ -126,7 +126,7 @@ export default function CampaignsView() {
       : campaigns.filter((c) => c.status === activeFilter)
 
   return (
-    <div className="flex flex-col gap-6 text-[13.5px] text-[#171717] font-[family-name:var(--font-geist-sans)]">
+    <div className="flex flex-col gap-6 text-[13.5px] text-[#171717] font-[family-name:var(--font-geist-sans)] p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
         <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">

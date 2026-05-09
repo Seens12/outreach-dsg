@@ -65,7 +65,7 @@ export default function WebhooksView() {
   const [webhooks] = useState<WebhookData[]>(mockWebhooks);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>

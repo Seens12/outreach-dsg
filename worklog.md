@@ -130,3 +130,18 @@ Stage Summary:
 - 30 view components + sidebar + topbar + store = complete dashboard
 - All views follow template design: monochrome palette, rounded-[10px] cards, border-[#e8e8e8], Lucide icons, no emojis
 - Analytics page has real recharts: AreaChart, BarChart, PieChart, heatmap
+
+---
+Task ID: 13
+Agent: main
+Task: Fix missing padding in expanded mode views
+
+Work Log:
+- Identified 8 views missing root-level padding: CampaignsView, SettingsView, BillingView, CrmView, NotificationsView, SecurityView, AbTestingView, WebhooksView
+- Added `p-6 overflow-y-auto h-full custom-scroll` to each view's root div
+- Verified remaining views (Admin*, Analytics, Reports, Help, AiDemo, Inbox, Dashboard) already have proper padding through internal child elements
+- Lint passed clean, dev server compiles successfully
+
+Stage Summary:
+- All views now have consistent padding in expanded mode matching chat mode
+- No views stick to sidebar or monitor edges

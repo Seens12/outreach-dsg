@@ -151,7 +151,7 @@ const statusStyles: Record<string, string> = {
 
 export default function BillingView() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#0d0d0d]">Биллинг</h1>
