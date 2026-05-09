@@ -121,8 +121,8 @@ const typeLabels: Record<ReportType, string> = {
 }
 
 const typeBadgeClasses: Record<ReportType, string> = {
-  weekly: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-  monthly: 'bg-[#f0fdf4] text-[#16a34a] border-[#bbf7d0]',
+  weekly: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
+  monthly: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
   once: 'bg-[#fafafa] text-[#525252] border-[#e8e8e8]',
 }
 
@@ -132,23 +132,23 @@ const statusConfig: Record<
 > = {
   ready: {
     label: 'Готов',
-    color: 'text-[#16a34a]',
-    bgColor: 'bg-[#f0fdf4]',
-    borderColor: 'border-[#bbf7d0]',
+    color: 'text-[#404040]',
+    bgColor: 'bg-[#f5f5f5]',
+    borderColor: 'border-[#e8e8e8]',
     Icon: CheckCircle2,
   },
   in_progress: {
     label: 'В процессе',
-    color: 'text-[#d97706]',
-    bgColor: 'bg-[#fffbeb]',
-    borderColor: 'border-[#fde68a]',
+    color: 'text-[#525252]',
+    bgColor: 'bg-[#f5f5f5]',
+    borderColor: 'border-[#e8e8e8]',
     Icon: Loader2,
   },
   error: {
     label: 'Ошибка',
-    color: 'text-[#dc2626]',
-    bgColor: 'bg-[#fef2f2]',
-    borderColor: 'border-[#fecaca]',
+    color: 'text-[#404040]',
+    bgColor: 'bg-[#f5f5f5]',
+    borderColor: 'border-[#e8e8e8]',
     Icon: AlertCircle,
   },
 }
@@ -217,7 +217,7 @@ export default function ReportsView() {
               Генерация и просмотр отчётов
             </p>
           </div>
-          <button onClick={() => toast.success('Отчёт создан')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0d0d0d] text-white text-sm font-medium rounded-[10px] hover:bg-[#262626] transition-colors shadow-sm cursor-pointer">
+          <button onClick={() => toast.success('Отчёт создан')} className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0d0d0d] text-white text-sm font-medium rounded-[10px] hover:bg-[#262626] transition-colors shadow-card cursor-pointer">
             <Plus className="w-4 h-4" />
             Создать отчёт
           </button>
@@ -234,7 +234,7 @@ export default function ReportsView() {
             return (
               <div
                 key={report.id}
-                className="bg-white border border-[#e8e8e8] rounded-[10px] p-4 flex items-center gap-4 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-shadow group"
+                className="bg-white border border-[#e8e8e8] rounded-[10px] p-4 flex items-center gap-4 hover:shadow-card transition-shadow group"
               >
                 {/* Icon */}
                 <div className="w-10 h-10 rounded-[8px] bg-[#fafafa] flex items-center justify-center flex-shrink-0">

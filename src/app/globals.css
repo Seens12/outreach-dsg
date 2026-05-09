@@ -191,3 +191,29 @@
   z-index: 1;
   position: relative;
 }
+
+/* Unified shadow */
+.shadow-card {
+  box-shadow: rgb(200 200 200 / 25%) 0px 50px 100px -20px, rgb(0 0 0 / 20%) 0px 30px 60px -30px;
+}
+
+/* Taller inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+input[type="search"] {
+  min-height: 40px;
+}
+
+/* Form input focus with unified shadow */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  box-shadow: rgb(200 200 200 / 25%) 0px 50px 100px -20px, rgb(0 0 0 / 20%) 0px 30px 60px -30px;
+  outline: none;
+}

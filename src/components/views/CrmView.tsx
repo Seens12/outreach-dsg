@@ -2,230 +2,341 @@
 
 import { useState } from 'react';
 import {
-  Link2,
-  Unplug,
-  Settings,
-  Plus,
+  Database,
   RefreshCw,
   Users,
-  Database,
+  Handshake,
+  Clock,
   CheckCircle2,
   XCircle,
-  Globe,
-  Plug,
+  Link2,
+  Settings,
+  ArrowRight,
+  Crown,
+  Star,
+  Shield,
+  Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
-interface CrmIntegration {
+const stats = [
+  { label: 'Активных', value: '1', icon: Zap },
+  { label: 'Контактов', value: '847', icon: Users },
+  { label: 'Сделки', value: '124', icon: Handshake },
+  { label: 'Последняя синхр.', value: '5 мин назад', icon: Clock },
+];
+
+interface CrmFeature {
+  text: string;
+}
+
+interface CrmCard {
   id: string;
   name: string;
   description: string;
-  icon: 'amocrm' | 'bitrix' | 'custom';
   connected: boolean;
-  syncedRecords: number;
-  lastSync: string;
+  badge: string;
+  badgeType: 'popular' | 'premium' | 'none';
+  contacts: number;
+  deals: number;
+  features: CrmFeature[];
 }
 
-const mockIntegrations: CrmIntegration[] = [
+const crmCards: CrmCard[] = [
   {
     id: '1',
     name: 'amoCRM',
-    description: 'Синхронизация контактов, сделок и воронок с amoCRM',
-    icon: 'amocrm',
+    description: 'Полная двусторонняя синхронизация контактов, сделок и воронок',
     connected: true,
-    syncedRecords: 1247,
-    lastSync: '5 мин назад',
+    badge: 'Популярная',
+    badgeType: 'popular',
+    contacts: 847,
+    deals: 124,
+    features: [
+      { text: 'Двусторонняя синхронизация' },
+      { text: 'Автоматическое создание сделок' },
+      { text: 'Обновление статусов в реальном времени' },
+      { text: 'Импорт/экспорт контактов' },
+    ],
   },
   {
     id: '2',
     name: 'Bitrix24',
-    description: 'Интеграция с CRM-системой Битрикс24 для обмена лидами',
-    icon: 'bitrix',
-    connected: true,
-    syncedRecords: 892,
-    lastSync: '12 мин назад',
+    description: 'Интеграция с CRM-системой Битрикс24 для обмена лидами и задачами',
+    connected: false,
+    badge: '',
+    badgeType: 'none',
+    contacts: 0,
+    deals: 0,
+    features: [
+      { text: 'Синхронизация лидов' },
+      { text: 'Создание задач из писем' },
+      { text: 'Отслеживание активности' },
+    ],
   },
   {
     id: '3',
-    name: 'Custom API',
-    description: 'Подключение к произвольной CRM через REST API',
-    icon: 'custom',
+    name: 'HubSpot',
+    description: 'Интеграция с HubSpot CRM для маркетинга и продаж',
     connected: false,
-    syncedRecords: 0,
-    lastSync: 'Никогда',
+    badge: 'Премиум',
+    badgeType: 'premium',
+    contacts: 0,
+    deals: 0,
+    features: [
+      { text: 'Контакт-менеджмент' },
+      { text: 'Пайплайн сделок' },
+      { text: 'Email-трекинг' },
+      { text: 'Веб-хуки и автоматизации' },
+    ],
+  },
+  {
+    id: '4',
+    name: 'Pipedrive',
+    description: 'Управление сделками и контактами через Pipedrive API',
+    connected: false,
+    badge: 'Премиум',
+    badgeType: 'premium',
+    contacts: 0,
+    deals: 0,
+    features: [
+      { text: 'Синхронизация сделок' },
+      { text: 'Управление контактами' },
+      { text: 'Трекинг активности' },
+    ],
   },
 ];
 
-function CrmIcon({ type }: { type: CrmIntegration['icon'] }) {
-  switch (type) {
-    case 'amocrm':
-      return (
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#2563eb]/10">
-          <Database className="size-5 text-[#2563eb]" />
-        </div>
-      );
-    case 'bitrix':
-      return (
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#16a34a]/10">
-          <Globe className="size-5 text-[#16a34a]" />
-        </div>
-      );
-    case 'custom':
-      return (
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#d97706]/10">
-          <Plug className="size-5 text-[#d97706]" />
-        </div>
-      );
-  }
+function CrmIconPlaceholder({ name }: { name: string }) {
+  const firstLetter = name[0];
+  return (
+    <div className="flex size-12 shrink-0 items-center justify-center rounded-[10px] bg-[#f5f5f5] border border-[#e8e8e8]">
+      <span className="text-[18px] font-bold text-[#404040]">{firstLetter}</span>
+    </div>
+  );
 }
 
 export default function CrmView() {
-  const [integrations, setIntegrations] = useState<CrmIntegration[]>(mockIntegrations);
+  const [cards, setCards] = useState<CrmCard[]>(crmCards);
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
-  const crmToDisconnect = integrations.find((c) => c.id === confirmId);
+  const cardToDisconnect = cards.find((c) => c.id === confirmId);
 
-  const handleDisconnect = (id: string) => {
-    setIntegrations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, connected: false, syncedRecords: 0, lastSync: 'Никогда' } : c))
-    );
-  };
+  const connectedCard = cards.find((c) => c.connected);
+  const availableCards = cards.filter((c) => !c.connected);
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">CRM</h1>
-          <p className="text-sm text-[#737373]">Управление интеграцией с CRM-системами</p>
-        </div>
+      <div>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+          CRM интеграции
+        </h1>
+        <p className="text-sm text-[#737373] mt-0.5">
+          Подключите вашу CRM-систему для автоматической синхронизации контактов, сделок и воронок
+        </p>
       </div>
 
-      {/* CRM Cards Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {integrations.map((crm) => (
-          <Card
-            key={crm.id}
-            className="border-[#e8e8e8] rounded-[10px] py-4"
-          >
-            <CardContent className="space-y-4 p-4">
-              {/* Icon + Name + Status */}
-              <div className="flex items-start gap-3">
-                <CrmIcon type={crm.icon} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-[#0d0d0d]">{crm.name}</h3>
-                    <Badge
-                      className={
-                        crm.connected
-                          ? 'bg-[#16a34a]/10 text-[#16a34a] border-[#16a34a]/20 text-[10px] px-1.5 py-0'
-                          : 'bg-[#fafafa] text-[#a3a3a3] border-[#e8e8e8] text-[10px] px-1.5 py-0'
-                      }
-                    >
-                      {crm.connected ? (
-                        <>
-                          <CheckCircle2 className="size-2.5" />
-                          Подключено
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="size-2.5" />
-                          Отключено
-                        </>
-                      )}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-xs text-[#737373] leading-relaxed">
-                    {crm.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="flex items-center gap-4 rounded-lg bg-[#fafafa] p-3">
-                <div className="flex items-center gap-2">
-                  <Users className="size-3.5 text-[#737373]" />
-                  <div>
-                    <p className="text-xs text-[#a3a3a3]">Записей</p>
-                    <p className="text-sm font-medium text-[#0d0d0d]">
-                      {crm.syncedRecords.toLocaleString('ru-RU')}
-                    </p>
-                  </div>
-                </div>
-                <div className="h-8 w-px bg-[#e8e8e8]" />
-                <div className="flex items-center gap-2">
-                  <RefreshCw className="size-3.5 text-[#737373]" />
-                  <div>
-                    <p className="text-xs text-[#a3a3a3]">Последняя синхр.</p>
-                    <p className="text-sm font-medium text-[#0d0d0d]">{crm.lastSync}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={s.label}
+              className="border border-[#e8e8e8] rounded-[10px] bg-white p-4 shadow-card"
+            >
               <div className="flex items-center gap-2">
-                {crm.connected ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-[#dc2626]/30 text-[#dc2626] hover:bg-[#dc2626]/5 hover:text-[#dc2626]"
-                      onClick={() => setConfirmId(crm.id)}
-                    >
-                      <Unplug className="size-3.5" />
-                      Отключить
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]"
-                    >
-                      <Settings className="size-3.5" />
-                      Настройки
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    size="sm"
-                    className="w-full bg-[#0d0d0d] hover:bg-[#262626] text-white"
-                  >
-                    <Link2 className="size-3.5" />
-                    Подключить
-                  </Button>
-                )}
+                <div className="flex items-center justify-center size-8 rounded-[8px] bg-[#fafafa]">
+                  <Icon className="size-4 text-[#525252]" />
+                </div>
+                <span className="text-[12.5px] text-[#737373] font-medium">
+                  {s.label}
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-
-        {/* Add Integration Card */}
-        <Card className="border-dashed border-[#e8e8e8] rounded-[10px] py-4 hover:border-[#2563eb]/40 transition-colors cursor-pointer">
-          <CardContent className="flex flex-col items-center justify-center gap-3 p-4 min-h-[220px]">
-            <div className="flex size-11 items-center justify-center rounded-full bg-[#fafafa]">
-              <Plus className="size-5 text-[#a3a3a3]" />
+              <p className="text-[24px] font-semibold text-[#0d0d0d] mt-2.5 tracking-tight">
+                {s.value}
+              </p>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-[#737373]">Добавить интеграцию</p>
-              <p className="text-xs text-[#a3a3a3] mt-1">Подключите новую CRM-систему</p>
-            </div>
-          </CardContent>
-        </Card>
+          );
+        })}
       </div>
+
+      {/* Connected Section */}
+      {connectedCard && (
+        <section>
+          <h2 className="text-[15px] font-semibold text-[#0d0d0d] mb-3">
+            Подключенные
+          </h2>
+          <div className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-4">
+                <CrmIconPlaceholder name={connectedCard.name} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="text-[15px] font-semibold text-[#0d0d0d]">
+                      {connectedCard.name}
+                    </h3>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full text-[11px] font-medium bg-[#f5f5f5] text-[#404040] border border-[#e8e8e8]">
+                      <CheckCircle2 className="size-3" />
+                      Подключено
+                    </span>
+                  </div>
+                  <p className="text-[12.5px] text-[#737373] mt-1">
+                    {connectedCard.description}
+                  </p>
+                  <div className="flex items-center gap-5 mt-3">
+                    <div className="flex items-center gap-1.5 text-[12.5px] text-[#525252]">
+                      <Users className="size-3.5 text-[#a3a3a3]" />
+                      <span>
+                        <span className="font-semibold text-[#0d0d0d]">
+                          {connectedCard.contacts}
+                        </span>{' '}
+                        контактов
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[12.5px] text-[#525252]">
+                      <Handshake className="size-3.5 text-[#a3a3a3]" />
+                      <span>
+                        <span className="font-semibold text-[#0d0d0d]">
+                          {connectedCard.deals}
+                        </span>{' '}
+                        сделок
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() =>
+                    toast.success('Синхронизация запущена...')
+                  }
+                  className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#525252] px-3.5 py-2 rounded-[7px] text-[12.5px] font-medium hover:bg-[#f5f5f5] transition-colors cursor-pointer"
+                >
+                  <RefreshCw className="size-3.5" />
+                  Синхронизировать
+                </button>
+                <button
+                  onClick={() => toast.info('Открытие настроек маппинга...')}
+                  className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#525252] px-3.5 py-2 rounded-[7px] text-[12.5px] font-medium hover:bg-[#f5f5f5] transition-colors cursor-pointer"
+                >
+                  <Settings className="size-3.5" />
+                  Маппинг
+                </button>
+                <button
+                  onClick={() => setConfirmId(connectedCard.id)}
+                  className="inline-flex items-center gap-1.5 border border-[#dc2626]/20 bg-[#dc2626]/5 text-[#dc2626] px-3.5 py-2 rounded-[7px] text-[12.5px] font-medium hover:bg-[#dc2626]/10 transition-colors cursor-pointer"
+                >
+                  <XCircle className="size-3.5" />
+                  Отключить
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Available Integrations */}
+      <section>
+        <h2 className="text-[15px] font-semibold text-[#0d0d0d] mb-3">
+          Доступные интеграции
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {availableCards.map((crm) => (
+            <div
+              key={crm.id}
+              className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card flex flex-col"
+            >
+              {/* Icon + Name + Badge */}
+              <div className="flex items-start gap-3">
+                <CrmIconPlaceholder name={crm.name} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-[14.5px] font-semibold text-[#0d0d0d]">
+                      {crm.name}
+                    </h3>
+                    {crm.badgeType === 'premium' && (
+                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
+                        <Crown className="size-3" />
+                        Премиум
+                      </span>
+                    )}
+                    {crm.badgeType === 'popular' && (
+                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
+                        <Star className="size-3" />
+                        {crm.badge}
+                      </span>
+                    )}
+                  </div>
+                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-[2px] rounded-full text-[10px] font-medium bg-[#fafafa] text-[#a3a3a3] border border-[#e8e8e8]">
+                    Не подключено
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-[12.5px] text-[#737373] mt-3 leading-relaxed">
+                {crm.description}
+              </p>
+
+              {/* Features */}
+              <ul className="mt-3 space-y-1.5 flex-1">
+                {crm.features.map((f) => (
+                  <li
+                    key={f.text}
+                    className="flex items-center gap-2 text-[12.5px] text-[#525252]"
+                  >
+                    <CheckCircle2 className="size-3.5 text-[#a3a3a3] shrink-0" />
+                    {f.text}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Connect button */}
+              <button
+                onClick={() => {
+                  if (crm.badgeType === 'premium') {
+                    toast.info('Доступно на Premium-плане');
+                  } else {
+                    toast.success(`Подключение к ${crm.name}...`);
+                  }
+                }}
+                className={`mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-medium transition-colors cursor-pointer ${
+                  crm.badgeType === 'premium'
+                    ? 'border border-[#e8e8e8] bg-[#f5f5f5] text-[#525252] hover:bg-[#e8e8e8]'
+                    : 'bg-[#0d0d0d] text-white hover:bg-[#262626]'
+                }`}
+              >
+                <Link2 className="size-3.5" />
+                {crm.badgeType === 'premium' ? 'Узнать больше' : 'Подключить'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <ConfirmDialog
         open={confirmId !== null}
         onOpenChange={(open) => !open && setConfirmId(null)}
         title="Отключить CRM?"
-        description={crmToDisconnect ? `Интеграция с «${crmToDisconnect.name}» будет отключена. Все несинхронизированные данные могут быть потеряны.` : 'Интеграция будет отключена.'}
+        description={
+          cardToDisconnect
+            ? `Интеграция с «${cardToDisconnect.name}» будет отключена. Все несинхронизированные данные могут быть потеряны.`
+            : 'Интеграция будет отключена.'
+        }
         confirmLabel="Отключить"
         onConfirm={() => {
           if (confirmId) {
-            handleDisconnect(confirmId);
-            toast.success('CRM отключён');
+            setCards((prev) =>
+              prev.map((c) =>
+                c.id === confirmId
+                  ? { ...c, connected: false, contacts: 0, deals: 0 }
+                  : c
+              )
+            );
+            toast.success('CRM отключена');
             setConfirmId(null);
           }
         }}

@@ -142,7 +142,7 @@ export default function AdminView() {
                   key={item.label}
                   className="flex items-center gap-3 p-3 rounded-lg bg-[#fafafa]"
                 >
-                  <Circle className="w-2.5 h-2.5 fill-[#16a34a] text-[#16a34a] flex-shrink-0" />
+                  <Circle className="w-2.5 h-2.5 fill-[#0d0d0d] text-[#0d0d0d] flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-medium text-[#171717]">
                       {item.label}

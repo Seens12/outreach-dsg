@@ -40,15 +40,15 @@ const logEntries: LogEntry[] = [
 const levelConfig: Record<LogLevel, { icon: typeof AlertCircle; className: string }> = {
   ERROR: {
     icon: AlertCircle,
-    className: 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]',
+    className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
   },
   WARN: {
     icon: AlertTriangle,
-    className: 'bg-[#fffbeb] text-[#d97706] border-[#fde68a]',
+    className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
   },
   INFO: {
     icon: Info,
-    className: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
+    className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
   },
 }
 

@@ -152,7 +152,7 @@ export default function AdminUsersView() {
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
                             u.status === 'active'
-                              ? 'bg-[#16a34a]'
+                              ? 'bg-[#0d0d0d]'
                               : 'bg-[#d4d4d4]'
                           }`}
                         />

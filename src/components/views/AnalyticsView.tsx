@@ -237,7 +237,7 @@ export default function AnalyticsView() {
               onClick={() => setActivePeriod(p)}
               className={`px-4 py-2 text-sm font-medium rounded-[8px] transition-all duration-150 cursor-pointer ${
                 activePeriod === p
-                  ? 'bg-white text-[#0d0d0d] shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+                  ? 'bg-white text-[#0d0d0d] shadow-card'
                   : 'text-[#737373] hover:text-[#0d0d0d]'
               }`}
             >

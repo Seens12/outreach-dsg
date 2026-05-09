@@ -114,7 +114,7 @@ function TypingIndicator() {
 
 function AgentCard({ card }: { card: AgentCardData }) {
   return (
-    <div className="mt-2 border border-[#e8e8e8] rounded-[10px] bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="mt-2 border border-[#e8e8e8] rounded-[10px] bg-white overflow-hidden shadow-card">
       <div className="flex items-center gap-2 px-4 py-3 bg-[#fafafa] border-b border-[#e8e8e8]">
         <div className="flex items-center justify-center w-6 h-6 rounded-[6px] bg-[#0d0d0d]">
           <Sparkles className="w-3.5 h-3.5 text-white" />
@@ -186,7 +186,7 @@ export default function ChatView() {
       {screen === 'welcome' && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
           {/* Logo */}
-          <div className="flex items-center justify-center w-16 h-16 rounded-[16px] bg-[#0d0d0d] mb-6 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-center w-16 h-16 rounded-[16px] bg-[#0d0d0d] mb-6 shadow-card">
             <Zap className="w-8 h-8 text-white" />
           </div>
 
@@ -213,7 +213,7 @@ export default function ChatView() {
                 <button
                   key={card.id}
                   onClick={() => handleWelcomeCardClick(card.id)}
-                  className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 text-left hover:bg-[#fafafa] hover:border-[#d4d4d4] transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] cursor-pointer group"
+                  className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 text-left hover:bg-[#fafafa] hover:border-[#d4d4d4] transition-all shadow-card hover:shadow-card cursor-pointer group"
                 >
                   <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#f5f5f5] mb-3 group-hover:bg-[#ebebeb] transition-colors">
                     <CardIcon className="w-5 h-5 text-[#525252]" />

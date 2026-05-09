@@ -6,208 +6,267 @@ import {
   Plus,
   Play,
   Pencil,
-  Trash2,
-  CheckCircle2,
-  XCircle,
+  Power,
   Clock,
   Activity,
-  Link,
+  Zap,
+  CheckCircle2,
+  ArrowRight,
+  ScrollText,
+  ExternalLink,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { EmptyState } from '@/components/shared/EmptyState';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 
 interface WebhookData {
   id: string;
+  name: string;
   url: string;
   events: string[];
   active: boolean;
   lastDelivery: string;
   successRate: number;
+  created: string;
 }
 
 const mockWebhooks: WebhookData[] = [
   {
     id: '1',
-    url: 'https://api.myapp.com/webhooks/outreach',
-    events: ['email.sent', 'email.reply', 'lead.created'],
+    name: 'amoCRM — Интеграция',
+    url: 'https://api.mycompany.com/webhooks/outreach-amo',
+    events: ['Горячий лид', 'Тёплый лид', 'Лид классифицирован', 'Ответ на письмо'],
     active: true,
-    lastDelivery: '2 мин назад',
+    lastDelivery: '10 мин назад',
     successRate: 98.5,
+    created: '15 янв 2025',
   },
   {
     id: '2',
-    url: 'https://hooks.slack.com/services/T0X/B0X/abc',
-    events: ['lead.created', 'lead.converted'],
+    name: 'Slack — Уведомления',
+    url: 'https://hooks.slack.com/services/T0X/B0X/a1b2c3d4e5f6g7h8',
+    events: ['Горячий лид', 'Ответ на письмо', 'Лид классифицирован'],
     active: true,
-    lastDelivery: '15 мин назад',
+    lastDelivery: '32 мин назад',
     successRate: 100,
+    created: '22 дек 2024',
   },
   {
     id: '3',
-    url: 'https://n8n.mycompany.com/webhook/crm-sync',
-    events: ['email.bounced', 'email.reply', 'campaign.completed'],
-    active: false,
-    lastDelivery: '2 дня назад',
-    successRate: 72.3,
+    name: 'n8n — Автоматизация',
+    url: 'https://n8n.mycompany.com/webhook/crm-sync-automation',
+    events: ['Лид классифицирован', 'Ответ на письмо'],
+    active: true,
+    lastDelivery: '1 ч назад',
+    successRate: 95.2,
+    created: '10 янв 2025',
   },
 ];
 
-const eventColors: Record<string, string> = {
-  'email.sent': 'bg-[#2563eb]/10 text-[#2563eb] border-[#2563eb]/20',
-  'email.reply': 'bg-[#16a34a]/10 text-[#16a34a] border-[#16a34a]/20',
-  'email.bounced': 'bg-[#dc2626]/10 text-[#dc2626] border-[#dc2626]/20',
-  'lead.created': 'bg-[#d97706]/10 text-[#d97706] border-[#d97706]/20',
-  'lead.converted': 'bg-[#16a34a]/10 text-[#16a34a] border-[#16a34a]/20',
-  'campaign.completed': 'bg-[#2563eb]/10 text-[#2563eb] border-[#2563eb]/20',
-};
+const stats = [
+  { label: 'Активных', value: '3', icon: Zap },
+  { label: 'Событий сегодня', value: '8', icon: Activity },
+  { label: 'Успешность', value: '75%', icon: CheckCircle2 },
+  { label: 'Ср. время', value: '228мс', icon: Clock },
+];
 
 export default function WebhooksView() {
   const [webhooks, setWebhooks] = useState<WebhookData[]>(mockWebhooks);
-  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [toggleId, setToggleId] = useState<string | null>(null);
 
-  const webhookToDelete = webhooks.find((w) => w.id === confirmId);
+  const webhookToToggle = webhooks.find((w) => w.id === toggleId);
 
-  const handleDelete = (id: string) => {
-    setWebhooks((prev) => prev.filter((w) => w.id !== id));
+  const handleToggle = (id: string) => {
+    setWebhooks((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, active: !w.active } : w))
+    );
   };
 
   return (
     <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Вебхуки</h1>
-          <p className="text-sm text-[#737373]">Управление вебхук-интеграциями</p>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+            Вебхуки и интеграции
+          </h1>
+          <p className="text-sm text-[#737373] mt-0.5">
+            Управление вебхуками для автоматизации
+          </p>
         </div>
-        <Button onClick={() => toast.success('Вебхук добавлен')} className="mt-3 sm:mt-0 bg-[#0d0d0d] hover:bg-[#262626] text-white">
-          <Plus className="size-4" />
-          Добавить вебхук
-        </Button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => toast.info('Лог доставки открывается...')}
+            className="inline-flex items-center gap-2 border border-[#e8e8e8] bg-white text-[#525252] px-4 py-2 rounded-[8px] text-[13px] font-medium hover:bg-[#f5f5f5] transition-colors cursor-pointer"
+          >
+            <ScrollText className="size-4" />
+            Лог доставки
+          </button>
+          <button
+            onClick={() => toast.success('Вебхук добавлен')}
+            className="inline-flex items-center gap-2 bg-[#0d0d0d] text-white px-4 py-2 rounded-[8px] text-[13px] font-medium hover:bg-[#262626] transition-colors cursor-pointer"
+          >
+            <Plus className="size-4" />
+            Добавить вебхук
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={s.label}
+              className="border border-[#e8e8e8] rounded-[10px] bg-white p-4 shadow-card"
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center size-8 rounded-[8px] bg-[#fafafa]">
+                  <Icon className="size-4 text-[#525252]" />
+                </div>
+                <span className="text-[12.5px] text-[#737373] font-medium">
+                  {s.label}
+                </span>
+              </div>
+              <p className="text-[24px] font-semibold text-[#0d0d0d] mt-2.5 tracking-tight">
+                {s.value}
+              </p>
+            </div>
+          );
+        })}
       </div>
 
       {/* Webhook Cards */}
       <div className="grid gap-4">
-        {webhooks.length === 0 ? (
-          <EmptyState
-            icon={Link}
-            title="Нет вебхуков"
-            description="Добавьте первый вебхук для интеграции"
-            action={{ label: 'Добавить вебхук', onClick: () => toast.success('Вебхук добавлен') }}
-          />
-        ) : (
-        <>
         {webhooks.map((webhook) => (
-          <Card
+          <div
             key={webhook.id}
-            className="border-[#e8e8e8] rounded-[10px] py-4"
+            className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card"
           >
-            <CardContent className="space-y-4 p-4">
-              {/* Top Row: URL + Status */}
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-start gap-3 min-w-0">
-                  <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#fafafa]">
-                    <Webhook className="size-4 text-[#737373]" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-[#0d0d0d] font-mono">
-                      {webhook.url}
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {webhook.events.map((event) => (
-                        <Badge
-                          key={event}
-                          variant="outline"
-                          className={`text-xs ${eventColors[event] || 'bg-[#fafafa] text-[#737373] border-[#e8e8e8]'}`}
-                        >
-                          {event}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+            {/* Top row: Name + Status */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#fafafa] border border-[#f0f0f0]">
+                  <Webhook className="size-[18px] text-[#737373]" />
                 </div>
-                <Badge
-                  className={
-                    webhook.active
-                      ? 'bg-[#16a34a]/10 text-[#16a34a] border-[#16a34a]/20'
-                      : 'bg-[#fafafa] text-[#737373] border-[#e8e8e8]'
-                  }
-                >
-                  {webhook.active ? (
-                    <>
-                      <CheckCircle2 className="size-3" />
-                      Активен
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="size-3" />
-                      Неактивен
-                    </>
-                  )}
-                </Badge>
-              </div>
-
-              {/* Stats Row */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-[#737373] border-t border-[#f5f5f5] pt-3">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="size-3.5" />
-                  <span>Последняя доставка: {webhook.lastDelivery}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Activity className="size-3.5" />
-                  <span>
-                    Успешность:{' '}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="text-[14.5px] font-semibold text-[#0d0d0d]">
+                      {webhook.name}
+                    </h3>
                     <span
-                      className={
-                        webhook.successRate >= 95
-                          ? 'text-[#16a34a] font-medium'
-                          : webhook.successRate >= 80
-                            ? 'text-[#d97706] font-medium'
-                            : 'text-[#dc2626] font-medium'
-                      }
+                      className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full text-[11px] font-medium ${
+                        webhook.active
+                          ? 'bg-[#f5f5f5] text-[#404040] border border-[#e8e8e8]'
+                          : 'bg-[#fafafa] text-[#a3a3a3] border border-[#e8e8e8]'
+                      }`}
                     >
-                      {webhook.successRate}%
+                      <span
+                        className={`size-1.5 rounded-full ${
+                          webhook.active ? 'bg-[#0d0d0d]' : 'bg-[#a3a3a3]'
+                        }`}
+                      />
+                      {webhook.active ? 'Активен' : 'Отключен'}
                     </span>
-                  </span>
+                  </div>
+                  <p className="mt-1.5 text-[12.5px] text-[#a3a3a3] font-mono truncate">
+                    {webhook.url}
+                    <ExternalLink className="inline size-3 ml-1.5 text-[#d4d4d4]" />
+                  </p>
                 </div>
               </div>
+            </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2 border-t border-[#f5f5f5] pt-3">
-                <Button variant="outline" size="sm" aria-label="Тест" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
-                  <Play className="size-3.5" />
-                  Тест
-                </Button>
-                <Button variant="outline" size="sm" aria-label="Изменить" className="border-[#e8e8e8] text-[#737373] hover:text-[#0d0d0d]">
-                  <Pencil className="size-3.5" />
-                  Изменить
-                </Button>
-                <Button variant="outline" size="sm" aria-label="Удалить" className="border-[#e8e8e8] text-[#dc2626] hover:text-[#dc2626] hover:border-[#dc2626]/30 hover:bg-[#dc2626]/5" onClick={() => setConfirmId(webhook.id)}>
-                  <Trash2 className="size-3.5" />
-                  Удалить
-                </Button>
+            {/* Event badges */}
+            <div className="flex flex-wrap gap-1.5 mt-3.5">
+              {webhook.events.map((event) => (
+                <span
+                  key={event}
+                  className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[11px] font-medium bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]"
+                >
+                  {event}
+                </span>
+              ))}
+            </div>
+
+            {/* Last delivery info */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3.5 pt-3.5 border-t border-[#f5f5f5] text-[12.5px] text-[#737373]">
+              <div className="flex items-center gap-1.5">
+                <Clock className="size-3.5 text-[#a3a3a3]" />
+                <span>{webhook.lastDelivery}</span>
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex items-center gap-1.5">
+                <Activity className="size-3.5 text-[#a3a3a3]" />
+                <span>
+                  Успешность:{' '}
+                  <span className="font-medium text-[#404040]">
+                    {webhook.successRate}%
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <ArrowRight className="size-3.5 text-[#a3a3a3]" />
+                <span>
+                  Создан:{' '}
+                  <span className="text-[#404040]">{webhook.created}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 mt-3.5 pt-3.5 border-t border-[#f5f5f5]">
+              <button
+                onClick={() => toast.success('Тест отправлен')}
+                className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#525252] px-3 py-1.5 rounded-[7px] text-[12.5px] font-medium hover:bg-[#f5f5f5] transition-colors cursor-pointer"
+              >
+                <Play className="size-3.5" />
+                Тест
+              </button>
+              <button
+                onClick={() => toast.info('Редактирование вебхука...')}
+                className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#525252] px-3 py-1.5 rounded-[7px] text-[12.5px] font-medium hover:bg-[#f5f5f5] transition-colors cursor-pointer"
+              >
+                <Pencil className="size-3.5" />
+                Изменить
+              </button>
+              <button
+                onClick={() => setToggleId(webhook.id)}
+                className={`inline-flex items-center gap-1.5 border px-3 py-1.5 rounded-[7px] text-[12.5px] font-medium transition-colors cursor-pointer ${
+                  webhook.active
+                    ? 'border-[#e8e8e8] bg-white text-[#737373] hover:bg-[#f5f5f5]'
+                    : 'border-[#0d0d0d]/20 bg-[#0d0d0d]/5 text-[#404040]'
+                }`}
+              >
+                <Power className="size-3.5" />
+                {webhook.active ? 'Отключить' : 'Включить'}
+              </button>
+            </div>
+          </div>
         ))}
-        </>
-        )}
       </div>
 
       <ConfirmDialog
-        open={confirmId !== null}
-        onOpenChange={(open) => !open && setConfirmId(null)}
-        title="Удалить вебхук?"
-        description={webhookToDelete ? `Вебхук «${webhookToDelete.url}» будет удалён безвозвратно.` : 'Вебхук будет удалён безвозвратно.'}
-        confirmLabel="Удалить"
+        open={toggleId !== null}
+        onOpenChange={(open) => !open && setToggleId(null)}
+        title={
+          webhookToToggle?.active
+            ? 'Отключить вебхук?'
+            : 'Включить вебхук?'
+        }
+        description={
+          webhookToToggle
+            ? webhookToToggle.active
+              ? `Вебхук «${webhookToToggle.name}» будет отключен. События больше не будут доставляться.`
+              : `Вебхук «${webhookToToggle.name}» будет включен.`
+            : ''
+        }
+        confirmLabel={webhookToToggle?.active ? 'Отключить' : 'Включить'}
+        destructive={webhookToToggle?.active ?? true}
         onConfirm={() => {
-          if (confirmId) {
-            handleDelete(confirmId);
-            toast.success('Вебхук удалён');
-            setConfirmId(null);
+          if (toggleId) {
+            handleToggle(toggleId);
+            toast.success(webhookToToggle?.active ? 'Вебхук отключен' : 'Вебхук включен');
+            setToggleId(null);
           }
         }}
       />

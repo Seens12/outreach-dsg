@@ -3,205 +3,325 @@
 import { useState } from 'react'
 import {
   Plus,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Trash2,
-  Zap,
-  RefreshCw,
   Mail,
+  Zap,
+  FileText,
+  Pause,
+  Play,
   AlertTriangle,
+  CheckCircle2,
+  BarChart3,
+  Send,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
-import { EmptyState } from '@/components/shared/EmptyState'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
-type MailboxStatus = 'connected' | 'pending'
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type MailboxStatus = 'healthy' | 'warming' | 'issues'
 
 interface Mailbox {
   id: string
   email: string
+  userName: string
   status: MailboxStatus
-  imapOk: boolean
-  smtpOk: boolean
-  lastSync: string
+  provider: string
+  warmupDay: number
+  warmupTotal: number
+  warmupDone: boolean
+  sentToday: number
+  sentMax: number
+  spamRate: number
+  bounceRate: number
+  weeklyBars: number[]
+  paused: boolean
 }
+
+// ---------------------------------------------------------------------------
+// Demo data
+// ---------------------------------------------------------------------------
 
 const mailboxes: Mailbox[] = [
   {
     id: '1',
-    email: 'outreach@company.ru',
-    status: 'connected',
-    imapOk: true,
-    smtpOk: true,
-    lastSync: '5 мин назад',
+    email: 'outreach@techcorp.ru',
+    userName: 'Алексей Петров',
+    status: 'healthy',
+    provider: 'Яндекс',
+    warmupDay: 21,
+    warmupTotal: 21,
+    warmupDone: true,
+    sentToday: 28,
+    sentMax: 40,
+    spamRate: 2,
+    bounceRate: 1,
+    weeklyBars: [18, 22, 25, 20, 28, 30, 28],
+    paused: false,
   },
   {
     id: '2',
-    email: 'sales@company.ru',
-    status: 'connected',
-    imapOk: true,
-    smtpOk: true,
-    lastSync: '12 мин назад',
+    email: 'sales@prospect.ru',
+    userName: 'Мария Иванова',
+    status: 'healthy',
+    provider: 'Gmail',
+    warmupDay: 21,
+    warmupTotal: 21,
+    warmupDone: true,
+    sentToday: 35,
+    sentMax: 50,
+    spamRate: 3,
+    bounceRate: 1,
+    weeklyBars: [30, 32, 28, 35, 38, 33, 35],
+    paused: false,
   },
   {
     id: '3',
-    email: 'support@company.ru',
-    status: 'pending',
-    imapOk: true,
-    smtpOk: false,
-    lastSync: 'Ошибка',
+    email: 'connect@sender.io',
+    userName: 'Дмитрий Смирнов',
+    status: 'warming',
+    provider: 'Яндекс',
+    warmupDay: 18,
+    warmupTotal: 21,
+    warmupDone: false,
+    sentToday: 12,
+    sentMax: 15,
+    spamRate: 5,
+    bounceRate: 2,
+    weeklyBars: [5, 7, 8, 9, 10, 11, 12],
+    paused: false,
+  },
+  {
+    id: '4',
+    email: 'demo@example.com',
+    userName: 'Елена Козлова',
+    status: 'issues',
+    provider: 'Gmail',
+    warmupDay: 14,
+    warmupTotal: 21,
+    warmupDone: false,
+    sentToday: 5,
+    sentMax: 20,
+    spamRate: 12,
+    bounceRate: 8,
+    weeklyBars: [15, 12, 8, 6, 4, 5, 5],
+    paused: true,
   },
 ]
 
-function StatusBadge({ status }: { status: MailboxStatus }) {
-  if (status === 'connected') {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-        Подключен
-      </span>
-    )
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-      <AlertTriangle className="h-3 w-3" />
-      Ожидание
-    </span>
-  )
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const statusConfig: Record<MailboxStatus, { label: string; className: string }> = {
+  healthy: { label: 'Здоров', className: 'bg-[#f5f5f5] text-[#404040]' },
+  warming: { label: 'Разогрев', className: 'bg-[#f5f5f5] text-[#525252]' },
+  issues: { label: 'Проблема', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
 }
 
-function CheckIndicator({ ok, label }: { ok: boolean; label: string }) {
+function MiniBarChart({ bars }: { bars: number[] }) {
+  const max = Math.max(...bars)
   return (
-    <div className="flex items-center gap-1.5 text-[12px]">
-      {ok ? (
-        <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-      ) : (
-        <XCircle className="h-3.5 w-3.5 text-red-500" />
-      )}
-      <span className={ok ? 'text-[#525252]' : 'text-red-500'}>{label}</span>
+    <div className="flex items-end gap-[2px] h-8">
+      {bars.map((v, i) => (
+        <div
+          key={i}
+          className="spark-bar flex-1 bg-[#171717] rounded-[2px] opacity-20 last:opacity-50"
+          style={{ height: `${Math.max(4, (v / max) * 100)}%` }}
+        />
+      ))}
     </div>
   )
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function MailboxesView() {
   const [data, setData] = useState<Mailbox[]>(mailboxes)
-  const [confirmId, setConfirmId] = useState<string | null>(null)
 
-  const mailboxToDelete = data.find((m) => m.id === confirmId)
-
-  const handleDelete = (id: string) => {
-    setData((prev) => prev.filter((m) => m.id !== id))
+  const togglePause = (id: string) => {
+    setData((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, paused: !m.paused } : m))
+    )
+    const mb = data.find((m) => m.id === id)
+    if (mb) {
+      toast.success(mb.paused ? `${mb.email}: возобновлён` : `${mb.email}: приостановлен`)
+    }
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 overflow-y-auto h-full custom-scroll">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Ящики</h1>
-          <p className="text-[13px] text-[#737373]">
-            Управление email-ящиками
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+            Почтовые ящики
+          </h1>
+          <p className="text-[13px] text-[#737373] mt-1">
+            Мониторинг и управление почтовыми ящиками
           </p>
         </div>
-        <Button onClick={() => toast.success('Ящик добавлен')} className="gap-2 bg-[#0d0d0d] text-white hover:bg-[#262626]">
+        <Button
+          onClick={() => toast.success('Ящик подключён')}
+          className="gap-2 bg-[#0d0d0d] text-white hover:bg-[#262626]"
+        >
           <Plus className="h-4 w-4" />
-          Добавить ящик
+          Подключить ящик
         </Button>
       </div>
 
-      {/* Mailbox list */}
-      <div className="flex flex-col gap-4">
-        {data.length === 0 ? (
-          <EmptyState
-            icon={Mail}
-            title="Нет почтовых ящиков"
-            description="Подключите первый почтовый ящик для начала работы"
-            action={{ label: 'Добавить ящик', onClick: () => toast.success('Ящик добавлен') }}
-          />
-        ) : (
-        <>
-        {data.map((mailbox) => (
-          <div
-            key={mailbox.id}
-            className="rounded-[10px] border border-[#e8e8e8] bg-white p-5"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              {/* Left side: email + status */}
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#fafafa]">
-                    <Mail className="h-4 w-4 text-[#525252]" />
+      {/* Stats row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {[
+          { label: 'Ящиков', value: '4', icon: Mail },
+          { label: 'Здоровых', value: '2', icon: CheckCircle2 },
+          { label: 'На разогреве', value: '2', icon: Zap },
+          { label: 'Отправлено сегодня', value: '93', icon: Send },
+        ].map((s) => {
+          const Icon = s.icon
+          return (
+            <div
+              key={s.label}
+              className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-4"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#fafafa]">
+                  <Icon className="w-4 h-4 text-[#525252]" />
+                </div>
+                <span className="text-[12.5px] text-[#737373] font-medium">{s.label}</span>
+              </div>
+              <div className="text-[24px] font-semibold text-[#0d0d0d] tracking-tight">
+                {s.value}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Mailbox cards */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {data.map((mb) => {
+          const st = statusConfig[mb.status]
+          const warmupPct = Math.round((mb.warmupDay / mb.warmupTotal) * 100)
+          const sendPct = Math.round((mb.sentToday / mb.sentMax) * 100)
+
+          return (
+            <div
+              key={mb.id}
+              className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-5"
+            >
+              {/* Top row: email + provider + status */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#fafafa] shrink-0">
+                    <Mail className="w-4 h-4 text-[#525252]" />
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="font-mono text-sm font-medium text-[#0d0d0d]">
-                      {mailbox.email}
-                    </span>
-                    <StatusBadge status={mailbox.status} />
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-medium text-[#171717] truncate">
+                      {mb.email}
+                    </div>
+                    <div className="text-[12px] text-[#a3a3a3]">
+                      {mb.userName} &middot; {mb.provider}
+                    </div>
                   </div>
                 </div>
+                <span
+                  className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-medium shrink-0 ${st.className}`}
+                >
+                  {st.label}
+                </span>
+              </div>
 
-                {/* Checks row */}
-                <div className="flex items-center gap-5">
-                  <CheckIndicator ok={mailbox.imapOk} label="IMAP" />
-                  <CheckIndicator ok={mailbox.smtpOk} label="SMTP" />
-                  <div className="flex items-center gap-1.5 text-[12px] text-[#a3a3a3]">
-                    <RefreshCw className="h-3 w-3" />
-                    <span>
-                      Последняя синхронизация:{' '}
-                      {mailbox.lastSync === 'Ошибка' ? (
-                        <span className="text-red-500">{mailbox.lastSync}</span>
-                      ) : (
-                        mailbox.lastSync
-                      )}
-                    </span>
+              {/* Warmup progress */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[12px] text-[#737373] font-medium">
+                    Прогрев: День {mb.warmupDay} из {mb.warmupTotal}
+                    {mb.warmupDone && ' — Завершён'}
+                  </span>
+                  <span className="text-[12px] text-[#525252] font-semibold">{warmupPct}%</span>
+                </div>
+                <Progress
+                  value={warmupPct}
+                  className={`h-1.5 rounded-full [&>div]:${mb.warmupDone ? 'bg-[#404040]' : 'bg-[#737373]'}`}
+                />
+              </div>
+
+              {/* Sending stats */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div>
+                  <div className="text-[11px] text-[#a3a3a3] mb-0.5">Отправлено</div>
+                  <div className="text-[14px] font-semibold text-[#0d0d0d]">
+                    {mb.sentToday}/{mb.sentMax}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-[#a3a3a3] mb-0.5">Spam rate</div>
+                  <div className={`text-[14px] font-semibold ${mb.spamRate > 5 ? 'text-[#a3a3a3]' : 'text-[#0d0d0d]'}`}>
+                    {mb.spamRate}%
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-[#a3a3a3] mb-0.5">Bounce</div>
+                  <div className={`text-[14px] font-semibold ${mb.bounceRate > 5 ? 'text-[#a3a3a3]' : 'text-[#0d0d0d]'}`}>
+                    {mb.bounceRate}%
                   </div>
                 </div>
               </div>
 
-              {/* Right side: action buttons */}
-              <div className="flex items-center gap-2">
+              {/* Mini chart: volume over 7 days */}
+              <div className="mb-4">
+                <div className="text-[11px] text-[#a3a3a3] mb-2">Объём за 7 дней</div>
+                <MiniBarChart bars={mb.weeklyBars} />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 pt-3 border-t border-[#f5f5f5]">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-[13px]"
+                  className="gap-1.5 text-[12px] border-[#e8e8e8]"
+                  onClick={() => toast.info('Тестовое письмо отправлено для ' + mb.email)}
                 >
-                  <Zap className="h-3.5 w-3.5" />
+                  <Zap className="h-3 w-3" />
                   Тест
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-[13px] text-red-600 hover:border-red-200 hover:bg-red-50 hover:text-red-700"
-                  onClick={() => setConfirmId(mailbox.id)}
+                  className="gap-1.5 text-[12px] border-[#e8e8e8]"
+                  onClick={() => toast.info('Логи для ' + mb.email)}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Удалить
+                  <FileText className="h-3 w-3" />
+                  Логи
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`gap-1.5 text-[12px] border-[#e8e8e8] ${mb.paused ? 'text-[#525252]' : 'text-[#a3a3a3]'}`}
+                  onClick={() => togglePause(mb.id)}
+                >
+                  {mb.paused ? (
+                    <>
+                      <Play className="h-3 w-3" />
+                      Продолжить
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="h-3 w-3" />
+                      Пауза
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
-          </div>
-        ))}
-        </>
-        )}
+          )
+        })}
       </div>
-
-      <ConfirmDialog
-        open={confirmId !== null}
-        onOpenChange={(open) => !open && setConfirmId(null)}
-        title="Удалить ящик?"
-        description={mailboxToDelete ? `Ящик «${mailboxToDelete.email}» будет удалён безвозвратно.` : 'Ящик будет удалён безвозвратно.'}
-        confirmLabel="Удалить"
-        onConfirm={() => {
-          if (confirmId) {
-            handleDelete(confirmId)
-            toast.success('Ящик удалён')
-            setConfirmId(null)
-          }
-        }}
-      />
     </div>
   )
 }

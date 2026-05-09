@@ -1,326 +1,227 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
 import {
   Check,
-  Crown,
+  X,
   Download,
-  Mail,
-  Users,
+  Crown,
   Zap,
-  Building2,
-  Infinity,
   Star,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from '@/components/ui/table';
+  Rocket,
+} from 'lucide-react'
+import { toast } from 'sonner'
 
-interface Plan {
-  id: string;
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  current: boolean;
-  icon: React.ReactNode;
-  accent: string;
+/* ── Plan Types ────────────────────────────────────────── */
+
+interface Feature {
+  label: string
+  starter: string | boolean
+  growth: string | boolean
+  pro: string | boolean
 }
 
-const plans: Plan[] = [
-  {
-    id: 'starter',
-    name: 'Starter',
-    price: '$29',
-    period: '/мес',
-    description: 'Для начинающих',
-    features: [
-      '1,000 писем/мес',
-      '500 контактов',
-      '1 кампания',
-      'Email поддержка',
-      'Базовая аналитика',
-    ],
-    current: false,
-    icon: <Zap className="size-5" />,
-    accent: '#737373',
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$99',
-    period: '/мес',
-    description: 'Для растущих команд',
-    features: [
-      '10,000 писем/мес',
-      '5,000 контактов',
-      'Безлимит кампаний',
-      'A/B тестирование',
-      'CRM интеграции',
-      'Приоритетная поддержка',
-      'Расширенная аналитика',
-    ],
-    current: true,
-    icon: <Star className="size-5" />,
-    accent: '#2563eb',
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: '$249',
-    period: '/мес',
-    description: 'Для крупных компаний',
-    features: [
-      'Безлимит писем',
-      'Безлимит контактов',
-      'Безлимит кампаний',
-      'A/B тестирование',
-      'Все CRM интеграции',
-      'Dedicated менеджер',
-      'API доступ',
-      'White-label',
-      'SLA гарантия',
-    ],
-    current: false,
-    icon: <Building2 className="size-5" />,
-    accent: '#16a34a',
-  },
-];
+const features: Feature[] = [
+  { label: 'Контакты', starter: '500', growth: '5 000', pro: 'Безлимит' },
+  { label: 'Операторы', starter: '1', growth: '3', pro: '10' },
+  { label: 'AI-ответы / мес', starter: '50', growth: '500', pro: 'Безлимит' },
+  { label: 'Кампании', starter: '2', growth: '10', pro: 'Безлимит' },
+  { label: 'Документы', starter: false, growth: '10', pro: 'Безлимит' },
+  { label: 'A/B тестирование', starter: false, growth: true, pro: true },
+  { label: 'CRM интеграции', starter: false, growth: true, pro: true },
+  { label: 'API доступ', starter: false, growth: false, pro: true },
+  { label: 'Приоритетная поддержка', starter: false, growth: false, pro: true },
+  { label: 'Dedicated менеджер', starter: false, growth: false, pro: true },
+]
 
-interface PaymentRecord {
-  id: string;
-  date: string;
-  description: string;
-  amount: string;
-  status: 'Оплачено' | 'В обработке' | 'Возврат';
+const plans = [
+  { id: 'starter', name: 'Старт', price: '4 900', icon: Zap },
+  { id: 'growth', name: 'Рост', price: '12 900', icon: Rocket },
+  { id: 'pro', name: 'Pro', price: '29 900', icon: Star },
+]
+
+/* ── Payment History ───────────────────────────────────── */
+
+interface Payment {
+  id: string
+  date: string
+  description: string
+  amount: string
+  status: 'Оплачено' | 'В обработке'
 }
 
-const mockPayments: PaymentRecord[] = [
-  {
-    id: 'INV-2024-012',
-    date: '15 янв 2025',
-    description: 'Pro план - январь 2025',
-    amount: '$99.00',
-    status: 'Оплачено',
-  },
-  {
-    id: 'INV-2024-011',
-    date: '15 дек 2024',
-    description: 'Pro план - декабрь 2024',
-    amount: '$99.00',
-    status: 'Оплачено',
-  },
-  {
-    id: 'INV-2024-010',
-    date: '15 ноя 2024',
-    description: 'Pro план - ноябрь 2024',
-    amount: '$99.00',
-    status: 'Оплачено',
-  },
-  {
-    id: 'INV-2024-009',
-    date: '15 окт 2024',
-    description: 'Pro план - октябрь 2024',
-    amount: '$99.00',
-    status: 'Оплачено',
-  },
-  {
-    id: 'INV-2024-008',
-    date: '15 сен 2024',
-    description: 'Pro план - сентябрь 2024',
-    amount: '$99.00',
-    status: 'Оплачено',
-  },
-];
+const payments: Payment[] = [
+  { id: 'INV-2025-006', date: '15 июня 2025', description: 'Тариф Рост — июнь 2025', amount: '12 900 ₽', status: 'В обработке' },
+  { id: 'INV-2025-005', date: '15 мая 2025', description: 'Тариф Рост — май 2025', amount: '12 900 ₽', status: 'Оплачено' },
+  { id: 'INV-2025-004', date: '15 апр 2025', description: 'Тариф Рост — апрель 2025', amount: '12 900 ₽', status: 'Оплачено' },
+  { id: 'INV-2025-003', date: '15 мар 2025', description: 'Тариф Рост — март 2025', amount: '12 900 ₽', status: 'Оплачено' },
+]
 
 const statusStyles: Record<string, string> = {
-  Оплачено: 'bg-[#16a34a]/10 text-[#16a34a]',
-  'В обработке': 'bg-[#d97706]/10 text-[#d97706]',
-  Возврат: 'bg-[#dc2626]/10 text-[#dc2626]',
-};
+  'Оплачено': 'bg-[#f5f5f5] text-[#404040]',
+  'В обработке': 'bg-[#f5f5f5] text-[#525252]',
+}
+
+/* ── Component ─────────────────────────────────────────── */
 
 export default function BillingView() {
   return (
-    <div className="space-y-6 p-6 overflow-y-auto h-full custom-scroll">
+    <div className="flex flex-col gap-5 p-6 text-[13.5px] text-[#171717] overflow-y-auto h-full custom-scroll">
       {/* Header */}
       <div>
-        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">Биллинг</h1>
-        <p className="text-sm text-[#737373]">Управление подпиской и оплатами</p>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+          Биллинг
+        </h1>
+        <p className="text-[13px] text-[#737373] mt-1">
+          Управление подпиской и оплатами
+        </p>
       </div>
 
       {/* Current Plan Card */}
-      <Card className="border-[#e8e8e8] rounded-[10px] py-4">
-        <CardContent className="space-y-5 p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-[#2563eb]/10">
-                <Crown className="size-5 text-[#2563eb]" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-semibold text-[#0d0d0d]">Pro план</h3>
-                  <Badge className="bg-[#2563eb]/10 text-[#2563eb] border-[#2563eb]/20 text-[10px]">
-                    Текущий план
-                  </Badge>
-                </div>
-                <p className="text-sm text-[#737373]">$99/мес, следующее списание 15 фев 2025</p>
-              </div>
+      <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-5 shadow-card">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-11 h-11 rounded-[10px] bg-[#fafafa] shrink-0">
+              <Crown className="w-5 h-5 text-[#525252]" />
             </div>
-            <Button variant="outline" size="sm" className="border-[#e8e8e8] text-[#737373]">
-              Управление
-            </Button>
-          </div>
-
-          {/* Usage Bars */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-sm text-[#737373]">
-                  <Mail className="size-3.5" />
-                  Письма
-                </div>
-                <span className="text-sm font-medium text-[#0d0d0d]">
-                  7,847 <span className="text-[#a3a3a3] font-normal">/ 10,000</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-[15px] font-semibold text-[#0d0d0d]">Рост</h3>
+                <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px] bg-[#f5f5f5] text-[#404040]">
+                  Текущий план
                 </span>
               </div>
-              <Progress value={78.47} className="h-2 bg-[#f5f5f5]" />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-sm text-[#737373]">
-                  <Users className="size-3.5" />
-                  Контакты
-                </div>
-                <span className="text-sm font-medium text-[#0d0d0d]">
-                  2,341 <span className="text-[#a3a3a3] font-normal">/ 5,000</span>
-                </span>
-              </div>
-              <Progress value={46.82} className="h-2 bg-[#f5f5f5]" />
+              <p className="text-[13px] text-[#737373] mt-0.5">
+                12 900 ₽/мес &middot; Следующее списание: <span className="text-[#525252] font-medium">15 июля 2025</span>
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <button
+            onClick={() => toast.info('Управление подпиской')}
+            className="h-9 px-4 rounded-[8px] border border-[#e8e8e8] bg-white text-[13px] font-medium text-[#525252] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer shrink-0"
+          >
+            Управление
+          </button>
+        </div>
+      </div>
 
       {/* Plan Comparison */}
       <div>
-        <h2 className="text-base font-semibold text-[#0d0d0d] mb-3">Сравнение тарифов</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {plans.map((plan) => (
-            <Card
-              key={plan.id}
-              className={`border-[#e8e8e8] rounded-[10px] py-4 relative ${
-                plan.current ? 'ring-2 ring-[#2563eb]/20' : ''
-              }`}
-            >
-              {plan.current && (
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-[#2563eb] text-white border-0 text-[10px]">
-                    <Check className="size-3" />
-                    Текущий план
-                  </Badge>
-                </div>
-              )}
-              <CardContent className="space-y-4 p-4">
-                <div className="text-center space-y-2">
-                  <div
-                    className="mx-auto flex size-10 items-center justify-center rounded-lg"
-                    style={{ backgroundColor: `${plan.accent}15`, color: plan.accent }}
-                  >
-                    {plan.icon}
+        <h2 className="text-[15px] font-semibold text-[#0d0d0d] mb-4">Сравнение тарифов</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {plans.map((plan) => {
+            const isCurrent = plan.id === 'growth'
+            const Icon = plan.icon
+            return (
+              <div
+                key={plan.id}
+                className={`rounded-[10px] border bg-white p-5 flex flex-col shadow-card relative ${
+                  isCurrent ? 'border-[#0d0d0d]' : 'border-[#e8e8e8]'
+                }`}
+              >
+                {isCurrent && (
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                    <span className="text-[10.5px] font-semibold px-2.5 py-1 rounded-full bg-[#0d0d0d] text-white">
+                      Текущий план
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-[#0d0d0d]">{plan.name}</h3>
-                    <p className="text-xs text-[#a3a3a3]">{plan.description}</p>
+                )}
+
+                <div className="text-center mb-5">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#fafafa] mx-auto mb-3">
+                    <Icon className="w-5 h-5 text-[#525252]" />
                   </div>
-                  <div className="pt-1">
-                    <span className="text-2xl font-bold text-[#0d0d0d]">{plan.price}</span>
-                    <span className="text-sm text-[#a3a3a3]">{plan.period}</span>
+                  <h3 className="text-[15px] font-semibold text-[#0d0d0d]">{plan.name}</h3>
+                  <div className="mt-2">
+                    <span className="text-[24px] font-semibold text-[#0d0d0d] tracking-tight">{plan.price}</span>
+                    <span className="text-[13px] text-[#a3a3a3]"> ₽/мес</span>
                   </div>
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-2">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-xs text-[#737373]">
-                      <Check className="size-3.5 text-[#16a34a] shrink-0" />
-                      {feature}
-                    </li>
-                  ))}
+                <ul className="flex flex-col gap-2.5 flex-1 mb-5">
+                  {features.map((f) => {
+                    const value = f[plan.id as keyof Pick<Feature, 'starter' | 'growth' | 'pro'>]
+                    const included = value !== false
+                    return (
+                      <li key={f.label} className="flex items-center gap-2.5 text-[12.5px]">
+                        {included ? (
+                          <Check className="w-3.5 h-3.5 text-[#404040] shrink-0" />
+                        ) : (
+                          <X className="w-3.5 h-3.5 text-[#d4d4d4] shrink-0" />
+                        )}
+                        <span className={included ? 'text-[#525252]' : 'text-[#d4d4d4]'}>
+                          {f.label}
+                          {typeof value === 'string' && value !== true && (
+                            <span className="text-[#a3a3a3] ml-1">({value})</span>
+                          )}
+                        </span>
+                      </li>
+                    )
+                  })}
                 </ul>
 
                 {/* CTA */}
-                {plan.current ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full border-[#e8e8e8] text-[#737373]"
+                {isCurrent ? (
+                  <button
                     disabled
+                    className="w-full h-10 rounded-[8px] border border-[#e8e8e8] bg-[#fafafa] text-[13px] font-medium text-[#a3a3a3] cursor-not-allowed"
                   >
                     Текущий план
-                  </Button>
+                  </button>
                 ) : (
-                  <Button
-                    size="sm"
-                    className="w-full bg-[#0d0d0d] hover:bg-[#262626] text-white"
+                  <button
+                    onClick={() => toast.success(`Выбран тариф "${plan.name}"`)}
+                    className="w-full h-10 rounded-[8px] bg-[#0d0d0d] text-white text-[13px] font-medium hover:bg-[#262626] transition-colors cursor-pointer"
                   >
-                    Выбрать
-                  </Button>
+                    Выбрать {plan.name}
+                  </button>
                 )}
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            )
+          })}
         </div>
       </div>
 
       {/* Payment History */}
       <div>
-        <h2 className="text-base font-semibold text-[#0d0d0d] mb-3">История оплат</h2>
-        <Card className="border-[#e8e8e8] rounded-[10px] py-4">
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-[#f5f5f5] hover:bg-transparent">
-                  <TableHead className="text-[#a3a3a3] font-medium text-xs pl-4">Дата</TableHead>
-                  <TableHead className="text-[#a3a3a3] font-medium text-xs">Описание</TableHead>
-                  <TableHead className="text-[#a3a3a3] font-medium text-xs">Сумма</TableHead>
-                  <TableHead className="text-[#a3a3a3] font-medium text-xs">Статус</TableHead>
-                  <TableHead className="text-[#a3a3a3] font-medium text-xs text-right pr-4">Счёт</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockPayments.map((payment) => (
-                  <TableRow key={payment.id} className="border-[#f5f5f5]">
-                    <TableCell className="pl-4 text-sm text-[#0d0d0d]">{payment.date}</TableCell>
-                    <TableCell className="text-sm text-[#737373]">{payment.description}</TableCell>
-                    <TableCell className="text-sm font-medium text-[#0d0d0d]">{payment.amount}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium ${statusStyles[payment.status]}`}>
-                        {payment.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right pr-4">
-                      <Button variant="ghost" size="sm" className="text-[#2563eb] hover:text-[#2563eb] hover:bg-[#2563eb]/5">
-                        <Download className="size-3.5" />
-                        PDF
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <h2 className="text-[15px] font-semibold text-[#0d0d0d] mb-4">История оплат</h2>
+        <div className="rounded-[10px] border border-[#e8e8e8] bg-white overflow-hidden shadow-card">
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="border-b border-[#e8e8e8] bg-[#fafafa]">
+                <th className="text-left py-3 px-4 text-[11.5px] font-semibold text-[#a3a3a3] uppercase tracking-[0.04em]">Дата</th>
+                <th className="text-left py-3 px-4 text-[11.5px] font-semibold text-[#a3a3a3] uppercase tracking-[0.04em]">Описание</th>
+                <th className="text-left py-3 px-4 text-[11.5px] font-semibold text-[#a3a3a3] uppercase tracking-[0.04em]">Сумма</th>
+                <th className="text-left py-3 px-4 text-[11.5px] font-semibold text-[#a3a3a3] uppercase tracking-[0.04em]">Статус</th>
+                <th className="text-right py-3 px-4 text-[11.5px] font-semibold text-[#a3a3a3] uppercase tracking-[0.04em]">Счёт</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments.map((p) => (
+                <tr key={p.id} className="border-b border-[#f5f5f5] last:border-b-0 hover:bg-[#fafafa] transition-colors">
+                  <td className="py-3 px-4 text-[#525252]">{p.date}</td>
+                  <td className="py-3 px-4 text-[#404040] font-medium">{p.description}</td>
+                  <td className="py-3 px-4 font-semibold text-[#0d0d0d]">{p.amount}</td>
+                  <td className="py-3 px-4">
+                    <span className={`inline-flex items-center px-2 py-[3px] rounded-[6px] text-[11.5px] font-medium ${statusStyles[p.status]}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      onClick={() => toast.success('Скачивание счёта...')}
+                      className="inline-flex items-center gap-1 text-[12.5px] font-medium text-[#525252] hover:text-[#0d0d0d] transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  );
+  )
 }

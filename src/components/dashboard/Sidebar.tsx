@@ -27,8 +27,18 @@ import {
   HelpCircle,
   ChevronDown,
   Zap,
+  User,
+  LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { toast } from 'sonner'
 
 interface NavGroup {
   label: string
@@ -185,21 +195,52 @@ export function Sidebar() {
 
       {/* User */}
       <div className="border-t border-[#e8e8e8] px-3 py-2.5">
-        <button
-          onClick={toggleSidebar}
-          className="w-full flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-[#0d0d0d] hover:text-white transition-all duration-[160ms] group"
-        >
-          <div className="w-7 h-7 rounded-full bg-[#0d0d0d] text-white text-[10.5px] font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:text-[#0d0d0d] transition-colors">
-            АК
-          </div>
-          <div className="flex-1 min-w-0 text-left">
-            <div className="text-[12.5px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
-              Алексей Козлов
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="w-full flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-[#0d0d0d] hover:text-white transition-all duration-[160ms] group cursor-pointer"
+            >
+              <div className="w-7 h-7 rounded-full bg-[#0d0d0d] text-white text-[10.5px] font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:text-[#0d0d0d] transition-colors">
+                АК
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="text-[12.5px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                  Алексей Козлов
+                </div>
+                <div className="text-[11px] text-[#737373] group-hover:text-white/60 transition-colors">Pro план</div>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-[#a8a8a8] group-hover:text-white/60 transition-colors" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[200px] rounded-[10px] border-[#e8e8e8] bg-white p-1" side="top" align="start">
+            <div className="px-2 py-1.5">
+              <div className="text-[12.5px] font-semibold text-[#171717]">Алексей Козлов</div>
+              <div className="text-[11px] text-[#737373]">alexey@company.ru</div>
             </div>
-            <div className="text-[11px] text-[#737373] group-hover:text-white/60 transition-colors">Pro план</div>
-          </div>
-          <ChevronDown className="w-3.5 h-3.5 text-[#a8a8a8] group-hover:text-white/60 transition-colors" />
-        </button>
+            <DropdownMenuSeparator className="bg-[#e8e8e8]" />
+            <DropdownMenuItem onClick={() => setView('settings')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#404040] focus:bg-[#f5f5f5] focus:text-[#171717]">
+              <User className="w-[14px] h-[14px]" strokeWidth={1.8} />
+              Профиль
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setView('security')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#404040] focus:bg-[#f5f5f5] focus:text-[#171717]">
+              <Shield className="w-[14px] h-[14px]" strokeWidth={1.8} />
+              Безопасность
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setView('billing')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#404040] focus:bg-[#f5f5f5] focus:text-[#171717]">
+              <CreditCard className="w-[14px] h-[14px]" strokeWidth={1.8} />
+              Биллинг
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setView('settings')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#404040] focus:bg-[#f5f5f5] focus:text-[#171717]">
+              <Settings className="w-[14px] h-[14px]" strokeWidth={1.8} />
+              Настройки
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-[#e8e8e8]" />
+            <DropdownMenuItem onClick={() => toast.info('Выход из аккаунта')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#dc2626] focus:bg-[#fef2f2] focus:text-[#dc2626]">
+              <LogOut className="w-[14px] h-[14px]" strokeWidth={1.8} />
+              Выйти
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </aside>
   )

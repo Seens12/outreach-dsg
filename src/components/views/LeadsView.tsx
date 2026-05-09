@@ -1,266 +1,321 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
-  Search,
-  Plus,
-  MoreHorizontal,
+  Download,
+  ChevronDown,
+  Flame,
+  Clock,
   Mail,
   Phone,
   Eye,
-  ChevronDown,
-  UserPlus,
+  MoreHorizontal,
+  MapPin,
+  Building2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { EmptyState } from '@/components/shared/EmptyState'
-import { Skeleton } from '@/components/ui/skeleton'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-type LeadStatus = 'Новый' | 'В работе' | 'Квалифицированный' | 'Завершённый'
-type LeadSource = 'HH.ru' | 'LinkedIn' | 'Холодный контакт' | 'Реферал' | 'Веб-сайт'
+/* ── Types ─────────────────────────────────────────────── */
 
 interface Lead {
   id: string
   name: string
   initials: string
   company: string
-  status: LeadStatus
-  source: LeadSource
-  lastContact: string
+  role: string
+  confidence: number
+  status: 'hot' | 'warm' | 'cold'
+  quote: string
+  tags: string[]
+  lastActivity: string
 }
 
-// ---------------------------------------------------------------------------
-// Demo data
-// ---------------------------------------------------------------------------
+/* ── Demo Data ─────────────────────────────────────────── */
 
 const leads: Lead[] = [
-  { id: '1', name: 'Дмитрий Петров', initials: 'ДП', company: 'Яндекс', status: 'Новый', source: 'HH.ru', lastContact: '2 часа назад' },
-  { id: '2', name: 'Анна Сидорова', initials: 'АС', company: 'Сбер', status: 'В работе', source: 'LinkedIn', lastContact: 'Вчера' },
-  { id: '3', name: 'Максим Козлов', initials: 'МК', company: 'VK Tech', status: 'Квалифицированный', source: 'Реферал', lastContact: '3 дня назад' },
-  { id: '4', name: 'Елена Волкова', initials: 'ЕВ', company: 'Тинькофф', status: 'Новый', source: 'Веб-сайт', lastContact: '1 день назад' },
-  { id: '5', name: 'Артём Новиков', initials: 'АН', company: 'Ozon Tech', status: 'В работе', source: 'Холодный контакт', lastContact: '5 часов назад' },
-  { id: '6', name: 'Ольга Морозова', initials: 'ОМ', company: 'Mail.ru Group', status: 'Завершённый', source: 'LinkedIn', lastContact: '1 неделю назад' },
-  { id: '7', name: 'Иван Соколов', initials: 'ИС', company: 'Касперский', status: 'Квалифицированный', source: 'HH.ru', lastContact: '2 дня назад' },
-  { id: '8', name: 'Мария Лебедева', initials: 'МЛ', company: '2ГИС', status: 'В работе', source: 'Реферал', lastContact: '4 часа назад' },
+  {
+    id: '1',
+    name: 'Елена Морозова',
+    initials: 'ЕМ',
+    company: 'ДиджиталГрупп',
+    role: 'Директор по маркетингу',
+    confidence: 95,
+    status: 'hot',
+    quote: 'Нам очень интересно ваше решение, хотели бы обсудить условия сотрудничества',
+    tags: ['Готов к сделке', 'IT', 'Москва'],
+    lastActivity: '15 мин назад',
+  },
+  {
+    id: '2',
+    name: 'Иван Петров',
+    initials: 'ИП',
+    company: 'ТехноКорп',
+    role: 'CTO',
+    confidence: 92,
+    status: 'hot',
+    quote: 'Давайте запланируем демо на следующей неделе',
+    tags: ['Готов к сделке', 'Разработка ПО', 'Санкт-Петербург'],
+    lastActivity: '32 мин назад',
+  },
+  {
+    id: '3',
+    name: 'Ольга Новикова',
+    initials: 'ОН',
+    company: 'ФинТех Про',
+    role: 'Руководитель отдела продаж',
+    confidence: 91,
+    status: 'hot',
+    quote: 'Можете прислать коммерческое предложение на 50 лицензий?',
+    tags: ['Готов к сделке', 'Финтех', 'Казань'],
+    lastActivity: '1 ч назад',
+  },
+  {
+    id: '4',
+    name: 'Мария Сидорова',
+    initials: 'МС',
+    company: 'ИнноСофт',
+    role: 'CEO',
+    confidence: 88,
+    status: 'warm',
+    quote: 'Спасибо за информацию, обсудим с командой и вернёмся',
+    tags: ['SaaS', 'IT-консалтинг', 'Москва'],
+    lastActivity: '2 ч назад',
+  },
+  {
+    id: '5',
+    name: 'Дмитрий Козлов',
+    initials: 'ДК',
+    company: 'CloudBase',
+    role: 'VP of Engineering',
+    confidence: 76,
+    status: 'warm',
+    quote: 'Интересный продукт, но нам нужно сравнить с конкурентами',
+    tags: ['Облака', 'Инфраструктура', 'Новосибирск'],
+    lastActivity: '3 ч назад',
+  },
+  {
+    id: '6',
+    name: 'Анна Волкова',
+    initials: 'АВ',
+    company: 'РитейлПлюс',
+    role: 'Директор по развитию',
+    confidence: 64,
+    status: 'cold',
+    quote: 'Сейчас не в приоритете, но сохраните контакты на будущее',
+    tags: ['E-commerce', 'Ритейл', 'Екатеринбург'],
+    lastActivity: '1 день назад',
+  },
+  {
+    id: '7',
+    name: 'Сергей Лебедев',
+    initials: 'СЛ',
+    company: 'МедТех Инновации',
+    role: 'Коммерческий директор',
+    confidence: 58,
+    status: 'cold',
+    quote: 'Отправьте материалы на почту, изучим при возможности',
+    tags: ['Healthcare', 'B2B', 'Воронеж'],
+    lastActivity: '2 дня назад',
+  },
+  {
+    id: '8',
+    name: 'Татьяна Иванова',
+    initials: 'ТИ',
+    company: 'АгроСервис',
+    role: 'IT-директор',
+    confidence: 42,
+    status: 'cold',
+    quote: 'Спасибо, мы уже используем аналогичное решение',
+    tags: ['Агро', 'Enterprise', 'Краснодар'],
+    lastActivity: '4 дня назад',
+  },
 ]
 
-// ---------------------------------------------------------------------------
-// Status / source helpers
-// ---------------------------------------------------------------------------
+const campaignFilters = [
+  { label: 'Все кампании', count: 192 },
+  { label: 'IT Directors Q4', count: 47 },
+  { label: 'FinTech Outreach', count: 38 },
+  { label: 'Startup Pipeline', count: 29 },
+]
 
-const statusConfig: Record<LeadStatus, { color: string; bg: string }> = {
-  'Новый': { color: 'text-[#2563eb]', bg: 'bg-[#2563eb]/10' },
-  'В работе': { color: 'text-[#d97706]', bg: 'bg-[#d97706]/10' },
-  'Квалифицированный': { color: 'text-[#16a34a]', bg: 'bg-[#16a34a]/10' },
-  'Завершённый': { color: 'text-[#737373]', bg: 'bg-[#e8e8e8]' },
+const confidenceLevels = ['Все', '80%+', '60%+', '40%+', '<40%']
+
+const statusConfig: Record<string, { label: string; className: string }> = {
+  hot: { label: 'Горячий', className: 'bg-[#f5f5f5] text-[#404040]' },
+  warm: { label: 'Тёплый', className: 'bg-[#f5f5f5] text-[#525252]' },
+  cold: { label: 'Холодный', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
 }
 
-const filters: Array<{ label: string; count?: number }> = [
-  { label: 'Все', count: 8 },
-  { label: 'Новые', count: 2 },
-  { label: 'В работе', count: 3 },
-  { label: 'Квалифицированные', count: 2 },
-  { label: 'Завершённые', count: 1 },
-]
+const statusDot: Record<string, string> = {
+  hot: 'bg-[#404040]',
+  warm: 'bg-[#737373]',
+  cold: 'bg-[#a3a3a3]',
+}
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+/* ── Component ─────────────────────────────────────────── */
 
 export default function LeadsView() {
-  const [activeFilter, setActiveFilter] = useState('Все')
-  const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 800)
-    return () => clearTimeout(t)
-  }, [])
-
-  const filteredLeads = leads.filter((lead) => {
-    if (!search) return true
-    const q = search.toLowerCase()
-    return (
-      lead.name.toLowerCase().includes(q) ||
-      lead.company.toLowerCase().includes(q)
-    )
-  })
+  const [campaign, setCampaign] = useState('Все кампании')
+  const [confidence, setConfidence] = useState('Все')
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col gap-5 p-6 text-[13.5px] text-[#171717] overflow-y-auto h-full custom-scroll">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
-          Лиды
-        </h1>
-        <p className="text-[13px] text-[#737373] font-medium mt-1">
-          Управление вашими лидами и сделками
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#0d0d0d]">
+            Воронка лидов
+          </h1>
+          <p className="text-[13px] text-[#737373] mt-1">
+            Управление лидами из кампаний холодных рассылок
+          </p>
+        </div>
+        <button
+          onClick={() => toast.success('Экспорт CSV запущен')}
+          className="flex items-center gap-2 h-9 px-4 rounded-[8px] border border-[#e8e8e8] bg-white text-[13px] font-medium text-[#525252] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer shrink-0"
+        >
+          <Download className="w-4 h-4" />
+          Экспорт CSV
+        </button>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4 mb-5">
-        <div className="relative w-[280px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#a8a8a8]" />
-          <Input
-            placeholder="Поиск лидов..."
-            aria-label="Поиск"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-[36px] text-[13px] bg-[#fafafa] border-[#e8e8e8] rounded-[8px] focus-visible:ring-[#2563eb]/20 focus-visible:border-[#2563eb]/40"
-          />
+      {/* Filters */}
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex gap-1.5">
+          {campaignFilters.map((f) => (
+            <button
+              key={f.label}
+              onClick={() => setCampaign(f.label)}
+              className={cn(
+                'h-8 px-3 rounded-full text-[12.5px] font-medium transition-colors cursor-pointer border',
+                campaign === f.label
+                  ? 'bg-[#0d0d0d] text-white border-[#0d0d0d]'
+                  : 'bg-white text-[#525252] border-[#e8e8e8] hover:bg-[#f5f5f5]'
+              )}
+            >
+              {f.label}
+              {campaign === f.label && (
+                <span className="ml-1.5 text-[11px] opacity-70">{f.count}</span>
+              )}
+            </button>
+          ))}
         </div>
 
-        <Button onClick={() => toast.success('Лид добавлен')} className="h-[36px] text-[13px] font-medium rounded-[8px] bg-[#0d0d0d] hover:bg-[#262626] text-white gap-2">
-          <Plus className="w-4 h-4" />
-          Добавить лид
-        </Button>
-      </div>
-
-      {/* Filter pills */}
-      <div className="flex items-center gap-2 mb-5">
-        {filters.map((f) => (
-          <button
-            key={f.label}
-            onClick={() => setActiveFilter(f.label)}
-            className={cn(
-              'h-[32px] px-3 rounded-full text-[12.5px] font-medium transition-all duration-150 flex items-center gap-1.5 cursor-pointer border',
-              activeFilter === f.label
-                ? 'bg-[#0d0d0d] text-white border-[#0d0d0d]'
-                : 'bg-white text-[#525252] border-[#e8e8e8] hover:bg-[#f5f5f5] hover:text-[#171717]'
-            )}
+        <div className="relative">
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-[#a3a3a3] pointer-events-none" />
+          <select
+            value={confidence}
+            onChange={(e) => setConfidence(e.target.value)}
+            className="appearance-none h-8 pl-3 pr-8 rounded-[8px] border border-[#e8e8e8] bg-white text-[12.5px] font-medium text-[#525252] cursor-pointer focus:outline-none focus:border-[#0d0d0d]"
           >
-            {f.label}
-            {f.count !== undefined && (
-              <span
-                className={cn(
-                  'text-[11px] font-semibold px-1.5 py-0.5 rounded-full leading-none',
-                  activeFilter === f.label
-                    ? 'bg-white/20 text-white'
-                    : 'bg-[#f5f5f5] text-[#737373]'
-                )}
-              >
-                {f.count}
-              </span>
-            )}
-          </button>
-        ))}
+            {confidenceLevels.map((l) => (
+              <option key={l} value={l}>{l === 'Все' ? 'Confidence' : l}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="border border-[#e8e8e8] rounded-[10px] bg-white overflow-hidden">
-        {loading ? (
-          <div className="p-4 space-y-3">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
-        ) : filteredLeads.length === 0 ? (
-          <EmptyState
-            icon={UserPlus}
-            title="Нет лидов"
-            description={search ? `По запросу «${search}» ничего не найдено` : 'Добавьте первый лид'}
-            action={!search ? { label: 'Добавить лид', onClick: () => toast.success('Лид добавлен') } : undefined}
-          />
-        ) : (
-        <table className="w-full text-[13px] font-medium">
-          <thead>
-            <tr className="border-b border-[#e8e8e8] bg-[#fafafa]">
-              <th className="w-10 pl-4 pr-2 py-3">
-                <Checkbox className="rounded-[4px]" />
-              </th>
-              <th className="text-left py-3 px-3 text-[12px] font-semibold text-[#737373] uppercase tracking-[0.04em]">
-                Имя
-              </th>
-              <th className="text-left py-3 px-3 text-[12px] font-semibold text-[#737373] uppercase tracking-[0.04em]">
-                Статус
-              </th>
-              <th className="text-left py-3 px-3 text-[12px] font-semibold text-[#737373] uppercase tracking-[0.04em]">
-                Источник
-              </th>
-              <th className="text-left py-3 px-3 text-[12px] font-semibold text-[#737373] uppercase tracking-[0.04em]">
-                Последний контакт
-              </th>
-              <th className="text-right py-3 px-4 text-[12px] font-semibold text-[#737373] uppercase tracking-[0.04em]">
-                Действия
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLeads.map((lead, idx) => {
-              const cfg = statusConfig[lead.status]
-              return (
-                <tr
-                  key={lead.id}
-                  className={cn(
-                    'border-b border-[#e8e8e8] last:border-b-0 transition-colors duration-100',
-                    'hover:bg-[#fafafa]'
-                  )}
-                >
-                  <td className="pl-4 pr-2 py-3">
-                    <Checkbox className="rounded-[4px]" />
-                  </td>
-                  <td className="py-3 px-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#0d0d0d] text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
-                        {lead.initials}
-                      </div>
-                      <div>
-                        <div className="text-[13px] font-semibold text-[#171717] leading-tight">
-                          {lead.name}
-                        </div>
-                        <div className="text-[12px] text-[#737373]">
-                          {lead.company}
-                        </div>
-                      </div>
+      {/* Stats bar */}
+      <div className="flex items-center gap-4 text-[12.5px] text-[#737373] flex-wrap">
+        <span className="font-semibold text-[#0d0d0d]">192 Всего лидов</span>
+        <span className="text-[#e8e8e8]">|</span>
+        <span>8 (4.2%) <span className="text-[#404040] font-medium">Горячих</span></span>
+        <span>23 (12.0%) <span className="text-[#525252] font-medium">Тёплых</span></span>
+        <span className="text-[#e8e8e8]">|</span>
+        <span>16.1% <span className="font-medium text-[#0d0d0d]">Конверсия</span></span>
+      </div>
+
+      {/* Lead Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {leads.map((lead) => {
+          const st = statusConfig[lead.status]
+          return (
+            <div
+              key={lead.id}
+              className="rounded-[10px] border border-[#e8e8e8] bg-white p-5 shadow-card hover:border-[#d4d4d4] transition-colors"
+            >
+              {/* Top: avatar + info + status */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className={cn(
+                      'flex items-center justify-center w-10 h-10 rounded-full text-[13px] font-semibold shrink-0',
+                      lead.status === 'hot' ? 'bg-[#0d0d0d] text-white' : 'bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]'
+                    )}>
+                      {lead.initials}
                     </div>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span
-                      className={cn(
-                        'inline-flex items-center px-2.5 py-[3px] rounded-full text-[12px] font-semibold',
-                        cfg.color,
-                        cfg.bg
-                      )}
-                    >
-                      {lead.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-[#525252]">
-                    {lead.source}
-                  </td>
-                  <td className="py-3 px-3 text-[#737373]">
-                    {lead.lastContact}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <button aria-label="Просмотр" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
-                        <Eye className="w-[14px] h-[14px]" />
-                      </button>
-                      <button aria-label="Отправить email" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
-                        <Mail className="w-[14px] h-[14px]" />
-                      </button>
-                      <button aria-label="Позвонить" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
-                        <Phone className="w-[14px] h-[14px]" />
-                      </button>
-                      <button aria-label="Действия" className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a8a8a8] hover:bg-[#f5f5f5] hover:text-[#171717] transition-colors duration-150 cursor-pointer">
-                        <MoreHorizontal className="w-[14px] h-[14px]" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-        )}
+                    {lead.status === 'hot' && (
+                      <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[#0d0d0d]">
+                        <Flame className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-[14px] font-semibold text-[#0d0d0d]">{lead.name}</div>
+                    <div className="text-[12px] text-[#737373]">{lead.company} &middot; {lead.role}</div>
+                  </div>
+                </div>
+                <span className={cn('text-[11px] font-medium px-2.5 py-1 rounded-[6px] shrink-0', st.className)}>
+                  {st.label}
+                </span>
+              </div>
+
+              {/* Quote */}
+              <p className="text-[12.5px] text-[#525252] italic leading-[1.5] mb-3 border-l-2 border-[#e8e8e8] pl-3">
+                &ldquo;{lead.quote}&rdquo;
+              </p>
+
+              {/* Confidence bar */}
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11.5px] text-[#a3a3a3] font-medium">Confidence</span>
+                  <span className="text-[12px] font-semibold text-[#0d0d0d]">{lead.confidence}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-[#f5f5f5] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[#0d0d0d] transition-all"
+                    style={{ width: `${lead.confidence}%`, opacity: 0.3 + (lead.confidence / 100) * 0.7 }}
+                  />
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                {lead.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-[11px] font-medium px-2 py-[3px] rounded-[5px] bg-[#f5f5f5] text-[#525252]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Footer: time + actions */}
+              <div className="flex items-center justify-between pt-3 border-t border-[#f5f5f5]">
+                <div className="flex items-center gap-1 text-[11.5px] text-[#a3a3a3]">
+                  <Clock className="w-3 h-3" />
+                  {lead.lastActivity}
+                </div>
+                <div className="flex items-center gap-0.5">
+                  <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a3a3a3] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer">
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                  <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a3a3a3] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer">
+                    <Mail className="w-3.5 h-3.5" />
+                  </button>
+                  <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a3a3a3] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer">
+                    <Phone className="w-3.5 h-3.5" />
+                  </button>
+                  <button className="w-7 h-7 flex items-center justify-center rounded-lg text-[#a3a3a3] hover:bg-[#f5f5f5] hover:text-[#0d0d0d] transition-colors cursor-pointer">
+                    <MoreHorizontal className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { useAppStore, type ViewId } from '@/lib/store'
 import { Sidebar } from '@/components/dashboard/Sidebar'
 import { Topbar } from '@/components/dashboard/Topbar'
+import { AgentPanel } from '@/components/shared/AgentPanel'
 
 // Lazy load all views
 const views: Record<ViewId, React.LazyExoticComponent<() => JSX.Element>> = {
@@ -47,10 +48,10 @@ const authViews: Set<ViewId> = new Set(['login', 'register', 'forgot-password'])
 
 function LoadingFallback() {
   return (
-    <div className="flex-1 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-2 border-[#e8e8e8] border-t-[#0d0d0d] rounded-full animate-spin" />
-        <span className="text-[13px] text-[#a8a8a8]">Загрузка...</span>
+        <span className="text-[13px] text-[#737373]">Загрузка...</span>
       </div>
     </div>
   )
@@ -87,6 +88,7 @@ export default function Home() {
             {isChat ? <ChatViewLazy /> : <>{(() => { const V = views[view]; return <V /> })()}</>}
           </Suspense>
         </main>
+        {!isAuth && !isChat && <AgentPanel />}
       </div>
     </div>
   )

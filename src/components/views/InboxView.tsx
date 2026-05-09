@@ -20,206 +20,68 @@ import {
   ArrowRight,
   CircleDot,
   Sparkles,
+  GraduationCap,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
-type InboxFilter = 'all' | 'unread' | 'replied' | 'important'
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-interface EmailContact {
-  name: string
-  company: string
-  email: string
-  avatar: string
-}
+type LeadStatus = 'hot' | 'warm' | 'cold'
+type EmailState = 'draft' | 'training' | 'ai-reply' | 'urgent'
 
 interface InboxItem {
   id: number
-  sender: EmailContact
+  initials: string
+  name: string
+  company: string
   preview: string
   time: string
   unread: boolean
+  leadStatus: LeadStatus
+  confidence: number
+  emailState: EmailState
   hasAttachment: boolean
-  important: boolean
-  replied: boolean
 }
 
 interface ThreadMessage {
   id: number
-  from: EmailContact
-  to: string
+  initials: string
+  name: string
+  company: string
   time: string
-  subject: string
   body: string
+  isMe: boolean
 }
 
-const contacts: Record<number, EmailContact> = {
-  1: {
-    name: 'Алексей Петров',
-    company: 'TechVision',
-    email: 'a.petrov@techvision.ru',
-    avatar: 'АП',
-  },
-  2: {
-    name: 'Мария Козлова',
-    company: 'DataFlow',
-    email: 'm.kozlova@dataflow.io',
-    avatar: 'МК',
-  },
-  3: {
-    name: 'Дмитрий Волков',
-    company: 'CloudSync',
-    email: 'd.volkov@cloudsync.com',
-    avatar: 'ДВ',
-  },
-  4: {
-    name: 'Елена Смирнова',
-    company: 'FinBridge',
-    email: 'e.smirnova@finbridge.ru',
-    avatar: 'ЕС',
-  },
-  5: {
-    name: 'Игорь Новиков',
-    company: 'SalesForce RU',
-    email: 'i.novikov@sf-ru.com',
-    avatar: 'ИН',
-  },
-  6: {
-    name: 'Ольга Федорова',
-    company: 'MarketPro',
-    email: 'o.fedorova@marketpro.ru',
-    avatar: 'ОФ',
-  },
-}
+// ---------------------------------------------------------------------------
+// Demo data
+// ---------------------------------------------------------------------------
 
 const inboxItems: InboxItem[] = [
-  {
-    id: 1,
-    sender: contacts[1],
-    preview: 'Добрый день! Заинтересованы в вашем решении для автоматизации...',
-    time: '10:32',
-    unread: true,
-    hasAttachment: false,
-    important: true,
-    replied: false,
-  },
-  {
-    id: 2,
-    sender: contacts[2],
-    preview: 'Спасибо за предложение. Хотели бы уточнить детали по интеграции...',
-    time: '09:15',
-    unread: true,
-    hasAttachment: true,
-    important: false,
-    replied: false,
-  },
-  {
-    id: 3,
-    sender: contacts[3],
-    preview: 'Можем ли мы запланировать демо на следующую неделю?',
-    time: 'Вчера',
-    unread: true,
-    hasAttachment: false,
-    important: false,
-    replied: true,
-  },
-  {
-    id: 4,
-    sender: contacts[4],
-    preview: 'Утверждаем бюджет на следующий квартал. Когда можем обсудить...',
-    time: 'Вчера',
-    unread: false,
-    hasAttachment: true,
-    important: true,
-    replied: true,
-  },
-  {
-    id: 5,
-    sender: contacts[5],
-    preview: 'Коллеги, нужна ваша помощь с настройкой CRM-интеграции...',
-    time: '2 дек',
-    unread: false,
-    hasAttachment: false,
-    important: false,
-    replied: true,
-  },
-  {
-    id: 6,
-    sender: contacts[6],
-    preview: 'Хотим заказать индивидуальный тариф. Какие условия?',
-    time: '1 дек',
-    unread: false,
-    hasAttachment: false,
-    important: false,
-    replied: false,
-  },
+  { id: 1, initials: 'АП', name: 'Алексей Петров', company: 'ТехноСтарт', preview: 'Добрый день! Заинтересованы в вашем решении для автоматизации outreach-процессов...', time: '10:32', unread: true, leadStatus: 'hot', confidence: 92, emailState: 'ai-reply', hasAttachment: false },
+  { id: 2, initials: 'МК', name: 'Мария Козлова', company: 'DataFlow', preview: 'Спасибо за предложение. Хотели бы уточнить детали по интеграции с нашей CRM...', time: '09:15', unread: true, leadStatus: 'hot', confidence: 88, emailState: 'urgent', hasAttachment: true },
+  { id: 3, initials: 'ДВ', name: 'Дмитрий Волков', company: 'CloudSync', preview: 'Можем ли мы запланировать демо на следующую неделю? Готовы обсудить условия...', time: 'Вчера', unread: true, leadStatus: 'warm', confidence: 75, emailState: 'draft', hasAttachment: false },
+  { id: 4, initials: 'ЕС', name: 'Елена Смирнова', company: 'FinBridge', preview: 'Утверждаем бюджет на следующий квартал. Когда можем обсудить контракты?', time: 'Вчера', unread: false, leadStatus: 'hot', confidence: 85, emailState: 'ai-reply', hasAttachment: true },
+  { id: 5, initials: 'ОН', name: 'Игорь Новиков', company: 'SalesForce RU', preview: 'Нужна ваша помощь с настройкой CRM-интеграции для нового клиента...', time: '2 дек', unread: false, leadStatus: 'warm', confidence: 70, emailState: 'training', hasAttachment: false },
+  { id: 6, initials: 'ОФ', name: 'Ольга Фёдорова', company: 'MarketPro', preview: 'Хотим заказать индивидуальный тариф. Какие условия для Enterprise-плана?', time: '1 дек', unread: false, leadStatus: 'cold', confidence: 45, emailState: 'draft', hasAttachment: false },
+  { id: 7, initials: 'СП', name: 'Сергей Попов', company: 'VK Tech', preview: 'Интересна ваша платформа для автоматизации B2B-продаж. Возможен ли пилотный проект?', time: '28 ноя', unread: true, leadStatus: 'warm', confidence: 68, emailState: 'ai-reply', hasAttachment: false },
+  { id: 8, initials: 'НЛ', name: 'Наталья Лебедева', company: '2ГИС', preview: 'Коллеги, можем ли мы получить демо-доступ к платформе для тестирования?', time: '27 ноя', unread: false, leadStatus: 'cold', confidence: 42, emailState: 'draft', hasAttachment: false },
+  { id: 9, initials: 'АБ', name: 'Андрей Белов', company: 'Ozon Tech', preview: 'Готовы подписать контракт на год. Нужна информация по юридическому оформлению...', time: '26 ноя', unread: false, leadStatus: 'hot', confidence: 91, emailState: 'ai-reply', hasAttachment: true },
+  { id: 10, initials: 'ИЛ', name: 'Ирина Лебедева', company: 'МТС Digital', preview: 'Подскажите, есть ли у вас интеграция с AmoCRM и Telegram-каналами?', time: '25 ноя', unread: true, leadStatus: 'warm', confidence: 62, emailState: 'training', hasAttachment: false },
+  { id: 11, initials: 'РЗ', name: 'Роман Зайцев', company: 'Касперский', preview: 'Рассматриваем OutreachAI для отдела B2B-продаж. Нужна презентация кейсов...', time: '24 ноя', unread: false, leadStatus: 'warm', confidence: 73, emailState: 'draft', hasAttachment: false },
+  { id: 12, initials: 'ЕК', name: 'Екатерина Краснова', company: 'Яндекс', preview: 'Добрый день! Мы ищем решение для автоматизации email-рассылок на 10k+ контактов...', time: '23 ноя', unread: true, leadStatus: 'hot', confidence: 87, emailState: 'ai-reply', hasAttachment: false },
 ]
 
 const threads: Record<number, { subject: string; messages: ThreadMessage[] }> = {
   1: {
     subject: 'Интерес к решению для автоматизации',
     messages: [
-      {
-        id: 1,
-        from: contacts[1],
-        to: 'вы',
-        time: '10:32',
-        subject: 'Интерес к решению для автоматизации',
-        body: 'Добрый день!\n\nМеня зовут Алексей Петров, я руковожу отделом разработки в TechVision. Мы сейчас активно ищем решение для автоматизации наших процессов outreach и холодных рассылок.\n\nВидели ваш продукт на конференции в Москве и заинтересовались. Можете рассказать подробнее о возможностях интеграции с нашей текущей CRM-системой?\n\nТакже хотелось бы узнать про цены и условия для компаний от 200 сотрудников.\n\nС уважением,\nАлексей Петров',
-      },
-      {
-        id: 2,
-        from: {
-          name: 'Вы',
-          company: 'OutreachAI',
-          email: 'team@outreachai.com',
-          avatar: 'ОА',
-        },
-        to: contacts[1].email,
-        time: '11:05',
-        subject: 'Re: Интерес к решению для автоматизации',
-        body: 'Здравствуйте, Алексей!\n\nСпасибо за интерес к нашему продукту. Рад, что вы нас заметили на конференции.\n\nМы поддерживаем интеграцию с Salesforce, HubSpot, amoCRM и Bitrix24. Также есть REST API для кастомной интеграции.\n\nДля компаний от 200 сотрудников у нас есть специальное enterprise-предложение. Давайте запланимаем демо-звонок на этой неделе?\n\nБуду рад обсудить все детали.\n\nС уважением,\nКоманда OutreachAI',
-      },
-      {
-        id: 3,
-        from: contacts[1],
-        to: 'вы',
-        time: '14:20',
-        subject: 'Re: Интерес к решению для автоматизации',
-        body: 'Отлично! Давайте в четверг в 15:00 по Москве. Нам это подходит.\n\nКстати, мы используемamoCRM — было бы здорово увидеть демо именно с нашей системой.\n\nОтправлю приглашение через календарь.\n\n— Алексей',
-      },
-    ],
-  },
-  2: {
-    subject: 'Уточнение деталей по интеграции',
-    messages: [
-      {
-        id: 1,
-        from: contacts[2],
-        to: 'вы',
-        time: '09:15',
-        subject: 'Уточнение деталей по интеграции',
-        body: 'Добрый день!\n\nСпасибо за ваше предложение по интеграции с DataFlow. Мы изучили документацию и у нас осталось несколько вопросов:\n\n1. Поддерживает ли ваш API webhook-уведомления?\n2. Какой лимит на количество запросов в минуту?\n3. Есть ли возможность SSO-авторизации?\n\nТакже прикрепила техническое задание для нашей команды.\n\nМария Козлова\nCTO, DataFlow',
-      },
-      {
-        id: 2,
-        from: {
-          name: 'Вы',
-          company: 'OutreachAI',
-          email: 'team@outreachai.com',
-          avatar: 'ОА',
-        },
-        to: contacts[2].email,
-        time: '09:48',
-        subject: 'Re: Уточнение деталей по интеграции',
-        body: 'Здравствуйте, Мария!\n\nОтвечаю на ваши вопросы:\n\n1. Да, мы поддерживаем webhook-уведомления для всех основных событий.\n2. Enterprise-тариф включает 1000 req/min, можно увеличить.\n3. SSO доступен на Enterprise-плане (SAML 2.0 и OIDC).\n\nИзучим ТЗ и вернёмся с предложением до конца дня.\n\n— Команда OutreachAI',
-      },
-      {
-        id: 3,
-        from: contacts[2],
-        to: 'вы',
-        time: '10:22',
-        subject: 'Re: Уточнение деталей по интеграции',
-        body: 'Спасибо за оперативный ответ! SSO — это критично для нас, так что enterprise-план нам подходит.\n\nБуду ждать ваше предложение. Если понадобится дополнительная информация — пишите.\n\n— Мария',
-      },
+      { id: 1, initials: 'АП', name: 'Алексей Петров', company: 'ТехноСтарт', time: '10:32', body: 'Добрый день!\n\nМеня зовут Алексей Петров, я руковожу отделом разработки в ТехноСтарт. Мы сейчас активно ищем решение для автоматизации наших процессов outreach.\n\nВидели ваш продукт на конференции в Москве и заинтересовались. Можете рассказать подробнее о возможностях интеграции с нашей CRM?\n\nС уважением,\nАлексей Петров', isMe: false },
+      { id: 2, initials: 'ОА', name: 'Команда OutreachAI', company: 'OutreachAI', time: '11:05', body: 'Здравствуйте, Алексей!\n\nСпасибо за интерес. Мы поддерживаем интеграцию с Salesforce, HubSpot, amoCRM и Bitrix24. Также есть REST API для кастомной интеграции.\n\nДавайте запланируем демо-звонок на этой неделе?\n\n— Команда OutreachAI', isMe: true },
+      { id: 3, initials: 'АП', name: 'Алексей Петров', company: 'ТехноСтарт', time: '14:20', body: 'Отлично! Давайте в четверг в 15:00. Мы используем amoCRM — было бы здорово увидеть демо именно с нашей системой.\n\n— Алексей', isMe: false },
     ],
   },
 }
@@ -230,35 +92,59 @@ const sources = [
   { name: 'Кейсы интеграции с amoCRM', relevance: 72, icon: Globe },
 ]
 
-const inboxFilters: { key: InboxFilter; label: string }[] = [
-  { key: 'all', label: 'Все' },
-  { key: 'unread', label: 'Непрочитанные' },
-  { key: 'replied', label: 'С ответом' },
-  { key: 'important', label: 'Важные' },
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const leadStatusConfig: Record<LeadStatus, { label: string; className: string }> = {
+  hot: { label: 'Горячий', className: 'bg-[#f5f5f5] text-[#404040]' },
+  warm: { label: 'Тёплый', className: 'bg-[#f5f5f5] text-[#525252]' },
+  cold: { label: 'Холодный', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+}
+
+const emailStateConfig: Record<EmailState, { label: string; className: string }> = {
+  draft: { label: 'Черновик', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+  training: { label: 'На обучении', className: 'bg-[#f5f5f5] text-[#737373]' },
+  'ai-reply': { label: 'AI-ответ', className: 'bg-[#f5f5f5] text-[#404040]' },
+  urgent: { label: 'Срочно', className: 'bg-[#0d0d0d] text-white' },
+}
+
+type InboxFilter = 'all' | 'attention' | 'training' | 'auto'
+
+const filterTabs: { key: InboxFilter; label: string; count: number }[] = [
+  { key: 'all', label: 'Все', count: 12 },
+  { key: 'attention', label: 'Внимание', count: 4 },
+  { key: 'training', label: 'Обучение', count: 4 },
+  { key: 'auto', label: 'Авто', count: 5 },
 ]
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export default function InboxView() {
   const [selectedEmailId, setSelectedEmailId] = useState<number>(1)
   const [activeFilter, setActiveFilter] = useState<InboxFilter>('all')
   const [replyText, setReplyText] = useState('')
+  const [learningMode, setLearningMode] = useState(false)
 
   const thread = threads[selectedEmailId]
   const selectedEmail = inboxItems.find((e) => e.id === selectedEmailId)
 
   const filteredInbox = inboxItems.filter((item) => {
     if (activeFilter === 'all') return true
-    if (activeFilter === 'unread') return item.unread
-    if (activeFilter === 'replied') return item.replied
-    if (activeFilter === 'important') return item.important
+    if (activeFilter === 'attention') return item.leadStatus === 'hot'
+    if (activeFilter === 'training') return item.emailState === 'training'
+    if (activeFilter === 'auto') return item.emailState === 'ai-reply'
     return true
   })
 
-  const confidence = 87
+  const confidence = selectedEmail?.confidence ?? 87
 
   return (
-    <div className="flex h-full text-[13.5px] text-[#171717] font-[family-name:var(--font-geist-sans)] rounded-[10px] border border-[#e8e8e8] overflow-hidden bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="flex h-full text-[13.5px] text-[#171717] font-[family-name:var(--font-geist-sans)] rounded-[10px] border border-[#e8e8e8] overflow-hidden bg-white shadow-card">
       {/* Left panel: Email list */}
-      <div className="w-[280px] lg:w-[320px] border-r border-[#e8e8e8] flex flex-col bg-white shrink-0">
+      <div className="w-[300px] lg:w-[340px] border-r border-[#e8e8e8] flex flex-col bg-white shrink-0">
         {/* Header */}
         <div className="p-4 border-b border-[#e8e8e8]">
           <div className="flex items-center justify-between mb-3">
@@ -268,24 +154,50 @@ export default function InboxView() {
                 Входящие
               </h2>
             </div>
-            <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#dc2626] text-white text-[11px] font-semibold">
-              12
+            <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#0d0d0d] text-white text-[11px] font-semibold">
+              {inboxItems.length}
             </span>
+          </div>
+
+          {/* Learning mode toggle */}
+          <div className="flex items-center gap-2 mb-3">
+            <GraduationCap className="size-3.5 text-[#737373]" />
+            <span className="text-[12px] font-medium text-[#525252]">Режим обучения</span>
+            <button
+              onClick={() => {
+                setLearningMode(!learningMode)
+                toast.success(learningMode ? 'Режим обучения выключен' : 'Режим обучения включен')
+              }}
+              className={cn(
+                'relative ml-auto w-8 h-[18px] rounded-full transition-colors duration-200 cursor-pointer',
+                learningMode ? 'bg-[#0d0d0d]' : 'bg-[#e8e8e8]'
+              )}
+              aria-label="Переключить режим обучения"
+            >
+              <span
+                className={cn(
+                  'absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full bg-white shadow-sm transition-transform duration-200',
+                  learningMode && 'translate-x-[14px]'
+                )}
+              />
+            </button>
           </div>
 
           {/* Filter pills */}
           <div className="flex items-center gap-1.5">
-            {inboxFilters.map((f) => (
+            {filterTabs.map((f) => (
               <button
                 key={f.key}
                 onClick={() => setActiveFilter(f.key)}
-                className={`px-2.5 py-1 rounded-full text-[12px] font-medium transition-colors ${
+                className={cn(
+                  'px-2.5 py-1 rounded-full text-[12px] font-medium transition-colors cursor-pointer',
                   activeFilter === f.key
                     ? 'bg-[#0d0d0d] text-white'
                     : 'bg-[#f5f5f5] text-[#737373] hover:bg-[#e8e8e8]'
-                }`}
+                )}
               >
                 {f.label}
+                <span className="ml-1 text-[10px] opacity-70">{f.count}</span>
               </button>
             ))}
           </div>
@@ -295,65 +207,74 @@ export default function InboxView() {
         <div className="flex-1 overflow-y-auto">
           {filteredInbox.map((item) => {
             const isSelected = item.id === selectedEmailId
+            const lead = leadStatusConfig[item.leadStatus]
+            const state = emailStateConfig[item.emailState]
             return (
               <button
                 key={item.id}
                 onClick={() => setSelectedEmailId(item.id)}
-                className={`w-full text-left px-4 py-3 border-b border-[#f5f5f5] transition-colors hover:bg-[#fafafa] ${
+                className={cn(
+                  'w-full text-left px-4 py-3.5 border-b border-[#f5f5f5] transition-colors hover:bg-[#fafafa] cursor-pointer',
                   isSelected ? 'bg-[#f5f5f5]' : 'bg-white'
-                }`}
+                )}
               >
-                <div className="flex items-start gap-2.5">
-                  {/* Unread indicator */}
-                  {item.unread && (
-                    <span className="mt-[7px] w-[3px] h-[3px] rounded-full bg-[#0d0d0d] shrink-0" />
-                  )}
-                  {!item.unread && <span className="w-[3px] shrink-0" />}
-
+                {/* Row 1: Avatar + Name + Company + Time */}
+                <div className="flex items-center gap-2.5 mb-1.5">
+                  <div className="w-8 h-8 rounded-full bg-[#0d0d0d] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                    {item.initials}
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span
-                        className={`text-[13px] truncate ${
-                          item.unread
-                            ? 'font-semibold text-[#0d0d0d]'
-                            : 'font-medium text-[#525252]'
-                        }`}
-                      >
-                        {item.sender.name}
+                    <div className="flex items-center gap-1.5">
+                      {item.unread && (
+                        <span className="w-[6px] h-[6px] rounded-full bg-[#0d0d0d] shrink-0" />
+                      )}
+                      <span className={cn(
+                        'text-[13px] truncate',
+                        item.unread ? 'font-semibold text-[#0d0d0d]' : 'font-medium text-[#525252]'
+                      )}>
+                        {item.name}
                       </span>
-                      <span
-                        className={`text-[11px] shrink-0 ml-2 ${
-                          item.unread
-                            ? 'text-[#0d0d0d] font-medium'
-                            : 'text-[#737373]'
-                        }`}
-                      >
-                        {item.time}
+                      <span className="text-[11px] text-[#a3a3a3] shrink-0">
+                        {item.company}
                       </span>
                     </div>
-                    <p className="text-[12px] text-[#737373] truncate mb-0.5">
-                      {item.sender.company}
-                    </p>
-                    <p
-                      className={`text-[12.5px] truncate ${
-                        item.unread
-                          ? 'text-[#404040]'
-                          : 'text-[#737373]'
-                      }`}
-                    >
-                      {item.preview}
-                    </p>
                   </div>
+                  <span className="text-[11px] text-[#737373] shrink-0">{item.time}</span>
+                </div>
 
-                  {/* Icons row */}
-                  <div className="flex flex-col items-center gap-1 pt-0.5 shrink-0">
-                    {item.important && (
-                      <Star className="size-3 text-[#d97706] fill-[#d97706]" />
-                    )}
-                    {item.hasAttachment && (
-                      <Paperclip className="size-3 text-[#a3a3a3]" />
-                    )}
-                  </div>
+                {/* Row 2: Preview */}
+                <p className={cn(
+                  'text-[12px] truncate mb-2 ml-[42px]',
+                  item.unread ? 'text-[#404040]' : 'text-[#737373]'
+                )}>
+                  {item.preview}
+                </p>
+
+                {/* Row 3: Badges */}
+                <div className="flex items-center gap-2 ml-[42px]">
+                  {/* Lead status */}
+                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold', lead.className)}>
+                    {lead.label}
+                  </span>
+
+                  {/* Email state */}
+                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold', state.className)}>
+                    {state.label}
+                  </span>
+
+                  {/* Confidence */}
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold ml-auto">
+                    <CircleDot className={cn(
+                      'size-3',
+                      item.confidence >= 80 ? 'text-[#0d0d0d]' : item.confidence >= 50 ? 'text-[#737373]' : 'text-[#a3a3a3]'
+                    )} />
+                    {item.confidence}%
+                  </span>
+
+                  {/* Attachment */}
+                  {item.hasAttachment && (
+                    <Paperclip className="size-3 text-[#a3a3a3]" />
+                  )}
                 </div>
               </button>
             )
@@ -372,15 +293,14 @@ export default function InboxView() {
               </h3>
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center size-8 rounded-full bg-[#0d0d0d] text-white text-[12px] font-semibold">
-                  {selectedEmail.sender.avatar}
+                  {selectedEmail.initials}
                 </div>
                 <div>
                   <p className="text-[13.5px] font-medium text-[#0d0d0d]">
-                    {selectedEmail.sender.name}
+                    {selectedEmail.name}
                   </p>
                   <p className="text-[12px] text-[#737373]">
-                    {selectedEmail.sender.company} &middot;{' '}
-                    {selectedEmail.sender.email}
+                    {selectedEmail.company}
                   </p>
                 </div>
               </div>
@@ -389,57 +309,38 @@ export default function InboxView() {
             {/* Thread messages */}
             <div className="flex-1 overflow-y-auto px-6 py-4">
               <div className="flex flex-col gap-4">
-                {thread.messages.map((msg, idx) => {
-                  const isMe = msg.from.company === 'OutreachAI'
-                  return (
-                    <div
-                      key={msg.id}
-                      className={`rounded-[10px] border border-[#e8e8e8] p-4 ${
-                        isMe ? 'bg-[#fafafa]' : 'bg-white'
-                      }`}
-                    >
-                      {/* Message header */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`flex items-center justify-center size-6 rounded-full text-[10px] font-semibold ${
-                              isMe
-                                ? 'bg-[#0d0d0d] text-white'
-                                : 'bg-[#f5f5f5] text-[#525252]'
-                            }`}
-                          >
-                            {msg.from.avatar}
-                          </div>
-                          <span className="text-[13px] font-semibold text-[#0d0d0d]">
-                            {msg.from.name}
-                          </span>
-                          {!isMe && (
-                            <span className="text-[12px] text-[#737373]">
-                              {msg.from.company}
-                            </span>
-                          )}
-                          {isMe && (
-                            <span className="text-[12px] text-[#737373]">
-                              мне
-                            </span>
-                          )}
+                {thread.messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={cn(
+                      'rounded-[10px] border border-[#e8e8e8] p-4',
+                      msg.isMe ? 'bg-[#fafafa]' : 'bg-white'
+                    )}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={cn(
+                          'flex items-center justify-center size-6 rounded-full text-[10px] font-semibold',
+                          msg.isMe ? 'bg-[#0d0d0d] text-white' : 'bg-[#f5f5f5] text-[#525252]'
+                        )}>
+                          {msg.initials}
                         </div>
-                        <span className="text-[11px] text-[#737373]">
-                          {msg.time}
+                        <span className="text-[13px] font-semibold text-[#0d0d0d]">{msg.name}</span>
+                        <span className="text-[12px] text-[#737373]">
+                          {msg.isMe ? 'мне' : msg.company}
                         </span>
                       </div>
-
-                      {/* Message body */}
-                      <div className="text-[13px] text-[#404040] leading-relaxed whitespace-pre-line">
-                        {msg.body}
-                      </div>
+                      <span className="text-[11px] text-[#737373]">{msg.time}</span>
                     </div>
-                  )
-                })}
+                    <div className="text-[13px] text-[#404040] leading-relaxed whitespace-pre-line">
+                      {msg.body}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Draft reply area */}
+            {/* Reply area */}
             <div className="border-t border-[#e8e8e8] p-4">
               <div className="border border-[#e8e8e8] rounded-[10px] bg-white overflow-hidden">
                 <textarea
@@ -452,18 +353,27 @@ export default function InboxView() {
                 />
                 <div className="flex items-center justify-between px-3 py-2 border-t border-[#f5f5f5] bg-[#fafafa]">
                   <div className="flex items-center gap-1">
-                    <button className="p-1.5 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f0f0f0] transition-colors">
+                    <button className="p-1.5 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f0f0f0] transition-colors cursor-pointer">
                       <Paperclip className="size-3.5" />
                     </button>
-                    <button className="p-1.5 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f0f0f0] transition-colors">
+                    <button className="p-1.5 rounded-md text-[#a3a3a3] hover:text-[#525252] hover:bg-[#f0f0f0] transition-colors cursor-pointer">
                       <MoreHorizontal className="size-3.5" />
                     </button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="px-3 py-1.5 rounded-[7px] text-[12px] font-medium text-[#737373] hover:bg-[#f0f0f0] transition-colors">
+                    <button
+                      onClick={() => setReplyText('')}
+                      className="px-3 py-1.5 rounded-[7px] text-[12px] font-medium text-[#737373] hover:bg-[#f0f0f0] transition-colors cursor-pointer"
+                    >
                       Отменить
                     </button>
-                    <button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[7px] bg-[#0d0d0d] text-white text-[12px] font-medium hover:bg-[#262626] transition-colors">
+                    <button
+                      onClick={() => {
+                        setReplyText('')
+                        toast.success('Ответ отправлен')
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[7px] bg-[#0d0d0d] text-white text-[12px] font-medium hover:bg-[#262626] transition-colors cursor-pointer"
+                    >
                       <Send className="size-3" />
                       Отправить
                     </button>
@@ -482,7 +392,7 @@ export default function InboxView() {
         )}
       </div>
 
-      {/* Right panel: RAG / AI assistant */}
+      {/* Right panel: AI Assistant */}
       <div className="hidden lg:flex w-[280px] border-l border-[#e8e8e8] flex-col bg-[#fafafa] shrink-0">
         <div className="p-4 border-b border-[#e8e8e8]">
           <div className="flex items-center gap-2">
@@ -505,24 +415,18 @@ export default function InboxView() {
                   {confidence}%
                 </span>
                 <CircleDot
-                  className={`size-4 ${
-                    confidence >= 80
-                      ? 'text-[#16a34a]'
-                      : confidence >= 50
-                        ? 'text-[#d97706]'
-                        : 'text-[#dc2626]'
-                  }`}
+                  className={cn(
+                    'size-4',
+                    confidence >= 80 ? 'text-[#0d0d0d]' : confidence >= 50 ? 'text-[#737373]' : 'text-[#a3a3a3]'
+                  )}
                 />
               </div>
               <div className="w-full h-[6px] bg-[#f0f0f0] rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all ${
-                    confidence >= 80
-                      ? 'bg-[#16a34a]'
-                      : confidence >= 50
-                        ? 'bg-[#d97706]'
-                        : 'bg-[#dc2626]'
-                  }`}
+                  className={cn(
+                    'h-full rounded-full transition-all',
+                    confidence >= 80 ? 'bg-[#0d0d0d]' : confidence >= 50 ? 'bg-[#737373]' : 'bg-[#a3a3a3]'
+                  )}
                   style={{ width: `${confidence}%` }}
                 />
               </div>
@@ -568,16 +472,15 @@ export default function InboxView() {
           </div>
 
           {/* Warning box */}
-          <div className="rounded-[8px] bg-[#fef3c7] border border-[#fde68a] p-3">
+          <div className="rounded-[8px] bg-[#fafafa] border border-[#e8e8e8] p-3">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="size-4 text-[#d97706] shrink-0 mt-0.5" />
+              <AlertTriangle className="size-4 text-[#737373] shrink-0 mt-0.5" />
               <div>
-                <p className="text-[12px] font-semibold text-[#92400e] mb-0.5">
+                <p className="text-[12px] font-semibold text-[#404040] mb-0.5">
                   Недостающая информация
                 </p>
-                <p className="text-[11px] text-[#a16207] leading-relaxed">
-                  Нет данных о текущих акциях и специальных предложениях.
-                  Добавьте информацию для более точных ответов.
+                <p className="text-[11px] text-[#737373] leading-relaxed">
+                  Нет данных о текущих акциях и специальных предложениях. Добавьте информацию для более точных ответов.
                 </p>
               </div>
             </div>
@@ -589,15 +492,15 @@ export default function InboxView() {
               Действия
             </h3>
             <div className="flex flex-col gap-2">
-              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] border border-[#e8e8e8] bg-white text-[12.5px] font-medium text-[#404040] hover:bg-[#f5f5f5] transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] border border-[#e8e8e8] bg-white text-[12.5px] font-medium text-[#404040] hover:bg-[#f5f5f5] transition-colors cursor-pointer">
                 <Sparkles className="size-3.5" />
                 Редактировать
               </button>
-              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] border border-[#e8e8e8] bg-white text-[12.5px] font-medium text-[#404040] hover:bg-[#f5f5f5] transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] border border-[#e8e8e8] bg-white text-[12.5px] font-medium text-[#404040] hover:bg-[#f5f5f5] transition-colors cursor-pointer">
                 <Send className="size-3.5" />
                 Отправить как есть
               </button>
-              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] bg-[#0d0d0d] text-white text-[12.5px] font-medium hover:bg-[#262626] transition-colors">
+              <button className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-[8px] bg-[#0d0d0d] text-white text-[12.5px] font-medium hover:bg-[#262626] transition-colors cursor-pointer">
                 <RefreshCw className="size-3.5" />
                 Регенерировать
               </button>
