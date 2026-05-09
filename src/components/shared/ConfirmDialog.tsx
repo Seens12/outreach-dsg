@@ -45,7 +45,7 @@ export function ConfirmDialog({
             onClick={onConfirm}
             className={
               destructive
-                ? 'bg-[#dc2626] hover:bg-[#b91c1c] text-white rounded-[8px]'
+                ? 'bg-[#be123c] hover:bg-[#be123c] text-white rounded-[8px]'
                 : 'bg-[#0d0d0d] hover:bg-[#262626] text-white rounded-[8px]'
             }
           >

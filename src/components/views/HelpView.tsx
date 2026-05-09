@@ -77,7 +77,7 @@ const quickStartCards = [
     time: '10 мин',
     description: 'Настройте интеграции с CRM, календарём и другими сервисами.',
     iconBg: 'bg-[#dcfce7]',
-    iconColor: 'text-[#22c55e]',
+    iconColor: 'text-[#15803d]',
   },
 ]
 

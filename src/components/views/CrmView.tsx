@@ -178,7 +178,7 @@ export default function CrmView() {
                     <h3 className="text-[15px] font-semibold text-[#0d0d0d]">
                       {connectedCard.name}
                     </h3>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#22c55e] border border-[#bbf7d0]">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]">
                       <CheckCircle2 className="size-3" />
                       Подключено
                     </span>
@@ -227,7 +227,7 @@ export default function CrmView() {
                 </button>
                 <button
                   onClick={() => setConfirmId(connectedCard.id)}
-                  className="inline-flex items-center gap-1.5 border border-[#fda4af]/30 bg-[#fce7f3]/50 text-[#e11d48] px-3.5 py-2 rounded-[7px] text-[12.5px] font-medium hover:bg-[#fce7f3] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 border border-[#fecdd3]/50 bg-[#fce7f3]/50 text-[#be123c] px-3.5 py-2 rounded-[7px] text-[12.5px] font-medium hover:bg-[#fce7f3] transition-colors cursor-pointer"
                 >
                   <XCircle className="size-3.5" />
                   Отключить

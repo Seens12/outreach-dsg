@@ -80,7 +80,7 @@ const greenLevels = [
   'bg-[#dcfce7]', // 1-2
   'bg-[#bbf7d0]', // 3-4
   'bg-[#a7f3d0]', // 5-6
-  'bg-[#86efac]', // 7-8
+  'bg-[#bbf7d0]', // 7-8
   'bg-[#6ee7b7]', // 9-10
 ]
 
@@ -96,7 +96,7 @@ function getHeatColor(v: number): string {
 const insights = [
   {
     icon: TrendingUp,
-    color: 'text-[#22c55e] bg-[#dcfce7]',
+    color: 'text-[#15803d] bg-[#dcfce7]',
     text: 'Вторники показывают на 34% больше ответов по сравнению с другими днями недели',
   },
   {
@@ -106,7 +106,7 @@ const insights = [
   },
   {
     icon: Clock,
-    color: 'text-[#d97706] bg-[#fef3c7]',
+    color: 'text-[#a16207] bg-[#fafafa]',
     text: 'Follow-up через 3 дня оптимальный: конверсия на 18% выше, чем через 1 день',
   },
 ]
@@ -128,7 +128,7 @@ const metricCards = [
     trendUp: true,
     icon: MailOpen,
     iconBg: 'bg-[#dcfce7]',
-    iconColor: 'text-[#22c55e]',
+    iconColor: 'text-[#15803d]',
   },
   {
     label: 'Ответы',
@@ -137,7 +137,7 @@ const metricCards = [
     trendUp: false,
     icon: MessageSquare,
     iconBg: 'bg-[#fce7f3]',
-    iconColor: 'text-[#e11d48]',
+    iconColor: 'text-[#be123c]',
   },
   {
     label: 'Конверсия',
@@ -145,8 +145,8 @@ const metricCards = [
     trend: '+0.4%',
     trendUp: true,
     icon: ArrowUpRight,
-    iconBg: 'bg-[#fef3c7]',
-    iconColor: 'text-[#d97706]',
+    iconBg: 'bg-[#fafafa]',
+    iconColor: 'text-[#a16207]',
   },
 ]
 
@@ -279,13 +279,13 @@ export default function AnalyticsView() {
                   </div>
                   <div className="flex items-center gap-1 mt-1">
                     {m.trendUp ? (
-                      <TrendingUp className="w-3.5 h-3.5 text-[#22c55e]" />
+                      <TrendingUp className="w-3.5 h-3.5 text-[#15803d]" />
                     ) : (
-                      <TrendingDown className="w-3.5 h-3.5 text-[#e11d48]" />
+                      <TrendingDown className="w-3.5 h-3.5 text-[#be123c]" />
                     )}
                     <span
                       className={`text-[12px] font-semibold ${
-                        m.trendUp ? 'text-[#22c55e]' : 'text-[#e11d48]'
+                        m.trendUp ? 'text-[#15803d]' : 'text-[#be123c]'
                       }`}
                     >
                       {m.trend}
@@ -320,8 +320,8 @@ export default function AnalyticsView() {
                   <stop offset="95%" stopColor="#0d0d0d" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="replyGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#15803d" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#15803d" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -356,11 +356,11 @@ export default function AnalyticsView() {
                 type="monotone"
                 dataKey="replies"
                 name="Ответы"
-                stroke="#22c55e"
+                stroke="#15803d"
                 strokeWidth={2}
                 fill="url(#replyGradient)"
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 2, fill: '#fff', stroke: '#22c55e' }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: '#fff', stroke: '#15803d' }}
               />
             </AreaChart>
           </ResponsiveContainer>

@@ -43,8 +43,8 @@ type ViewTab = 'month' | 'week' | 'day'
 
 const eventDotColors: Record<EventKind, string> = {
   campaign: 'bg-[#3b82f6]',
-  'follow-up': 'bg-[#22c55e]',
-  demo: 'bg-[#d97706]',
+  'follow-up': 'bg-[#15803d]',
+  demo: 'bg-[#a16207]',
   'ai-action': 'bg-[#7c3aed]',
 }
 

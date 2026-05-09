@@ -41,8 +41,8 @@ const filterOptions: { key: FilterKey; label: string }[] = [
 ]
 
 const statusConfig: Record<Lead['status'], { label: string; className: string }> = {
-  hot: { label: 'Горячий', className: 'bg-[#fce7f3] text-[#e11d48]' },
-  warm: { label: 'Тёплый', className: 'bg-[#fef3c7] text-[#d97706]' },
+  hot: { label: 'Горячий', className: 'bg-[#fce7f3] text-[#be123c]' },
+  warm: { label: 'Тёплый', className: 'bg-[#fafafa] text-[#a16207]' },
   cold: { label: 'Холодный', className: 'bg-[#dbeafe] text-[#3b82f6]' },
   inwork: { label: 'В работе', className: 'bg-[#ede9fe] text-[#7c3aed]' },
 }

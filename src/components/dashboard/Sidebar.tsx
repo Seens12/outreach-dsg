@@ -453,7 +453,7 @@ export function Sidebar() {
                 Настройки
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-[#e8e8e8]" />
-              <DropdownMenuItem onClick={() => toast.info('Выход из аккаунта')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#dc2626] focus:bg-[#fef2f2] focus:text-[#dc2626]">
+              <DropdownMenuItem onClick={() => toast.info('Выход из аккаунта')} className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] text-[#be123c] focus:bg-[#fef2f2] focus:text-[#be123c]">
                 <LogOut className="w-[14px] h-[14px]" strokeWidth={1.8} />
                 Выйти
               </DropdownMenuItem>

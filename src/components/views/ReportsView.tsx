@@ -132,21 +132,21 @@ const statusConfig: Record<
 > = {
   ready: {
     label: 'Готов',
-    color: 'text-[#22c55e]',
+    color: 'text-[#15803d]',
     bgColor: 'bg-[#dcfce7]',
     borderColor: 'border-[#bbf7d0]',
     Icon: CheckCircle2,
   },
   in_progress: {
     label: 'В процессе',
-    color: 'text-[#d97706]',
-    bgColor: 'bg-[#fef3c7]',
-    borderColor: 'border-[#fde68a]',
+    color: 'text-[#a16207]',
+    bgColor: 'bg-[#fafafa]',
+    borderColor: 'border-[#e8e8e8]',
     Icon: Loader2,
   },
   error: {
     label: 'Ошибка',
-    color: 'text-[#e11d48]',
+    color: 'text-[#be123c]',
     bgColor: 'bg-[#fce7f3]',
     borderColor: 'border-[#fbcfe8]',
     Icon: AlertCircle,
@@ -301,7 +301,7 @@ export default function ReportsView() {
                   <button
                     onClick={() => setConfirmId(report.id)}
                     aria-label="Удалить"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-[#737373] hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-[#737373] hover:text-[#be123c] hover:bg-[#fef2f2] transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

@@ -41,9 +41,9 @@ interface ActivityItem {
 const actionConfig: Record<ActionKind, { label: string; dotColor: string; icon: typeof Send; iconBg: string; iconColor: string }> = {
   sent: { label: 'Отправлено', dotColor: 'bg-[#3b82f6]', icon: Send, iconBg: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
   'ai-reply': { label: 'AI ответ', dotColor: 'bg-[#7c3aed]', icon: Bot, iconBg: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
-  lead: { label: 'Лид', dotColor: 'bg-[#e11d48]', icon: Flame, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
-  meeting: { label: 'Встреча', dotColor: 'bg-[#d97706]', icon: Users, iconBg: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
-  received: { label: 'Получено', dotColor: 'bg-[#22c55e]', icon: Mail, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#22c55e]' },
+  lead: { label: 'Лид', dotColor: 'bg-[#be123c]', icon: Flame, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#be123c]' },
+  meeting: { label: 'Встреча', dotColor: 'bg-[#a16207]', icon: Users, iconBg: 'bg-[#fafafa]', iconColor: 'text-[#a16207]' },
+  received: { label: 'Получено', dotColor: 'bg-[#15803d]', icon: Mail, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#15803d]' },
 }
 
 const typeFilterOptions = [

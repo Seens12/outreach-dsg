@@ -38,7 +38,7 @@ const quickActions = [
 const metrics = [
   { label: 'Активные кампании', value: '3', trend: '+12%', icon: Megaphone, iconBg: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
   { label: 'Всего контактов', value: '1 247', trend: '+17%', icon: Users, iconBg: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
-  { label: 'Горячих лидов', value: '8', trend: '+60%', icon: Flame, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
+  { label: 'Горячих лидов', value: '8', trend: '+60%', icon: Flame, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#be123c]' },
   { label: 'AI-диалогов сегодня', value: '45', trend: '+8%', icon: Bot, iconBg: 'bg-[#cffafe]', iconColor: 'text-[#0891b2]' },
 ]
 
@@ -77,10 +77,10 @@ const attentionItems = [
 
 const dotColor: Record<string, string> = {
   sent: 'bg-[#3b82f6]',
-  received: 'bg-[#22c55e]',
-  lead: 'bg-[#e11d48]',
+  received: 'bg-[#15803d]',
+  lead: 'bg-[#be123c]',
   ai: 'bg-[#7c3aed]',
-  meeting: 'bg-[#d97706]',
+  meeting: 'bg-[#a16207]',
 }
 
 /* ── Component ─────────────────────────────────────────── */
@@ -137,7 +137,7 @@ export default function DashboardView() {
               <div className="text-[24px] font-semibold text-[#0d0d0d] mt-2 tracking-tight">
                 {m.value}
               </div>
-              <div className="flex items-center gap-1 mt-1 text-[12px] font-medium text-[#22c55e]">
+              <div className="flex items-center gap-1 mt-1 text-[12px] font-medium text-[#15803d]">
                 <TrendingUp className="w-3 h-3" />
                 {m.trend}
               </div>

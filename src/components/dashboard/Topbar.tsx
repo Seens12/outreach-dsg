@@ -113,7 +113,7 @@ export function Topbar() {
           <DropdownMenuTrigger asChild>
             <button aria-label="Уведомления" className="w-[30px] h-[30px] flex items-center justify-center rounded-lg border-none bg-transparent cursor-pointer text-[#a8a8a8] hover:bg-[#0d0d0d] hover:text-white transition-all duration-[160ms] relative">
               <Bell className="w-[15px] h-[15px]" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-              <div className="absolute top-[5px] right-[5px] w-[7px] h-[7px] bg-[#dc2626] rounded-full border-[1.5px] border-white" />
+              <div className="absolute top-[5px] right-[5px] w-[7px] h-[7px] bg-[#be123c] rounded-full border-[1.5px] border-white" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[280px] rounded-[10px] border-[#e8e8e8] bg-white p-1" side="bottom" align="end">

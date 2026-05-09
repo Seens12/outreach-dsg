@@ -91,9 +91,9 @@ const domains: Domain[] = [
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<DomainStatus, { label: string; className: string }> = {
-  verified: { label: 'Прогрев завершён', className: 'bg-[#dcfce7] text-[#22c55e]' },
-  warming: { label: 'В прогреве', className: 'bg-[#fef3c7] text-[#d97706]' },
-  issues: { label: 'С проблемами', className: 'bg-[#fce7f3] text-[#e11d48]' },
+  verified: { label: 'Прогрев завершён', className: 'bg-[#dcfce7] text-[#15803d]' },
+  warming: { label: 'В прогреве', className: 'bg-[#fafafa] text-[#a16207]' },
+  issues: { label: 'С проблемами', className: 'bg-[#fce7f3] text-[#be123c]' },
 }
 
 // ---------------------------------------------------------------------------
@@ -200,11 +200,11 @@ export default function DomainsView() {
                         className="flex items-center gap-1.5 text-[12px]"
                       >
                         {rec.ok ? (
-                          <Check className="h-3.5 w-3.5 text-[#22c55e]" />
+                          <Check className="h-3.5 w-3.5 text-[#15803d]" />
                         ) : (
-                          <X className="h-3.5 w-3.5 text-[#e11d48]" />
+                          <X className="h-3.5 w-3.5 text-[#be123c]" />
                         )}
-                        <span className={rec.ok ? 'text-[#22c55e]' : 'text-[#e11d48]'}>
+                        <span className={rec.ok ? 'text-[#15803d]' : 'text-[#be123c]'}>
                           {rec.label}
                         </span>
                       </div>

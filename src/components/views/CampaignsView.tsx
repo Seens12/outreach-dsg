@@ -130,8 +130,8 @@ const statusConfig: Record<
   active: {
     label: 'Активная',
     bg: 'bg-[#dcfce7]',
-    text: 'text-[#22c55e]',
-    dot: 'bg-[#22c55e]',
+    text: 'text-[#15803d]',
+    dot: 'bg-[#15803d]',
   },
   draft: {
     label: 'Черновик',

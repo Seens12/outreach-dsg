@@ -158,7 +158,7 @@ export default function AdminTenantsView() {
                           variant="ghost"
                           size="icon"
                           aria-label="Удалить"
-                          className="h-8 w-8 text-[#a8a8a8] hover:text-[#dc2626]"
+                          className="h-8 w-8 text-[#a8a8a8] hover:text-[#be123c]"
                           onClick={() => setConfirmId(t.name)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />

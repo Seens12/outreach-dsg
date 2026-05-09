@@ -66,7 +66,7 @@ const sources: KnowledgeSource[] = [
     meta: 'Версия 2.1 · Действителен до 1 сент',
     status: 'Активен',
     ttl: 'TTL: 115 дней',
-    ttlColor: 'text-[#d97706]',
+    ttlColor: 'text-[#a16207]',
   },
   {
     id: '3',
@@ -93,7 +93,7 @@ const sources: KnowledgeSource[] = [
     meta: 'Версия 1.3 · Нужно обновить',
     status: 'Устаревает',
     ttl: 'TTL: 7 дней',
-    ttlColor: 'text-[#e11d48]',
+    ttlColor: 'text-[#be123c]',
   },
   {
     id: '6',
@@ -118,10 +118,10 @@ const statusStyles: Record<SourceStatus, string> = {
 
 const typeConfig: Record<SourceType, { icon: typeof Globe; iconBg: string; iconColor: string }> = {
   web: { icon: Globe, iconBg: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
-  price: { icon: DollarSign, iconBg: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
-  cases: { icon: BookOpen, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#22c55e]' },
+  price: { icon: DollarSign, iconBg: 'bg-[#fafafa]', iconColor: 'text-[#a16207]' },
+  cases: { icon: BookOpen, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#15803d]' },
   faq: { icon: HelpCircle, iconBg: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
-  scripts: { icon: FileText, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
+  scripts: { icon: FileText, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#be123c]' },
 }
 
 const coverageTopics = [
@@ -133,16 +133,16 @@ const coverageTopics = [
 ]
 
 function coverageColor(pct: number): string {
-  if (pct >= 75) return 'bg-[#86efac]'
-  if (pct >= 50) return 'bg-[#fcd34d]'
-  return 'bg-[#fda4af]'
+  if (pct >= 75) return 'bg-[#bbf7d0]'
+  if (pct >= 50) return 'bg-[#fde68a]'
+  return 'bg-[#fecdd3]'
 }
 
 function coveragePctColor(pct: number): string {
-  if (pct >= 75) return 'text-[#22c55e]'
-  if (pct >= 50) return 'text-[#d97706]'
-  if (pct > 0) return 'text-[#e11d48]'
-  return 'text-[#e11d48]'
+  if (pct >= 75) return 'text-[#15803d]'
+  if (pct >= 50) return 'text-[#a16207]'
+  if (pct > 0) return 'text-[#be123c]'
+  return 'text-[#be123c]'
 }
 
 // ---------------------------------------------------------------------------
@@ -187,13 +187,13 @@ export default function KnowledgeBaseView() {
               Агент может обработать 68% входящих самостоятельно
             </div>
           </div>
-          <div className="text-[22px] font-bold text-[#d97706]">68%</div>
+          <div className="text-[22px] font-bold text-[#a16207]">68%</div>
         </div>
 
         {/* Main coverage bar */}
         <div className="w-full h-2 bg-[#fafafa] rounded-full overflow-hidden mb-4">
           <div
-            className="h-full rounded-full bg-[#d97706] transition-all duration-500"
+            className="h-full rounded-full bg-[#a16207] transition-all duration-500"
             style={{ width: '68%' }}
           />
         </div>

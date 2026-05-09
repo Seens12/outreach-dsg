@@ -216,7 +216,7 @@ export default function ChatView() {
 
           {/* Status */}
           <div className="flex items-center gap-2 mb-10">
-            <span className="status-pulse w-2 h-2 rounded-full bg-[#16a34a] inline-block" />
+            <span className="status-pulse w-2 h-2 rounded-full bg-[#15803d] inline-block" />
             <span className="text-[12.5px] text-[#525252] font-medium">
               Агент готов к работе
             </span>
@@ -317,7 +317,7 @@ export default function ChatView() {
           <div className="flex flex-wrap gap-1.5 mb-2">
             <div className="group relative flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[#f5f5f5] border border-[#e8e8e8] hover:border-[#d4d4d4] transition-colors cursor-default max-w-[180px]">
               <div className="w-6 h-6 rounded-[4px] bg-[#dcfce7] flex items-center justify-center shrink-0">
-                <FileSpreadsheet className="w-3.5 h-3.5 text-[#16a34a]" />
+                <FileSpreadsheet className="w-3.5 h-3.5 text-[#15803d]" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[11.5px] font-medium text-[#171717] truncate leading-tight">Компании_outreach.xlsx</div>

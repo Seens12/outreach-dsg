@@ -26,21 +26,21 @@ const statCards = [
     value: '156',
     icon: Users,
     change: '+18 за месяц',
-    color: 'text-[#16a34a]',
+    color: 'text-[#15803d]',
   },
   {
     label: 'Активные сессии',
     value: '89',
     icon: Activity,
     change: 'Сейчас онлайн',
-    color: 'text-[#d97706]',
+    color: 'text-[#a16207]',
   },
   {
     label: 'Системная нагрузка',
     value: '32%',
     icon: Cpu,
     change: 'Норма',
-    color: 'text-[#16a34a]',
+    color: 'text-[#15803d]',
   },
 ]
 
@@ -62,25 +62,25 @@ const recentActivity = [
     icon: Settings,
     text: 'Тенант "DataFlow" обновил настройки почты',
     time: '23 мин назад',
-    color: 'text-[#d97706]',
+    color: 'text-[#a16207]',
   },
   {
     icon: CheckCircle,
     text: 'Backup базы данных завершён успешно',
     time: '1 час назад',
-    color: 'text-[#16a34a]',
+    color: 'text-[#15803d]',
   },
   {
     icon: AlertTriangle,
     text: 'Высокая нагрузка на email-сервер (восстановлено)',
     time: '2 часа назад',
-    color: 'text-[#d97706]',
+    color: 'text-[#a16207]',
   },
   {
     icon: UserPlus,
     text: 'Новый тенант создан: "CloudSync Solutions"',
     time: '3 часа назад',
-    color: 'text-[#16a34a]',
+    color: 'text-[#15803d]',
   },
 ]
 

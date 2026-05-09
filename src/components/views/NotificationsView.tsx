@@ -120,15 +120,15 @@ const notifications: Notification[] = [
 
 const typeConfig: Record<NotificationType, { icon: React.ElementType; bgClass: string; iconColor: string }> = {
   user: { icon: User, bgClass: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
-  alert: { icon: AlertTriangle, bgClass: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
-  calendar: { icon: CalendarClock, bgClass: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
+  alert: { icon: AlertTriangle, bgClass: 'bg-[#fce7f3]', iconColor: 'text-[#be123c]' },
+  calendar: { icon: CalendarClock, bgClass: 'bg-[#fafafa]', iconColor: 'text-[#a16207]' },
   mail: { icon: Mail, bgClass: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
   system: { icon: Zap, bgClass: 'bg-[#cffafe]', iconColor: 'text-[#0891b2]' },
 }
 
 const priorityConfig: Record<NotificationPriority, { label: string; className: string }> = {
-  high: { label: 'Высокий', className: 'bg-[#fce7f3] text-[#e11d48]' },
-  medium: { label: 'Средний', className: 'bg-[#fef3c7] text-[#d97706]' },
+  high: { label: 'Высокий', className: 'bg-[#fce7f3] text-[#be123c]' },
+  medium: { label: 'Средний', className: 'bg-[#fafafa] text-[#a16207]' },
   low: { label: 'Низкий', className: 'bg-[#dbeafe] text-[#3b82f6]' },
 }
 

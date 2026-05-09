@@ -79,21 +79,21 @@ const mailboxes: Mailbox[] = [
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<MailboxStatus, { label: string; className: string }> = {
-  active: { label: 'Активен', className: 'bg-[#dcfce7] text-[#22c55e]' },
-  warming: { label: 'Прогрев', className: 'bg-[#fef3c7] text-[#d97706]' },
-  paused: { label: 'Пауза', className: 'bg-[#fce7f3] text-[#e11d48]' },
+  active: { label: 'Активен', className: 'bg-[#dcfce7] text-[#15803d]' },
+  warming: { label: 'Прогрев', className: 'bg-[#fafafa] text-[#a16207]' },
+  paused: { label: 'Пауза', className: 'bg-[#fce7f3] text-[#be123c]' },
 }
 
 function spamRateColor(rate: number): string {
-  if (rate <= 0.1) return 'color:#22c55e;font-weight:600'
-  if (rate <= 0.5) return 'color:#d97706;font-weight:600'
-  return 'color:#e11d48;font-weight:600'
+  if (rate <= 0.1) return 'color:#15803d;font-weight:600'
+  if (rate <= 0.5) return 'color:#a16207;font-weight:600'
+  return 'color:#be123c;font-weight:600'
 }
 
 function spamRateClass(rate: number): string {
-  if (rate <= 0.1) return 'text-[#22c55e] font-semibold'
-  if (rate <= 0.5) return 'text-[#d97706] font-semibold'
-  return 'text-[#e11d48] font-semibold'
+  if (rate <= 0.1) return 'text-[#15803d] font-semibold'
+  if (rate <= 0.5) return 'text-[#a16207] font-semibold'
+  return 'text-[#be123c] font-semibold'
 }
 
 function warmingClass(mb: Mailbox): string {
@@ -190,13 +190,13 @@ export default function MailboxesView() {
       </div>
 
       {/* Warning alert */}
-      <div className="bg-[#fef3c7]/50 border border-[#fde68a] rounded-[10px] p-4 flex gap-3 items-start">
-        <AlertCircle className="w-[15px] h-[15px] text-[#d97706] shrink-0 mt-0.5" />
+      <div className="bg-[#fafafa] border border-[#e8e8e8] rounded-[10px] p-4 flex gap-3 items-start">
+        <AlertCircle className="w-[15px] h-[15px] text-[#737373] shrink-0 mt-0.5" />
         <div className="text-[13px] text-[#404040] leading-[1.5]">
           Ящик <strong>info@outreach2.ru</strong> приостановлен автоматически: spam rate 0.92%
           (порог 0.5%). Рекомендации: проверить список получателей, снизить дневной лимит.{' '}
           <span
-            className="text-[#e11d48] font-semibold cursor-pointer hover:underline"
+            className="text-[#be123c] font-semibold cursor-pointer hover:underline"
             onClick={() => toast.info('Агент анализирует проблему')}
           >
             Попросить агента разобраться →

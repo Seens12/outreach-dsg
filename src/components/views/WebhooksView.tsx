@@ -157,13 +157,13 @@ export default function WebhooksView() {
                     <span
                       className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-[3px] rounded-[6px] text-[12px] ${
                         webhook.active
-                          ? 'bg-[#dcfce7] text-[#22c55e] border border-[#bbf7d0]'
+                          ? 'bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]'
                           : 'bg-[#f5f5f5] text-[#a3a3a3] border border-[#e8e8e8]'
                       }`}
                     >
                       <span
                         className={`size-1.5 rounded-full ${
-                          webhook.active ? 'bg-[#22c55e]' : 'bg-[#a3a3a3]'
+                          webhook.active ? 'bg-[#15803d]' : 'bg-[#a3a3a3]'
                         }`}
                       />
                       {webhook.active ? 'Активен' : 'Отключен'}

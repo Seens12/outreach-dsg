@@ -107,13 +107,13 @@ export default function AdminBillingView() {
                 Месячная выручка (MRR)
               </span>
               <div className="w-9 h-9 rounded-[8px] bg-[#fafafa] flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-[#16a34a]" />
+                <TrendingUp className="w-4 h-4 text-[#15803d]" />
               </div>
             </div>
             <div className="text-2xl font-semibold text-[#171717]">
               $4 127
             </div>
-            <div className="text-[12px] text-[#16a34a] mt-1 flex items-center gap-1">
+            <div className="text-[12px] text-[#15803d] mt-1 flex items-center gap-1">
               <TrendingUp className="w-3 h-3" />
               +12.5% к прошлому месяцу
             </div>
@@ -171,7 +171,7 @@ export default function AdminBillingView() {
                       variant="ghost"
                       size="icon"
                       aria-label="Удалить"
-                      className="h-7 w-7 text-[#a8a8a8] hover:text-[#dc2626]"
+                      className="h-7 w-7 text-[#a8a8a8] hover:text-[#be123c]"
                       onClick={() => setConfirmId(plan.name)}
                     >
                       <Trash2 className="w-3 h-3" />
@@ -190,7 +190,7 @@ export default function AdminBillingView() {
                       key={f}
                       className="flex items-center gap-2 text-[13px] text-[#525252]"
                     >
-                      <CheckCircle className="w-3.5 h-3.5 text-[#16a34a] flex-shrink-0" />
+                      <CheckCircle className="w-3.5 h-3.5 text-[#15803d] flex-shrink-0" />
                       {f}
                     </li>
                   ))}

@@ -99,9 +99,9 @@ const securityChecks: SecurityCheck[] = [
 // ---------------------------------------------------------------------------
 
 const statusIcon: Record<SecurityCheck['status'], { icon: React.ElementType; className: string; bgClass: string }> = {
-  ok: { icon: CheckCircle2, className: 'text-[#22c55e]', bgClass: 'bg-[#dcfce7]' },
-  warning: { icon: AlertCircle, className: 'text-[#d97706]', bgClass: 'bg-[#fef3c7]' },
-  error: { icon: XCircle, className: 'text-[#e11d48]', bgClass: 'bg-[#fce7f3]' },
+  ok: { icon: CheckCircle2, className: 'text-[#15803d]', bgClass: 'bg-[#dcfce7]' },
+  warning: { icon: AlertCircle, className: 'text-[#a16207]', bgClass: 'bg-[#fafafa]' },
+  error: { icon: XCircle, className: 'text-[#be123c]', bgClass: 'bg-[#fce7f3]' },
 }
 
 // ---------------------------------------------------------------------------
@@ -129,7 +129,7 @@ export default function SecurityView() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#dcfce7]">
-                <ShieldCheck className="w-5 h-5 text-[#22c55e]" />
+                <ShieldCheck className="w-5 h-5 text-[#15803d]" />
               </div>
               <div>
                 <p className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">
@@ -144,7 +144,7 @@ export default function SecurityView() {
               </div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#22c55e]">
+              <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#15803d]">
                 Хороший уровень
               </span>
             </div>
@@ -162,7 +162,7 @@ export default function SecurityView() {
               <circle
                 cx="50" cy="50" r="42"
                 fill="none"
-                stroke="#22c55e"
+                stroke="#15803d"
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 42}`}
@@ -210,7 +210,7 @@ export default function SecurityView() {
                     </span>
                     <span className={cn(
                       'text-[14px] font-bold',
-                      cat.score >= 90 ? 'text-[#22c55e]' : cat.score >= 80 ? 'text-[#d97706]' : 'text-[#e11d48]'
+                      cat.score >= 90 ? 'text-[#15803d]' : cat.score >= 80 ? 'text-[#a16207]' : 'text-[#be123c]'
                     )}>
                       {cat.score}
                     </span>
@@ -219,7 +219,7 @@ export default function SecurityView() {
                     <div
                       className={cn(
                         'h-full rounded-full transition-all duration-500',
-                        cat.score >= 90 ? 'bg-[#86efac]' : cat.score >= 80 ? 'bg-[#fcd34d]' : 'bg-[#fda4af]'
+                        cat.score >= 90 ? 'bg-[#bbf7d0]' : cat.score >= 80 ? 'bg-[#fde68a]' : 'bg-[#fecdd3]'
                       )}
                       style={{ width: `${cat.score}%` }}
                     />
@@ -267,17 +267,17 @@ export default function SecurityView() {
                       {check.title}
                     </h3>
                     {check.status === 'ok' && (
-                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#22c55e]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#15803d]">
                         Включена
                       </span>
                     )}
                     {check.status === 'warning' && (
-                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fef3c7] text-[#d97706]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fafafa] text-[#a16207]">
                         Средняя
                       </span>
                     )}
                     {check.status === 'error' && (
-                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fce7f3] text-[#e11d48]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fce7f3] text-[#be123c]">
                         Не настроено
                       </span>
                     )}

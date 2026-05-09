@@ -58,7 +58,7 @@ export default function AdminSystemView() {
             </div>
             <div className="flex items-center justify-between py-2 border-t border-[#e8e8e8]">
               <div className="flex items-center gap-3">
-                <AlertTriangle className="w-4 h-4 text-[#d97706]" />
+                <AlertTriangle className="w-4 h-4 text-[#737373]" />
                 <div>
                   <div className="text-[13px] font-medium text-[#171717]">Режим обслуживания</div>
                   <div className="text-[12px] text-[#a8a8a8]">Отключить доступ для всех пользователей</div>
@@ -169,7 +169,7 @@ export default function AdminSystemView() {
             </div>
             <div className="flex items-center justify-between py-2 border-t border-[#e8e8e8]">
               <div className="text-[13px] font-medium text-[#171717]">Задач в очереди</div>
-              <span className="text-[13px] font-semibold text-[#16a34a]">3 (обработка)</span>
+              <span className="text-[13px] font-semibold text-[#15803d]">3 (обработка)</span>
             </div>
             <div className="flex items-center justify-between py-2 border-t border-[#e8e8e8]">
               <div className="text-[13px] font-medium text-[#171717]">Обработано за 24ч</div>

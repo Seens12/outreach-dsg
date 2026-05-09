@@ -68,7 +68,7 @@ export default function ForgotPasswordView() {
           ) : (
             <div className="text-center py-4">
               <div className="w-14 h-14 rounded-full bg-[#f0fdf4] flex items-center justify-center mx-auto mb-4">
-                <MailCheck className="w-7 h-7 text-[#16a34a]" />
+                <MailCheck className="w-7 h-7 text-[#15803d]" />
               </div>
               <h2 className="text-xl font-semibold text-[#171717] mb-2">
                 Письмо отправлено!

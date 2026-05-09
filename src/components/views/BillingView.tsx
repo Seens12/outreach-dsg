@@ -57,8 +57,8 @@ const payments: Payment[] = [
 ]
 
 const statusStyles: Record<string, string> = {
-  'Оплачено': 'bg-[#dcfce7] text-[#22c55e]',
-  'В обработке': 'bg-[#fef3c7] text-[#d97706]',
+  'Оплачено': 'bg-[#dcfce7] text-[#15803d]',
+  'В обработке': 'bg-[#fafafa] text-[#a16207]',
 }
 
 /* ── Component ─────────────────────────────────────────── */
@@ -80,8 +80,8 @@ export default function BillingView() {
       <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-5 shadow-card">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-11 h-11 rounded-[10px] bg-[#fef3c7] shrink-0">
-              <Crown className="w-5 h-5 text-[#d97706]" />
+            <div className="flex items-center justify-center w-11 h-11 rounded-[10px] bg-[#fafafa] shrink-0">
+              <Crown className="w-5 h-5 text-[#a16207]" />
             </div>
             <div>
               <div className="flex items-center gap-2">

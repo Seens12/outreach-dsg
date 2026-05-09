@@ -333,7 +333,7 @@ export default function TemplatesView() {
                   </button>
                   <button
                     onClick={() => setDeleteId(template.id)}
-                    className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#dc2626] px-3 py-1.5 rounded-[7px] text-[12px] font-medium hover:bg-[#dc2626]/5 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 border border-[#e8e8e8] bg-white text-[#be123c] px-3 py-1.5 rounded-[7px] text-[12px] font-medium hover:bg-[#be123c]/5 transition-colors cursor-pointer"
                   >
                     <Trash2 className="size-3.5" />
                   </button>

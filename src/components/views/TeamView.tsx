@@ -67,15 +67,15 @@ const members: TeamMember[] = [
 // ---------------------------------------------------------------------------
 
 const roleConfig: Record<MemberRole, { className: string }> = {
-  'Владелец': { className: 'bg-[#fef3c7] text-[#d97706]' },
+  'Владелец': { className: 'bg-[#fafafa] text-[#a16207]' },
   'Админ': { className: 'bg-[#ede9fe] text-[#7c3aed]' },
   'Менеджер': { className: 'bg-[#dbeafe] text-[#3b82f6]' },
-  'Специалист': { className: 'bg-[#dcfce7] text-[#22c55e]' },
+  'Специалист': { className: 'bg-[#dcfce7] text-[#15803d]' },
 }
 
 const statusConfig: Record<MemberStatus, { label: string; dotClass: string }> = {
-  online: { label: 'Онлайн', dotClass: 'bg-[#22c55e]' },
-  training: { label: 'Обучение', dotClass: 'bg-[#d97706]' },
+  online: { label: 'Онлайн', dotClass: 'bg-[#15803d]' },
+  training: { label: 'Обучение', dotClass: 'bg-[#a16207]' },
   offline: { label: 'Оффлайн', dotClass: 'bg-[#a3a3a3]' },
 }
 
