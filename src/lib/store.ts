@@ -44,22 +44,24 @@ export type ViewId =
   | 'admin-logs'
   | 'admin-billing'
 
+export type AppMode = 'chat' | 'expanded'
+
 interface AppState {
   view: ViewId
+  mode: AppMode
   sidebarOpen: boolean
-  isInbox: boolean
   setView: (view: ViewId) => void
+  setMode: (mode: AppMode) => void
   toggleSidebar: () => void
-  setInbox: (v: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
   view: 'dashboard',
+  mode: 'chat',
   sidebarOpen: true,
-  isInbox: true,
-  setView: (view) => set({ view }),
+  setView: (view) => set({ view, mode: 'expanded' }),
+  setMode: (mode) => set({ mode }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-  setInbox: (v) => set({ isInbox: v }),
 }))
 
 export const viewMeta: Record<ViewId, { title: string; group?: string }> = {

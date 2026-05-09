@@ -2,6 +2,7 @@
 
 import { useAppStore, viewMeta, type ViewId } from '@/lib/store'
 import {
+  Bot,
   LayoutDashboard,
   Megaphone,
   Inbox,
@@ -23,10 +24,8 @@ import {
   CreditCard,
   Shield,
   Settings,
-  Bot,
   HelpCircle,
   ChevronDown,
-  PanelLeftClose,
   Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -96,7 +95,6 @@ const navGroups: NavGroup[] = [
   {
     label: 'Поддержка',
     items: [
-      { id: 'ai-demo', icon: Bot },
       { id: 'help', icon: HelpCircle },
     ],
   },
@@ -114,7 +112,7 @@ const navGroups: NavGroup[] = [
 ]
 
 export function Sidebar() {
-  const { view, setView, sidebarOpen, toggleSidebar } = useAppStore()
+  const { view, mode, setView, setMode, sidebarOpen, toggleSidebar } = useAppStore()
 
   return (
     <aside
@@ -145,7 +143,7 @@ export function Sidebar() {
             </div>
             {group.items.map((item) => {
               const Icon = item.icon
-              const isActive = view === item.id
+              const isActive = mode === 'expanded' && view === item.id
               return (
                 <button
                   key={item.id}
@@ -153,8 +151,8 @@ export function Sidebar() {
                   className={cn(
                     'w-full flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
                     isActive
-                      ? 'bg-white text-[#171717] shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]'
-                      : 'text-[#525252] hover:bg-[#efefef] hover:text-[#171717]'
+                      ? 'bg-[#0d0d0d] text-white'
+                      : 'text-[#525252] hover:bg-[#0d0d0d] hover:text-white'
                   )}
                 >
                   <Icon
@@ -168,7 +166,7 @@ export function Sidebar() {
                     <span
                       className={cn(
                         'text-[10.5px] font-semibold min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full',
-                        isActive ? 'bg-[#0d0d0d] text-white' : 'bg-[#e8e8e8] text-[#525252]'
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#e8e8e8] text-[#525252]'
                       )}
                     >
                       {item.badge}
@@ -188,18 +186,18 @@ export function Sidebar() {
       <div className="border-t border-[#e8e8e8] px-3 py-2.5">
         <button
           onClick={toggleSidebar}
-          className="w-full flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-[#efefef] transition-all duration-[160ms]"
+          className="w-full flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-[#0d0d0d] hover:text-white transition-all duration-[160ms] group"
         >
-          <div className="w-7 h-7 rounded-full bg-[#0d0d0d] text-white text-[10.5px] font-bold flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#0d0d0d] text-white text-[10.5px] font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:text-[#0d0d0d] transition-colors">
             АК
           </div>
           <div className="flex-1 min-w-0 text-left">
             <div className="text-[12.5px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
               Алексей Козлов
             </div>
-            <div className="text-[11px] text-[#a8a8a8]">Pro план</div>
+            <div className="text-[11px] text-[#a8a8a8] group-hover:text-white/60 transition-colors">Pro план</div>
           </div>
-          <ChevronDown className="w-3.5 h-3.5 text-[#a8a8a8]" />
+          <ChevronDown className="w-3.5 h-3.5 text-[#a8a8a8] group-hover:text-white/60 transition-colors" />
         </button>
       </div>
     </aside>

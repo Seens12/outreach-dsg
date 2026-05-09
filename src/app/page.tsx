@@ -5,7 +5,7 @@ import { useAppStore, type ViewId } from '@/lib/store'
 import { Sidebar } from '@/components/dashboard/Sidebar'
 import { Topbar } from '@/components/dashboard/Topbar'
 
-// Lazy load all views for performance
+// Lazy load all views
 const views: Record<ViewId, React.LazyExoticComponent<() => JSX.Element>> = {
   dashboard: lazy(() => import('@/components/views/DashboardView')),
   campaigns: lazy(() => import('@/components/views/CampaignsView')),
@@ -41,6 +41,8 @@ const views: Record<ViewId, React.LazyExoticComponent<() => JSX.Element>> = {
   'admin-billing': lazy(() => import('@/components/views/AdminBillingView')),
 }
 
+const ChatViewLazy = lazy(() => import('@/components/views/ChatView'))
+
 const authViews: Set<ViewId> = new Set(['login', 'register', 'forgot-password'])
 
 function LoadingFallback() {
@@ -55,23 +57,17 @@ function LoadingFallback() {
 }
 
 export default function Home() {
-  const { view } = useAppStore()
+  const { view, mode } = useAppStore()
 
   const isAuth = authViews.has(view)
+  const isChat = mode === 'chat' && !isAuth
 
   useEffect(() => {
-    // Set body overflow based on view
-    if (isAuth) {
-      document.body.style.overflow = 'auto'
-    } else {
-      document.body.style.overflow = 'hidden'
-    }
-    return () => {
-      document.body.style.overflow = 'hidden'
-    }
+    document.body.style.overflow = isAuth ? 'auto' : 'hidden'
+    return () => { document.body.style.overflow = 'hidden' }
   }, [isAuth])
 
-  // Auth pages - full screen
+  // Auth pages — full screen, no sidebar
   if (isAuth) {
     const ViewComponent = views[view]
     return (
@@ -81,9 +77,6 @@ export default function Home() {
     )
   }
 
-  // Dashboard layout
-  const ViewComponent = views[view]
-
   return (
     <div className="flex h-screen overflow-hidden bg-white">
       <Sidebar />
@@ -91,7 +84,7 @@ export default function Home() {
         <Topbar />
         <main className="flex-1 overflow-hidden relative">
           <Suspense fallback={<LoadingFallback />}>
-            <ViewComponent />
+            {isChat ? <ChatViewLazy /> : <>{(() => { const V = views[view]; return <V /> })()}</>}
           </Suspense>
         </main>
       </div>
