@@ -40,10 +40,10 @@ const filterOptions: { key: FilterKey; label: string }[] = [
 ]
 
 const statusConfig: Record<Lead['status'], { label: string; className: string }> = {
-  hot: { label: 'Горячий', className: 'bg-[#f5f5f5] text-[#404040]' },
-  warm: { label: 'Тёплый', className: 'bg-[#f5f5f5] text-[#525252]' },
-  cold: { label: 'Холодный', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
-  inwork: { label: 'В работе', className: 'bg-[#f5f5f5] text-[#525252]' },
+  hot: { label: 'Горячий', className: 'bg-[#fce7f3] text-[#e11d48]' },
+  warm: { label: 'Тёплый', className: 'bg-[#fef3c7] text-[#d97706]' },
+  cold: { label: 'Холодный', className: 'bg-[#dbeafe] text-[#3b82f6]' },
+  inwork: { label: 'В работе', className: 'bg-[#ede9fe] text-[#7c3aed]' },
 }
 
 const PAGE_SIZE = 5

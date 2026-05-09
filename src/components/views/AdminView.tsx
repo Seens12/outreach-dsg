@@ -135,7 +135,7 @@ export default function AdminView() {
               Состояние системы
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {healthItems.map((item) => (
                 <div
@@ -164,7 +164,7 @@ export default function AdminView() {
               Последняя активность
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-6">
             <div className="space-y-0">
               {recentActivity.map((item, i) => {
                 const Icon = item.icon

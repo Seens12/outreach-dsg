@@ -42,10 +42,10 @@ type ViewTab = 'month' | 'week' | 'day'
 // ---------------------------------------------------------------------------
 
 const eventDotColors: Record<EventKind, string> = {
-  campaign: 'bg-[#404040]',
-  'follow-up': 'bg-[#737373]',
-  demo: 'bg-[#525252]',
-  'ai-action': 'bg-[#a3a3a3]',
+  campaign: 'bg-[#3b82f6]',
+  'follow-up': 'bg-[#22c55e]',
+  demo: 'bg-[#d97706]',
+  'ai-action': 'bg-[#7c3aed]',
 }
 
 const eventLabels: Record<EventKind, string> = {
@@ -175,7 +175,7 @@ export default function CalendarView() {
               className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-4"
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#fafafa]">
+                <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#fafafa]">
                   <Icon className="w-4 h-4 text-[#525252]" />
                 </div>
                 <span className="text-[12.5px] text-[#737373] font-medium">{s.label}</span>
@@ -314,14 +314,14 @@ export default function CalendarView() {
                     className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#fafafa] shrink-0">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#fafafa] shrink-0">
                         <Icon className="w-4 h-4 text-[#525252]" />
                       </div>
-                      <div>
+                      <div className="flex flex-col justify-center">
                         <span className="text-[13px] font-medium text-[#171717]">
                           {evt.title}
                         </span>
-                        <div className="text-[12px] text-[#a3a3a3] mt-0.5">
+                        <div className="text-[12px] text-[#a3a3a3] leading-tight">
                           {eventLabels[evt.kind]}
                         </div>
                       </div>

@@ -118,7 +118,7 @@ function renderContent(content: string) {
 }
 
 export function AgentPanel() {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const chatEndRef = useRef<HTMLDivElement>(null)

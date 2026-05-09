@@ -117,18 +117,18 @@ const notifications: Notification[] = [
 // Helpers
 // ---------------------------------------------------------------------------
 
-const typeConfig: Record<NotificationType, { icon: React.ElementType; bgClass: string }> = {
-  user: { icon: User, bgClass: 'bg-[#f5f5f5]' },
-  alert: { icon: AlertTriangle, bgClass: 'bg-[#f5f5f5]' },
-  calendar: { icon: CalendarClock, bgClass: 'bg-[#f5f5f5]' },
-  mail: { icon: Mail, bgClass: 'bg-[#f5f5f5]' },
-  system: { icon: Zap, bgClass: 'bg-[#f5f5f5]' },
+const typeConfig: Record<NotificationType, { icon: React.ElementType; bgClass: string; iconColor: string }> = {
+  user: { icon: User, bgClass: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
+  alert: { icon: AlertTriangle, bgClass: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
+  calendar: { icon: CalendarClock, bgClass: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
+  mail: { icon: Mail, bgClass: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
+  system: { icon: Zap, bgClass: 'bg-[#cffafe]', iconColor: 'text-[#0891b2]' },
 }
 
 const priorityConfig: Record<NotificationPriority, { label: string; className: string }> = {
-  high: { label: 'Высокий', className: 'bg-[#f5f5f5] text-[#404040]' },
-  medium: { label: 'Средний', className: 'bg-[#f5f5f5] text-[#525252]' },
-  low: { label: 'Низкий', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+  high: { label: 'Высокий', className: 'bg-[#fce7f3] text-[#e11d48]' },
+  medium: { label: 'Средний', className: 'bg-[#fef3c7] text-[#d97706]' },
+  low: { label: 'Низкий', className: 'bg-[#dbeafe] text-[#3b82f6]' },
 }
 
 type FilterTab = 'unread' | 'mentions' | 'system'
@@ -233,13 +233,13 @@ export default function NotificationsView() {
                   item.unread ? 'border-[#e8e8e8]' : 'border-[#f5f5f5]'
                 )}
               >
-                <div className="flex items-start gap-3.5">
+                <div className="flex items-center gap-3.5">
                   {/* Icon */}
                   <div className={cn(
-                    'flex items-center justify-center w-9 h-9 rounded-[8px] shrink-0 mt-0.5',
+                    'flex items-center justify-center w-10 h-10 rounded-[8px] shrink-0',
                     type.bgClass
                   )}>
-                    <TypeIcon className="w-4 h-4 text-[#525252]" />
+                    <TypeIcon className={cn('w-4 h-4', type.iconColor)} />
                   </div>
 
                   {/* Content */}
@@ -255,7 +255,7 @@ export default function NotificationsView() {
                         {item.title}
                       </h3>
                     </div>
-                    <p className="text-[12.5px] text-[#737373] leading-relaxed mb-2">
+                    <p className="text-[12.5px] text-[#737373] leading-tight mb-2">
                       {item.description}
                     </p>
                     <div className="flex items-center gap-3">

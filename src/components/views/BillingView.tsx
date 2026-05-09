@@ -57,8 +57,8 @@ const payments: Payment[] = [
 ]
 
 const statusStyles: Record<string, string> = {
-  'Оплачено': 'bg-[#f5f5f5] text-[#404040]',
-  'В обработке': 'bg-[#f5f5f5] text-[#525252]',
+  'Оплачено': 'bg-[#dcfce7] text-[#22c55e]',
+  'В обработке': 'bg-[#fef3c7] text-[#d97706]',
 }
 
 /* ── Component ─────────────────────────────────────────── */
@@ -80,13 +80,13 @@ export default function BillingView() {
       <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-5 shadow-card">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-11 h-11 rounded-[10px] bg-[#fafafa] shrink-0">
-              <Crown className="w-5 h-5 text-[#525252]" />
+            <div className="flex items-center justify-center w-11 h-11 rounded-[10px] bg-[#fef3c7] shrink-0">
+              <Crown className="w-5 h-5 text-[#d97706]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-[15px] font-semibold text-[#0d0d0d]">Рост</h3>
-                <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px] bg-[#f5f5f5] text-[#404040]">
+                <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px] bg-[#dbeafe] text-[#3b82f6]">
                   Текущий план
                 </span>
               </div>
@@ -115,20 +115,20 @@ export default function BillingView() {
               <div
                 key={plan.id}
                 className={`rounded-[10px] border bg-white p-5 flex flex-col shadow-card relative ${
-                  isCurrent ? 'border-[#0d0d0d]' : 'border-[#e8e8e8]'
+                  isCurrent ? 'border-[#3b82f6]' : 'border-[#e8e8e8]'
                 }`}
               >
                 {isCurrent && (
                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                    <span className="text-[10.5px] font-semibold px-2.5 py-1 rounded-full bg-[#0d0d0d] text-white">
+                    <span className="text-[10.5px] font-semibold px-2.5 py-1 rounded-full bg-[#dbeafe] text-[#3b82f6]">
                       Текущий план
                     </span>
                   </div>
                 )}
 
                 <div className="text-center mb-5">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#fafafa] mx-auto mb-3">
-                    <Icon className="w-5 h-5 text-[#525252]" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#cffafe] mx-auto mb-3">
+                    <Icon className="w-5 h-5 text-[#0891b2]" />
                   </div>
                   <h3 className="text-[15px] font-semibold text-[#0d0d0d]">{plan.name}</h3>
                   <div className="mt-2">

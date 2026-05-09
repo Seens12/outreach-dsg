@@ -73,9 +73,9 @@ const prospects: Prospect[] = [
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<ProspectStatus, { label: string; className: string }> = {
-  hot: { label: 'Горячий', className: 'bg-[#f5f5f5] text-[#404040]' },
-  warm: { label: 'Тёплый', className: 'bg-[#f5f5f5] text-[#525252]' },
-  new: { label: 'Новый', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+  hot: { label: 'Горячий', className: 'bg-[#fce7f3] text-[#e11d48]' },
+  warm: { label: 'Тёплый', className: 'bg-[#fef3c7] text-[#d97706]' },
+  new: { label: 'Новый', className: 'bg-[#dbeafe] text-[#3b82f6]' },
 }
 
 const statusFilters = [
@@ -297,14 +297,14 @@ export default function ProspectsView() {
                         <div
                           className={cn(
                             'h-full rounded-full',
-                            p.confidence >= 80 ? 'bg-[#171717]' : p.confidence >= 50 ? 'bg-[#737373]' : 'bg-[#a3a3a3]'
+                            p.confidence >= 80 ? 'bg-[#86efac]' : p.confidence >= 50 ? 'bg-[#fcd34d]' : 'bg-[#fda4af]'
                           )}
                           style={{ width: `${p.confidence}%` }}
                         />
                       </div>
                       <span className={cn(
                         'text-[12px] font-semibold min-w-[32px] text-right',
-                        p.confidence >= 80 ? 'text-[#171717]' : p.confidence >= 50 ? 'text-[#525252]' : 'text-[#a3a3a3]'
+                        p.confidence >= 80 ? 'text-[#22c55e]' : p.confidence >= 50 ? 'text-[#d97706]' : 'text-[#e11d48]'
                       )}>
                         {p.confidence}%
                       </span>

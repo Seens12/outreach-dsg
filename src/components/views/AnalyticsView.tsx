@@ -54,10 +54,10 @@ const funnelData = [
 ]
 
 const pieData = [
-  { name: 'Email', value: 45, color: '#0d0d0d' },
-  { name: 'LinkedIn', value: 25, color: '#2563eb' },
-  { name: 'Холодные звонки', value: 20, color: '#16a34a' },
-  { name: 'Рефералы', value: 10, color: '#d97706' },
+  { name: 'Email', value: 45, color: '#93c5fd' },
+  { name: 'LinkedIn', value: 25, color: '#c4b5fd' },
+  { name: 'Холодные звонки', value: 20, color: '#86efac' },
+  { name: 'Рефералы', value: 10, color: '#fcd34d' },
 ]
 
 const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
@@ -79,9 +79,9 @@ const greenLevels = [
   'bg-[#f5f5f5]', // 0
   'bg-[#dcfce7]', // 1-2
   'bg-[#bbf7d0]', // 3-4
-  'bg-[#86efac]', // 5-6
-  'bg-[#4ade80]', // 7-8
-  'bg-[#16a34a]', // 9-10
+  'bg-[#a7f3d0]', // 5-6
+  'bg-[#86efac]', // 7-8
+  'bg-[#6ee7b7]', // 9-10
 ]
 
 function getHeatColor(v: number): string {
@@ -96,17 +96,17 @@ function getHeatColor(v: number): string {
 const insights = [
   {
     icon: TrendingUp,
-    color: 'text-[#16a34a] bg-[#f0fdf4]',
+    color: 'text-[#22c55e] bg-[#dcfce7]',
     text: 'Вторники показывают на 34% больше ответов по сравнению с другими днями недели',
   },
   {
     icon: Target,
-    color: 'text-[#2563eb] bg-[#eff6ff]',
+    color: 'text-[#3b82f6] bg-[#dbeafe]',
     text: 'Тема с персонализацией конвертирует на 2.1x лучше, чем универсальная тема',
   },
   {
     icon: Clock,
-    color: 'text-[#d97706] bg-[#fffbeb]',
+    color: 'text-[#d97706] bg-[#fef3c7]',
     text: 'Follow-up через 3 дня оптимальный: конверсия на 18% выше, чем через 1 день',
   },
 ]
@@ -118,7 +118,8 @@ const metricCards = [
     trend: '+12.5%',
     trendUp: true,
     icon: Send,
-    iconBg: 'bg-[#fafafa]',
+    iconBg: 'bg-[#dbeafe]',
+    iconColor: 'text-[#3b82f6]',
   },
   {
     label: 'Открыто',
@@ -126,7 +127,8 @@ const metricCards = [
     trend: '+3.8%',
     trendUp: true,
     icon: MailOpen,
-    iconBg: 'bg-[#f0fdf4]',
+    iconBg: 'bg-[#dcfce7]',
+    iconColor: 'text-[#22c55e]',
   },
   {
     label: 'Ответы',
@@ -134,7 +136,8 @@ const metricCards = [
     trend: '-1.2%',
     trendUp: false,
     icon: MessageSquare,
-    iconBg: 'bg-[#eff6ff]',
+    iconBg: 'bg-[#fce7f3]',
+    iconColor: 'text-[#e11d48]',
   },
   {
     label: 'Конверсия',
@@ -142,7 +145,8 @@ const metricCards = [
     trend: '+0.4%',
     trendUp: true,
     icon: ArrowUpRight,
-    iconBg: 'bg-[#fffbeb]',
+    iconBg: 'bg-[#fef3c7]',
+    iconColor: 'text-[#d97706]',
   },
 ]
 
@@ -217,7 +221,7 @@ export default function AnalyticsView() {
   }, [])
 
   return (
-    <div className="flex-1 overflow-y-auto custom-scroll">
+    <div className="h-full overflow-y-auto custom-scroll">
       <div className="p-6 space-y-6">
         {/* Header with Period Selector */}
         <div className="flex items-center justify-between gap-4">
@@ -264,7 +268,7 @@ export default function AnalyticsView() {
                 <div
                   className={`w-10 h-10 rounded-[8px] ${m.iconBg} flex items-center justify-center flex-shrink-0`}
                 >
-                  <Icon className="w-[18px] h-[18px] text-[#525252]" />
+                  <Icon className={`w-[18px] h-[18px] ${m.iconColor}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] text-[#a8a8a8] font-medium">
@@ -275,13 +279,13 @@ export default function AnalyticsView() {
                   </div>
                   <div className="flex items-center gap-1 mt-1">
                     {m.trendUp ? (
-                      <TrendingUp className="w-3.5 h-3.5 text-[#16a34a]" />
+                      <TrendingUp className="w-3.5 h-3.5 text-[#22c55e]" />
                     ) : (
-                      <TrendingDown className="w-3.5 h-3.5 text-[#dc2626]" />
+                      <TrendingDown className="w-3.5 h-3.5 text-[#e11d48]" />
                     )}
                     <span
                       className={`text-[12px] font-semibold ${
-                        m.trendUp ? 'text-[#16a34a]' : 'text-[#dc2626]'
+                        m.trendUp ? 'text-[#22c55e]' : 'text-[#e11d48]'
                       }`}
                     >
                       {m.trend}
@@ -316,8 +320,8 @@ export default function AnalyticsView() {
                   <stop offset="95%" stopColor="#0d0d0d" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="replyGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#16a34a" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -352,11 +356,11 @@ export default function AnalyticsView() {
                 type="monotone"
                 dataKey="replies"
                 name="Ответы"
-                stroke="#16a34a"
+                stroke="#22c55e"
                 strokeWidth={2}
                 fill="url(#replyGradient)"
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 2, fill: '#fff', stroke: '#16a34a' }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: '#fff', stroke: '#22c55e' }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -375,7 +379,7 @@ export default function AnalyticsView() {
               {funnelData.map((item, i) => {
                 const maxVal = funnelData[0].value
                 const widthPct = Math.max(12, (item.value / maxVal) * 100)
-                const colors = ['#0d0d0d', '#2563eb', '#16a34a', '#d97706', '#dc2626']
+                const colors = ['#93c5fd', '#c4b5fd', '#86efac', '#fcd34d', '#fda4af']
                 return (
                   <div key={item.stage}>
                     <div className="flex items-center justify-between mb-1">
@@ -545,9 +549,9 @@ export default function AnalyticsView() {
           </h3>
           <div className="flex flex-col gap-3.5">
             {[
-              { name: 'IT-Москва', open: 38, reply: 11.2, fill: 'bg-[#0d0d0d]' },
-              { name: 'Финтех — CFO', open: 42, reply: 13.8, fill: 'bg-[#0d0d0d]' },
-              { name: 'E-commerce', open: 28, reply: 7.1, fill: 'bg-[#737373]', underperforming: true },
+              { name: 'IT-Москва', open: 38, reply: 11.2, fill: 'bg-[#93c5fd]' },
+              { name: 'Финтех — CFO', open: 42, reply: 13.8, fill: 'bg-[#c4b5fd]' },
+              { name: 'E-commerce', open: 28, reply: 7.1, fill: 'bg-[#d4d4d4]', underperforming: true },
             ].map((c) => (
               <div key={c.name}>
                 <div className="flex items-center justify-between text-[12.5px] mb-1.5">

@@ -91,9 +91,9 @@ const domains: Domain[] = [
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<DomainStatus, { label: string; className: string }> = {
-  verified: { label: 'Прогрев завершён', className: 'bg-[#f5f5f5] text-[#404040]' },
-  warming: { label: 'В прогреве', className: 'bg-[#f5f5f5] text-[#525252]' },
-  issues: { label: 'С проблемами', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+  verified: { label: 'Прогрев завершён', className: 'bg-[#dcfce7] text-[#22c55e]' },
+  warming: { label: 'В прогреве', className: 'bg-[#fef3c7] text-[#d97706]' },
+  issues: { label: 'С проблемами', className: 'bg-[#fce7f3] text-[#e11d48]' },
 }
 
 // ---------------------------------------------------------------------------
@@ -157,8 +157,8 @@ export default function DomainsView() {
       </div>
 
       {/* Domain cards */}
-      <div className="flex flex-col gap-4">
-        {data.map((domain) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {data.map((domain, index) => {
           const st = statusConfig[domain.status]
           const dnsOk = domain.dns.filter((d) => d.ok).length
           const dnsTotal = domain.dns.length
@@ -167,7 +167,7 @@ export default function DomainsView() {
           return (
             <div
               key={domain.id}
-              className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-5"
+              className={`rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-5 ${index === 0 ? 'md:col-span-2' : ''}`}
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 {/* Left column */}
@@ -200,11 +200,11 @@ export default function DomainsView() {
                         className="flex items-center gap-1.5 text-[12px]"
                       >
                         {rec.ok ? (
-                          <Check className="h-3.5 w-3.5 text-[#404040]" />
+                          <Check className="h-3.5 w-3.5 text-[#22c55e]" />
                         ) : (
-                          <X className="h-3.5 w-3.5 text-[#a3a3a3]" />
+                          <X className="h-3.5 w-3.5 text-[#e11d48]" />
                         )}
-                        <span className={rec.ok ? 'text-[#404040]' : 'text-[#a3a3a3]'}>
+                        <span className={rec.ok ? 'text-[#22c55e]' : 'text-[#e11d48]'}>
                           {rec.label}
                         </span>
                       </div>

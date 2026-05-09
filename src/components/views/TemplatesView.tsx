@@ -244,10 +244,10 @@ export default function TemplatesView() {
         ))}
       </div>
 
-      {/* Template list */}
-      <div className="grid gap-3">
+      {/* Template grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredTemplates.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-[#a3a3a3]">
+          <div className="flex flex-col items-center justify-center py-16 text-[#a3a3a3] md:col-span-2 lg:col-span-3">
             <FileText className="size-10 mb-3 text-[#d4d4d4]" />
             <p className="text-[14px] font-medium text-[#525252]">
               Нет шаблонов
@@ -257,10 +257,10 @@ export default function TemplatesView() {
             </p>
           </div>
         ) : (
-          filteredTemplates.map((template) => (
+          filteredTemplates.map((template, index) => (
             <div
               key={template.id}
-              className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow"
+              className={`border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow ${index === 0 ? 'md:col-span-2' : ''}`}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">

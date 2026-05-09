@@ -121,9 +121,9 @@ const typeLabels: Record<ReportType, string> = {
 }
 
 const typeBadgeClasses: Record<ReportType, string> = {
-  weekly: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
-  monthly: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
-  once: 'bg-[#fafafa] text-[#525252] border-[#e8e8e8]',
+  weekly: 'bg-[#dbeafe] text-[#3b82f6] border-[#bfdbfe]',
+  monthly: 'bg-[#ede9fe] text-[#7c3aed] border-[#ddd6fe]',
+  once: 'bg-[#cffafe] text-[#0891b2] border-[#a5f3fc]',
 }
 
 const statusConfig: Record<
@@ -132,23 +132,23 @@ const statusConfig: Record<
 > = {
   ready: {
     label: 'Готов',
-    color: 'text-[#404040]',
-    bgColor: 'bg-[#f5f5f5]',
-    borderColor: 'border-[#e8e8e8]',
+    color: 'text-[#22c55e]',
+    bgColor: 'bg-[#dcfce7]',
+    borderColor: 'border-[#bbf7d0]',
     Icon: CheckCircle2,
   },
   in_progress: {
     label: 'В процессе',
-    color: 'text-[#525252]',
-    bgColor: 'bg-[#f5f5f5]',
-    borderColor: 'border-[#e8e8e8]',
+    color: 'text-[#d97706]',
+    bgColor: 'bg-[#fef3c7]',
+    borderColor: 'border-[#fde68a]',
     Icon: Loader2,
   },
   error: {
     label: 'Ошибка',
-    color: 'text-[#404040]',
-    bgColor: 'bg-[#f5f5f5]',
-    borderColor: 'border-[#e8e8e8]',
+    color: 'text-[#e11d48]',
+    bgColor: 'bg-[#fce7f3]',
+    borderColor: 'border-[#fbcfe8]',
     Icon: AlertCircle,
   },
 }
@@ -196,16 +196,16 @@ export default function ReportsView() {
   const getBarColor = (status: ReportStatus): string => {
     switch (status) {
       case 'ready':
-        return '#0d0d0d'
+        return '#93c5fd'
       case 'in_progress':
-        return '#d97706'
+        return '#fcd34d'
       case 'error':
-        return '#dc2626'
+        return '#fda4af'
     }
   }
 
   return (
-    <div className="flex-1 overflow-y-auto custom-scroll">
+    <div className="h-full overflow-y-auto custom-scroll">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -253,7 +253,7 @@ export default function ReportsView() {
                       {typeLabel}
                     </span>
                   </div>
-                  <p className="text-[12.5px] text-[#737373] mt-0.5 truncate">
+                  <p className="text-[12.5px] text-[#737373] leading-tight mt-0.5 truncate">
                     {report.description}
                   </p>
                   <div className="flex items-center gap-3 mt-1.5">

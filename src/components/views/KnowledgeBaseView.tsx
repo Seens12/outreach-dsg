@@ -93,7 +93,7 @@ const sources: KnowledgeSource[] = [
     meta: 'Версия 1.3 · Нужно обновить',
     status: 'Устаревает',
     ttl: 'TTL: 7 дней',
-    ttlColor: 'text-[#dc2626]',
+    ttlColor: 'text-[#e11d48]',
   },
   {
     id: '6',
@@ -117,11 +117,11 @@ const statusStyles: Record<SourceStatus, string> = {
 }
 
 const typeConfig: Record<SourceType, { icon: typeof Globe; iconBg: string; iconColor: string }> = {
-  web: { icon: Globe, iconBg: 'bg-[#eff6ff]', iconColor: 'text-[#2563eb]' },
-  price: { icon: DollarSign, iconBg: 'bg-[#fef3c7]', iconColor: 'text-[#92400e]' },
-  cases: { icon: BookOpen, iconBg: 'bg-[#f0fdf4]', iconColor: 'text-[#16a34a]' },
-  faq: { icon: HelpCircle, iconBg: 'bg-[#f5f5f5]', iconColor: 'text-[#525252]' },
-  scripts: { icon: FileText, iconBg: 'bg-[#fef2f2]', iconColor: 'text-[#dc2626]' },
+  web: { icon: Globe, iconBg: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
+  price: { icon: DollarSign, iconBg: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
+  cases: { icon: BookOpen, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#22c55e]' },
+  faq: { icon: HelpCircle, iconBg: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
+  scripts: { icon: FileText, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
 }
 
 const coverageTopics = [
@@ -133,16 +133,16 @@ const coverageTopics = [
 ]
 
 function coverageColor(pct: number): string {
-  if (pct >= 75) return 'bg-[#16a34a]'
-  if (pct >= 50) return 'bg-[#d97706]'
-  return 'bg-[#dc2626]'
+  if (pct >= 75) return 'bg-[#86efac]'
+  if (pct >= 50) return 'bg-[#fcd34d]'
+  return 'bg-[#fda4af]'
 }
 
 function coveragePctColor(pct: number): string {
-  if (pct >= 75) return 'text-[#16a34a]'
+  if (pct >= 75) return 'text-[#22c55e]'
   if (pct >= 50) return 'text-[#d97706]'
-  if (pct > 0) return 'text-[#dc2626]'
-  return 'text-[#dc2626]'
+  if (pct > 0) return 'text-[#e11d48]'
+  return 'text-[#e11d48]'
 }
 
 // ---------------------------------------------------------------------------

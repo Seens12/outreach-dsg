@@ -128,21 +128,21 @@ const statusConfig: Record<
 > = {
   active: {
     label: 'Активная',
-    bg: 'bg-[#f5f5f5]',
-    text: 'text-[#404040]',
-    dot: 'bg-[#0d0d0d]',
+    bg: 'bg-[#dcfce7]',
+    text: 'text-[#22c55e]',
+    dot: 'bg-[#22c55e]',
   },
   draft: {
     label: 'Черновик',
-    bg: 'bg-[#f5f5f5]',
-    text: 'text-[#737373]',
-    dot: 'bg-[#a3a3a3]',
+    bg: 'bg-[#dbeafe]',
+    text: 'text-[#3b82f6]',
+    dot: 'bg-[#3b82f6]',
   },
   completed: {
     label: 'Завершена',
     bg: 'bg-[#f5f5f5]',
-    text: 'text-[#404040]',
-    dot: 'bg-[#0d0d0d]',
+    text: 'text-[#525252]',
+    dot: 'bg-[#525252]',
   },
 };
 

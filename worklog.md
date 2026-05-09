@@ -222,3 +222,32 @@ Stage Summary:
 - Admin paddings unified to p-5 standard matching rest of app
 - All 32 pages verified present
 - 0 lint errors
+
+---
+Task ID: 2
+Agent: Main + Subagents
+Task: UI improvements - scrollbar, agent panel, slide-out panels, pastel colors, icon alignment, card grid, admin padding
+
+Work Log:
+- Unified scrollbar: width 5px→3px, thumb #d1d1d1→#d4d4d4, radius 3px→2px
+- Fixed scrolling on ReportsView and AnalyticsView (flex-1→h-full)
+- AgentPanel default state: isOpen true→false (only opens on user click)
+- Added 3 slide-out Sheet panels to SettingsView (Profile, Company, Appearance)
+- Added pastel colors across 18 view files:
+  - Pastel palette: blue(#dbeafe/#3b82f6), green(#dcfce7/#22c55e), amber(#fef3c7/#d97706), rose(#fce7f3/#e11d48), violet(#ede9fe/#7c3aed), cyan(#cffafe/#0891b2)
+  - DashboardView: stat icons, activity dots, donut chart
+  - KnowledgeBaseView: type icons, coverage bars
+  - AnalyticsView: pie chart, heatmap, metric icons, funnel, insights
+  - LeadsView: hot=rose, warm=amber, cold=blue, inwork=violet
+  - CampaignsView: status badges
+  - NotificationsView: type icons, priority badges
+  - SecurityView: check icons, score indicators
+  - CalendarView, ActivityView, HelpView, WebhooksView, DomainsView, MailboxesView, TeamView, ProspectsView, ReportsView, BillingView, CrmView
+- Fixed icon+text alignment in 8 files: DashboardView, NotificationsView, ActivityView, HelpView, CalendarView, ReportsView, SecurityView (icon containers w-8→w-10, added justify-center, leading-tight)
+- Card grid layout: TemplatesView (3-col grid), WebhooksView (2-col grid), DomainsView (2-col grid with first card spanning 2)
+- Admin internal padding: CardContent pt-4→pt-6 in AdminView (2 cards) and AdminSystemView (4 cards)
+
+Stage Summary:
+- All 7 tasks completed
+- 0 lint errors
+- Clean compile

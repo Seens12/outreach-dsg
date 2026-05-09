@@ -129,16 +129,16 @@
   }
 }
 
-/* Custom scrollbar */
+/* Thin scrollbar (unified across app) */
 .custom-scroll::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 .custom-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scroll::-webkit-scrollbar-thumb {
-  background: #d1d1d1;
-  border-radius: 3px;
+  background: #d4d4d4;
+  border-radius: 2px;
 }
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;

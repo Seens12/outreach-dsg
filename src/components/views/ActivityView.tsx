@@ -38,12 +38,12 @@ interface ActivityItem {
 // Config
 // ---------------------------------------------------------------------------
 
-const actionConfig: Record<ActionKind, { label: string; dotColor: string; icon: typeof Send }> = {
-  sent: { label: 'Отправлено', dotColor: 'bg-[#404040]', icon: Send },
-  'ai-reply': { label: 'AI ответ', dotColor: 'bg-[#525252]', icon: Bot },
-  lead: { label: 'Лид', dotColor: 'bg-[#0d0d0d]', icon: Flame },
-  meeting: { label: 'Встреча', dotColor: 'bg-[#737373]', icon: Users },
-  received: { label: 'Получено', dotColor: 'bg-[#a3a3a3]', icon: Mail },
+const actionConfig: Record<ActionKind, { label: string; dotColor: string; icon: typeof Send; iconBg: string; iconColor: string }> = {
+  sent: { label: 'Отправлено', dotColor: 'bg-[#3b82f6]', icon: Send, iconBg: 'bg-[#dbeafe]', iconColor: 'text-[#3b82f6]' },
+  'ai-reply': { label: 'AI ответ', dotColor: 'bg-[#7c3aed]', icon: Bot, iconBg: 'bg-[#ede9fe]', iconColor: 'text-[#7c3aed]' },
+  lead: { label: 'Лид', dotColor: 'bg-[#e11d48]', icon: Flame, iconBg: 'bg-[#fce7f3]', iconColor: 'text-[#e11d48]' },
+  meeting: { label: 'Встреча', dotColor: 'bg-[#d97706]', icon: Users, iconBg: 'bg-[#fef3c7]', iconColor: 'text-[#d97706]' },
+  received: { label: 'Получено', dotColor: 'bg-[#22c55e]', icon: Mail, iconBg: 'bg-[#dcfce7]', iconColor: 'text-[#22c55e]' },
 }
 
 const typeFilterOptions = [
@@ -168,10 +168,12 @@ export default function ActivityView() {
               className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-4"
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#fafafa]">
+                <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#fafafa]">
                   <Icon className="w-4 h-4 text-[#525252]" />
                 </div>
-                <span className="text-[12.5px] text-[#737373] font-medium">{s.label}</span>
+                <div className="flex flex-col justify-center">
+                  <span className="text-[12.5px] text-[#737373] font-medium leading-tight">{s.label}</span>
+                </div>
               </div>
               <div className="text-[24px] font-semibold text-[#0d0d0d] tracking-tight">
                 {s.value}
@@ -209,10 +211,10 @@ export default function ActivityView() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       {/* Avatar */}
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#f5f5f5] text-[#525252] text-[11px] font-semibold shrink-0 border border-[#e8e8e8]">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#f5f5f5] text-[#525252] text-[12px] font-semibold shrink-0 border border-[#e8e8e8]">
                         {item.initials}
                       </div>
-                      <div className="min-w-0">
+                      <div className="flex flex-col justify-center min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="text-[13px] font-semibold text-[#0d0d0d]">
                             {item.name}
@@ -227,7 +229,7 @@ export default function ActivityView() {
                       </div>
                     </div>
                     <span
-                      className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-medium shrink-0 bg-[#f5f5f5] text-[#525252]`}
+                      className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-medium shrink-0 ${config.iconBg} ${config.iconColor}`}
                     >
                       {config.label}
                     </span>

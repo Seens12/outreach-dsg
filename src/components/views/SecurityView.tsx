@@ -98,10 +98,10 @@ const securityChecks: SecurityCheck[] = [
 // Helpers
 // ---------------------------------------------------------------------------
 
-const statusIcon: Record<SecurityCheck['status'], { icon: React.ElementType; className: string }> = {
-  ok: { icon: CheckCircle2, className: 'text-[#0d0d0d]' },
-  warning: { icon: AlertCircle, className: 'text-[#737373]' },
-  error: { icon: XCircle, className: 'text-[#525252]' },
+const statusIcon: Record<SecurityCheck['status'], { icon: React.ElementType; className: string; bgClass: string }> = {
+  ok: { icon: CheckCircle2, className: 'text-[#22c55e]', bgClass: 'bg-[#dcfce7]' },
+  warning: { icon: AlertCircle, className: 'text-[#d97706]', bgClass: 'bg-[#fef3c7]' },
+  error: { icon: XCircle, className: 'text-[#e11d48]', bgClass: 'bg-[#fce7f3]' },
 }
 
 // ---------------------------------------------------------------------------
@@ -128,8 +128,8 @@ export default function SecurityView() {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#f5f5f5]">
-                <ShieldCheck className="w-5 h-5 text-[#0d0d0d]" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#dcfce7]">
+                <ShieldCheck className="w-5 h-5 text-[#22c55e]" />
               </div>
               <div>
                 <p className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">
@@ -144,7 +144,7 @@ export default function SecurityView() {
               </div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center px-2.5 py-[3px] rounded-full text-[11.5px] font-semibold bg-[#f5f5f5] text-[#404040]">
+              <span className="inline-flex items-center px-2.5 py-[3px] rounded-full text-[11.5px] font-semibold bg-[#dcfce7] text-[#22c55e]">
                 Хороший уровень
               </span>
             </div>
@@ -162,7 +162,7 @@ export default function SecurityView() {
               <circle
                 cx="50" cy="50" r="42"
                 fill="none"
-                stroke="#0d0d0d"
+                stroke="#22c55e"
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 42}`}
@@ -210,7 +210,7 @@ export default function SecurityView() {
                     </span>
                     <span className={cn(
                       'text-[14px] font-bold',
-                      cat.score >= 90 ? 'text-[#0d0d0d]' : cat.score >= 80 ? 'text-[#525252]' : 'text-[#737373]'
+                      cat.score >= 90 ? 'text-[#22c55e]' : cat.score >= 80 ? 'text-[#d97706]' : 'text-[#e11d48]'
                     )}>
                       {cat.score}
                     </span>
@@ -219,7 +219,7 @@ export default function SecurityView() {
                     <div
                       className={cn(
                         'h-full rounded-full transition-all duration-500',
-                        cat.score >= 90 ? 'bg-[#0d0d0d]' : cat.score >= 80 ? 'bg-[#737373]' : 'bg-[#a3a3a3]'
+                        cat.score >= 90 ? 'bg-[#86efac]' : cat.score >= 80 ? 'bg-[#fcd34d]' : 'bg-[#fda4af]'
                       )}
                       style={{ width: `${cat.score}%` }}
                     />
@@ -244,7 +244,7 @@ export default function SecurityView() {
               <div
                 key={check.id}
                 className={cn(
-                  'flex items-start gap-4 p-4 rounded-[10px] border transition-colors',
+                  'flex items-center gap-4 p-4 rounded-[10px] border transition-colors',
                   check.status === 'ok'
                     ? 'border-[#f5f5f5] bg-white'
                     : check.status === 'warning'
@@ -254,8 +254,8 @@ export default function SecurityView() {
               >
                 {/* Icon */}
                 <div className={cn(
-                  'flex items-center justify-center w-9 h-9 rounded-[8px] shrink-0 mt-0.5',
-                  check.status === 'ok' ? 'bg-[#f5f5f5]' : 'bg-[#f5f5f5]'
+                  'flex items-center justify-center w-10 h-10 rounded-[8px] shrink-0',
+                  st.bgClass
                 )}>
                   <StatusIcon className={cn('w-4 h-4', st.className)} />
                 </div>
@@ -267,22 +267,22 @@ export default function SecurityView() {
                       {check.title}
                     </h3>
                     {check.status === 'ok' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#f5f5f5] text-[#404040]">
+                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#dcfce7] text-[#22c55e]">
                         Включена
                       </span>
                     )}
                     {check.status === 'warning' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#f5f5f5] text-[#737373]">
+                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#fef3c7] text-[#d97706]">
                         Средняя
                       </span>
                     )}
                     {check.status === 'error' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#f5f5f5] text-[#a3a3a3]">
+                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#fce7f3] text-[#e11d48]">
                         Не настроено
                       </span>
                     )}
                   </div>
-                  <p className="text-[12.5px] text-[#737373] leading-relaxed">
+                  <p className="text-[12.5px] text-[#737373] leading-tight">
                     {check.description}
                   </p>
                 </div>
@@ -297,7 +297,7 @@ export default function SecurityView() {
                     }
                   }}
                   className={cn(
-                    'shrink-0 px-3 py-1.5 rounded-[7px] text-[12px] font-medium transition-colors cursor-pointer mt-0.5',
+                    'shrink-0 px-3 py-1.5 rounded-[7px] text-[12px] font-medium transition-colors cursor-pointer',
                     check.status === 'ok'
                       ? 'text-[#737373] bg-[#f5f5f5] hover:bg-[#e8e8e8]'
                       : 'text-[#404040] bg-[#f5f5f5] hover:bg-[#e8e8e8] border border-[#e8e8e8]'

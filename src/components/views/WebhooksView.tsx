@@ -137,7 +137,7 @@ export default function WebhooksView() {
       </div>
 
       {/* Webhook Cards */}
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {webhooks.map((webhook) => (
           <div
             key={webhook.id}
@@ -157,13 +157,13 @@ export default function WebhooksView() {
                     <span
                       className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full text-[11px] font-medium ${
                         webhook.active
-                          ? 'bg-[#f5f5f5] text-[#404040] border border-[#e8e8e8]'
-                          : 'bg-[#fafafa] text-[#a3a3a3] border border-[#e8e8e8]'
+                          ? 'bg-[#dcfce7] text-[#22c55e] border border-[#bbf7d0]'
+                          : 'bg-[#f5f5f5] text-[#a3a3a3] border border-[#e8e8e8]'
                       }`}
                     >
                       <span
                         className={`size-1.5 rounded-full ${
-                          webhook.active ? 'bg-[#0d0d0d]' : 'bg-[#a3a3a3]'
+                          webhook.active ? 'bg-[#22c55e]' : 'bg-[#a3a3a3]'
                         }`}
                       />
                       {webhook.active ? 'Активен' : 'Отключен'}

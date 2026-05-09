@@ -51,13 +51,15 @@ interface DocArticle {
 // Data
 // ---------------------------------------------------------------------------
 
-const quickStartCards: QuickStartCard[] = [
+const quickStartCards = [
   {
     icon: Rocket,
     title: 'Быстрый старт',
     steps: 5,
     time: '15 мин',
     description: 'Настройте платформу и отправьте первое письмо за 5 простых шагов.',
+    iconBg: 'bg-[#dbeafe]',
+    iconColor: 'text-[#3b82f6]',
   },
   {
     icon: Bot,
@@ -65,6 +67,8 @@ const quickStartCards: QuickStartCard[] = [
     steps: 7,
     time: '25 мин',
     description: 'Подключите AI-ассистента для автоматической обработки ответов.',
+    iconBg: 'bg-[#ede9fe]',
+    iconColor: 'text-[#7c3aed]',
   },
   {
     icon: Puzzle,
@@ -72,6 +76,8 @@ const quickStartCards: QuickStartCard[] = [
     steps: 4,
     time: '10 мин',
     description: 'Настройте интеграции с CRM, календарём и другими сервисами.',
+    iconBg: 'bg-[#dcfce7]',
+    iconColor: 'text-[#22c55e]',
   },
 ]
 
@@ -206,12 +212,12 @@ export default function HelpView() {
                 onClick={() => toast.info('Открыт гайд: ' + card.title)}
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#fafafa] group-hover:bg-[#f5f5f5] transition-colors shrink-0">
-                    <Icon className="w-4 h-4 text-[#525252]" />
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-[8px] ${card.iconBg} group-hover:opacity-80 transition-colors shrink-0`}>
+                    <Icon className={`w-4 h-4 ${card.iconColor}`} />
                   </div>
-                  <div>
+                  <div className="flex flex-col justify-center">
                     <div className="text-[13px] font-semibold text-[#0d0d0d]">{card.title}</div>
-                    <div className="text-[11px] text-[#a3a3a3]">{card.steps} шагов</div>
+                    <div className="text-[11px] text-[#a3a3a3] leading-tight">{card.steps} шагов</div>
                   </div>
                 </div>
                 <p className="text-[12.5px] text-[#737373] leading-relaxed mb-3">
@@ -269,10 +275,10 @@ export default function HelpView() {
           {filteredDocs.map((article) => (
             <div
               key={article.id}
-              className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-4 hover:border-[#d4d4d4] transition-colors cursor-pointer group flex items-start gap-3"
+              className="rounded-[10px] border border-[#e8e8e8] bg-white shadow-card p-4 hover:border-[#d4d4d4] transition-colors cursor-pointer group flex items-center gap-3"
               onClick={() => toast.info('Открыта статья: ' + article.title)}
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#fafafa] group-hover:bg-[#f5f5f5] transition-colors shrink-0 mt-0.5">
+              <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#fafafa] group-hover:bg-[#f5f5f5] transition-colors shrink-0">
                 <FileText className="w-4 h-4 text-[#525252]" />
               </div>
               <div className="flex-1 min-w-0">
@@ -287,7 +293,7 @@ export default function HelpView() {
                   <span>{article.date}</span>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#d4d4d4] group-hover:text-[#a3a3a3] transition-colors shrink-0 mt-1" />
+              <ChevronRight className="w-4 h-4 text-[#d4d4d4] group-hover:text-[#a3a3a3] transition-colors shrink-0" />
             </div>
           ))}
         </div>

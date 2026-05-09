@@ -49,7 +49,7 @@ export default function AdminSystemView() {
               Основные параметры системы
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 pt-4">
+          <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-[13px] font-medium text-[#525252]">
@@ -105,7 +105,7 @@ export default function AdminSystemView() {
               Конфигурация почтового сервера
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 pt-4">
+          <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-[13px] font-medium text-[#525252]">
@@ -171,7 +171,7 @@ export default function AdminSystemView() {
               Использование дискового пространства
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-4 space-y-3">
+          <CardContent className="pt-6 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[13px] text-[#525252]">
                 Занято: <span className="font-medium text-[#171717]">24.7 GB</span> из 100 GB
@@ -213,7 +213,7 @@ export default function AdminSystemView() {
               Настройки фоновой обработки
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 pt-4">
+          <CardContent className="space-y-4 pt-6">
             <div className="flex items-center justify-between py-2">
               <div>
                 <div className="text-[13px] font-medium text-[#171717]">
