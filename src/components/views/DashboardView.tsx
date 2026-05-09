@@ -123,10 +123,10 @@ export default function DashboardView() {
 
       {/* 4 Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((m) => {
+        {metrics.map((m, i) => {
           const Icon = m.icon
           return (
-            <div key={m.label} className="rounded-[10px] border border-[#e8e8e8] bg-white p-4 shadow-card">
+            <div key={m.label} className="anim-fade-in rounded-[10px] border border-[#e8e8e8] bg-white p-4 shadow-card" style={{ animationDelay: `${i * 50}ms` }}>
               <div className="flex items-center justify-between">
                 <span className="text-[#737373] font-medium text-[12.5px]">{m.label}</span>
                 <div className={`flex items-center justify-center w-10 h-10 rounded-[8px] ${m.iconBg}`}>
@@ -239,7 +239,7 @@ export default function DashboardView() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-[18px] font-semibold text-[#0d0d0d]">192</div>
+                  <div className="text-[14px] font-semibold text-[#0d0d0d]">192</div>
                   <div className="text-[10px] text-[#a3a3a3]">лидов</div>
                 </div>
               </div>

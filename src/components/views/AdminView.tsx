@@ -12,12 +12,6 @@ import {
   AlertTriangle,
   CheckCircle,
 } from 'lucide-react'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card'
 
 const statCards = [
   {
@@ -129,14 +123,14 @@ export default function AdminView() {
         </div>
 
         {/* System health */}
-        <div className="rounded-[10px] border border-[#e8e8e8] bg-white">
-          <CardHeader className="pb-0">
-            <CardTitle className="text-sm font-semibold text-[#171717]">
+        <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-0">
+          <div className="px-5 pt-5 pb-0">
+            <h2 className="text-sm font-semibold text-[#171717]">
               Состояние системы
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            </h2>
+          </div>
+          <div className="px-5 pt-4 pb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {healthItems.map((item) => (
                 <div
                   key={item.label}
@@ -154,17 +148,17 @@ export default function AdminView() {
                 </div>
               ))}
             </div>
-          </CardContent>
+          </div>
         </div>
 
         {/* Recent activity */}
-        <div className="rounded-[10px] border border-[#e8e8e8] bg-white">
-          <CardHeader className="pb-0">
-            <CardTitle className="text-sm font-semibold text-[#171717]">
+        <div className="rounded-[10px] border border-[#e8e8e8] bg-white p-0">
+          <div className="px-5 pt-5 pb-0">
+            <h2 className="text-sm font-semibold text-[#171717]">
               Последняя активность
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
+            </h2>
+          </div>
+          <div className="px-5 pt-4 pb-5">
             <div className="space-y-0">
               {recentActivity.map((item, i) => {
                 const Icon = item.icon
@@ -191,7 +185,7 @@ export default function AdminView() {
                 )
               })}
             </div>
-          </CardContent>
+          </div>
         </div>
       </div>
     </div>

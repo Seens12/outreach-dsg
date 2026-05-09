@@ -260,7 +260,8 @@ export default function TemplatesView() {
           filteredTemplates.map((template, index) => (
             <div
               key={template.id}
-              className={`border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow ${index === 0 ? 'md:col-span-2' : ''}`}
+              className={`anim-fade-in border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow ${index === 0 ? 'md:col-span-2' : ''}`}
+              style={{ animationDelay: `${index * 60}ms` }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">

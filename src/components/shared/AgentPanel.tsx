@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Bot, Send, ChevronUp, Sparkles, User, Building2, Mail, Lightbulb, Search } from 'lucide-react'
+import { Bot, Send, ChevronUp, Sparkles, User, Building2, Mail, Lightbulb, Search, Mic, MicOff } from 'lucide-react'
+import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 interface AgentMessage {
@@ -121,6 +122,7 @@ export function AgentPanel() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages)
   const [input, setInput] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -135,6 +137,19 @@ export function AgentPanel() {
 
   const handleSuggestion = (label: string) => {
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: label }])
+  }
+
+  const handleToggleRecording = () => {
+    if (!isRecording) {
+      setIsRecording(true)
+    } else {
+      setIsRecording(false)
+      setMessages(prev => [
+        ...prev,
+        { id: Date.now(), role: 'user', content: '🎤 Голосовое сообщение' },
+      ])
+      toast.success('Голосовое сообщение отправлено')
+    }
   }
 
   return (
@@ -166,13 +181,14 @@ export function AgentPanel() {
             {/* Suggestion chips - only show at initial state */}
             {messages.length === initialMessages.length && (
               <div className="flex flex-wrap gap-2 mb-2">
-                {suggestions.map(s => {
+                {suggestions.map((s, i) => {
                   const Icon = s.icon
                   return (
                     <button
                       key={s.label}
                       onClick={() => handleSuggestion(s.label)}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#e8e8e8] bg-white text-[12px] text-[#525252] hover:bg-[#fafafa] hover:border-[#d4d4d4] transition-colors cursor-pointer"
+                      className="anim-scale-in inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#e8e8e8] bg-white text-[12px] text-[#525252] hover:bg-[#fafafa] hover:border-[#d4d4d4] transition-colors cursor-pointer"
+                      style={{ animationDelay: `${i * 40}ms` }}
                     >
                       <Icon className="w-3.5 h-3.5 text-[#737373]" />
                       {s.label}
@@ -197,7 +213,7 @@ export function AgentPanel() {
                     'max-w-[80%] rounded-lg px-3 py-2 text-[13px] leading-relaxed',
                     msg.role === 'user'
                       ? 'bg-[#0d0d0d] text-white'
-                      : 'bg-[#f5f5f5] text-[#171717]',
+                      : 'anim-fade-in bg-[#f5f5f5] text-[#171717]',
                   )}
                 >
                   <div className="whitespace-pre-wrap">
@@ -225,6 +241,28 @@ export function AgentPanel() {
                 className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3]"
               />
               <button
+                onClick={handleToggleRecording}
+                className={cn(
+                  'w-7 h-7 rounded-md flex items-center justify-center transition-colors relative',
+                  isRecording
+                    ? 'bg-[#fef2f2] border border-[#dc2626]/20'
+                    : 'bg-transparent border border-[#e8e8e8] hover:bg-[#f5f5f5]',
+                )}
+                aria-label={isRecording ? 'Остановить запись' : 'Начать запись'}
+              >
+                {isRecording ? (
+                  <MicOff className="w-3.5 h-3.5 text-[#dc2626]" />
+                ) : (
+                  <Mic className="w-3.5 h-3.5 text-[#737373]" />
+                )}
+                {isRecording && (
+                  <span
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#dc2626]"
+                    style={{ animation: 'mic-pulse 1s ease-in-out infinite' }}
+                  />
+                )}
+              </button>
+              <button
                 onClick={handleSend}
                 disabled={!input.trim()}
                 className="w-7 h-7 rounded-md bg-[#0d0d0d] hover:bg-[#262626] flex items-center justify-center disabled:opacity-30 transition-colors"
@@ -232,6 +270,12 @@ export function AgentPanel() {
                 <Send className="w-3.5 h-3.5 text-white" />
               </button>
             </div>
+            <style>{`
+              @keyframes mic-pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.4; }
+              }
+            `}</style>
           </div>
         </>
       )}

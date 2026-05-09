@@ -261,7 +261,7 @@ export default function NotificationsView() {
                     <div className="flex items-center gap-3">
                       <span className="text-[11.5px] text-[#a3a3a3]">{item.time}</span>
                       <span className={cn(
-                        'inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold',
+                        'inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px]',
                         priority.className
                       )}>
                         {priority.label}

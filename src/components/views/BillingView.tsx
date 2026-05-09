@@ -86,7 +86,7 @@ export default function BillingView() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-[15px] font-semibold text-[#0d0d0d]">Рост</h3>
-                <span className="text-[11px] font-medium px-2 py-[3px] rounded-[6px] bg-[#dbeafe] text-[#3b82f6]">
+                <span className="text-[12px] px-2.5 py-[3px] rounded-[6px] bg-[#dbeafe] text-[#3b82f6]">
                   Текущий план
                 </span>
               </div>
@@ -120,7 +120,7 @@ export default function BillingView() {
               >
                 {isCurrent && (
                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                    <span className="text-[10.5px] font-semibold px-2.5 py-1 rounded-full bg-[#dbeafe] text-[#3b82f6]">
+                    <span className="text-[12px] px-2.5 py-[3px] rounded-[6px] bg-[#dbeafe] text-[#3b82f6]">
                       Текущий план
                     </span>
                   </div>
@@ -203,7 +203,7 @@ export default function BillingView() {
                   <td className="py-3 px-4 text-[#404040] font-medium">{p.description}</td>
                   <td className="py-3 px-4 font-semibold text-[#0d0d0d]">{p.amount}</td>
                   <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2 py-[3px] rounded-[6px] text-[11.5px] font-medium ${statusStyles[p.status]}`}>
+                    <span className={`inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] ${statusStyles[p.status]}`}>
                       {p.status}
                     </span>
                   </td>

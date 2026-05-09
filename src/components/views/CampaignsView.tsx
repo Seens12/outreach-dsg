@@ -229,7 +229,7 @@ export default function CampaignsView() {
             </p>
           </div>
         ) : (
-          filtered.map((campaign) => {
+          filtered.map((campaign, idx) => {
             const status = statusConfig[campaign.status];
             const openRate =
               campaign.sent > 0
@@ -243,7 +243,8 @@ export default function CampaignsView() {
             return (
               <div
                 key={campaign.id}
-                className="border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow"
+                className="anim-fade-in border border-[#e8e8e8] rounded-[10px] bg-white p-5 shadow-card transition-shadow"
+                style={{ animationDelay: `${idx * 60}ms` }}
               >
                 {/* Top row: name + status + actions */}
                 <div className="flex items-center justify-between mb-4">
@@ -252,7 +253,7 @@ export default function CampaignsView() {
                       {campaign.name}
                     </h3>
                     <span
-                      className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium ${status.bg} ${status.text}`}
+                      className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-[6px] text-[12px] ${status.bg} ${status.text}`}
                     >
                       <span
                         className={`size-1.5 rounded-full ${status.dot}`}

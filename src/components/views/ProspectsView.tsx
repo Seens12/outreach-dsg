@@ -281,7 +281,7 @@ export default function ProspectsView() {
                     <span className="text-[13px] text-[#737373]">{p.position}</span>
                   </TableCell>
                   <TableCell>
-                    <span className={cn('inline-flex items-center px-2.5 py-[3px] rounded-full text-[11.5px] font-semibold', st.className)}>
+                    <span className={cn('inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px]', st.className)}>
                       {st.label}
                     </span>
                   </TableCell>

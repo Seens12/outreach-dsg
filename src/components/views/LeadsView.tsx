@@ -201,7 +201,7 @@ export default function LeadsView() {
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={cn(
-                          'inline-block text-[12px] font-medium px-2.5 py-[3px] rounded-[6px]',
+                          'inline-block text-[12px] px-2.5 py-[3px] rounded-[6px]',
                           st.className
                         )}
                       >

@@ -19,7 +19,7 @@ export function FilterPills<T extends string>({ options, active, onChange, class
           className={cn(
             'px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer',
             active === opt.key
-              ? 'bg-[#0d0d0d] text-white'
+              ? 'bg-[#0d0d0d] text-white anim-scale-in'
               : 'bg-[#f5f5f5] text-[#525252] hover:bg-[#e8e8e8]'
           )}
         >

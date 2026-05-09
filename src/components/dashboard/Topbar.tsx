@@ -34,8 +34,8 @@ export function Topbar() {
 
   return (
     <header className="h-[52px] border-b border-[#e8e8e8] flex items-center px-[18px] gap-2.5 flex-shrink-0 bg-white z-30">
-      {/* Left */}
-      <div className="flex items-center gap-2">
+      {/* Left — fixed width to prevent layout shift */}
+      <div className="flex items-center gap-2 w-[200px] shrink-0">
         <button
           onClick={toggleSidebar}
           aria-label="Свернуть меню"
@@ -68,7 +68,7 @@ export function Topbar() {
             className={cn(
               'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms]',
               isChat
-                ? 'bg-white text-[#171717] shadow-card font-semibold'
+                ? 'anim-scale-in bg-white text-[#171717] shadow-card font-semibold'
                 : 'bg-transparent text-[#737373] hover:text-[#171717]'
             )}
           >
@@ -80,7 +80,7 @@ export function Topbar() {
             className={cn(
               'flex items-center gap-1.5 px-3.5 py-[5px] rounded-full border-none cursor-pointer text-[12px] font-medium font-[inherit] whitespace-nowrap transition-all duration-[160ms]',
               !isChat
-                ? 'bg-white text-[#171717] shadow-card font-semibold'
+                ? 'anim-scale-in bg-white text-[#171717] shadow-card font-semibold'
                 : 'bg-transparent text-[#737373] hover:text-[#171717]'
             )}
           >

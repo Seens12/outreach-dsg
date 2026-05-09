@@ -155,7 +155,7 @@ export default function WebhooksView() {
                       {webhook.name}
                     </h3>
                     <span
-                      className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full text-[11px] font-medium ${
+                      className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-[3px] rounded-[6px] text-[12px] ${
                         webhook.active
                           ? 'bg-[#dcfce7] text-[#22c55e] border border-[#bbf7d0]'
                           : 'bg-[#f5f5f5] text-[#a3a3a3] border border-[#e8e8e8]'

@@ -225,7 +225,7 @@ export default function TeamView() {
                     <span className="text-[13px] text-[#525252]">{m.email}</span>
                   </TableCell>
                   <TableCell>
-                    <span className={cn('inline-flex items-center px-2.5 py-[3px] rounded-full text-[11.5px] font-semibold', role.className)}>
+                    <span className={cn('inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px]', role.className)}>
                       {m.role}
                     </span>
                   </TableCell>

@@ -144,7 +144,7 @@ export default function SecurityView() {
               </div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center px-2.5 py-[3px] rounded-full text-[11.5px] font-semibold bg-[#dcfce7] text-[#22c55e]">
+              <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#22c55e]">
                 Хороший уровень
               </span>
             </div>
@@ -267,17 +267,17 @@ export default function SecurityView() {
                       {check.title}
                     </h3>
                     {check.status === 'ok' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#dcfce7] text-[#22c55e]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#dcfce7] text-[#22c55e]">
                         Включена
                       </span>
                     )}
                     {check.status === 'warning' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#fef3c7] text-[#d97706]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fef3c7] text-[#d97706]">
                         Средняя
                       </span>
                     )}
                     {check.status === 'error' && (
-                      <span className="inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold bg-[#fce7f3] text-[#e11d48]">
+                      <span className="inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] bg-[#fce7f3] text-[#e11d48]">
                         Не настроено
                       </span>
                     )}

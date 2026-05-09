@@ -202,7 +202,7 @@ function renderCustomLabel({
       fill="white"
       textAnchor="middle"
       dominantBaseline="central"
-      style={{ fontSize: '13px', fontWeight: 600 }}
+      style={{ fontSize: '11px', fontWeight: 400 }}
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>

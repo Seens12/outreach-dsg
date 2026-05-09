@@ -162,7 +162,7 @@ export default function MailboxesView() {
                   <td className="px-4 py-3 text-[#525252]">{mb.provider}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-medium ${st.className}`}
+                      className={`inline-flex items-center px-2.5 py-[3px] rounded-[6px] text-[12px] ${st.className}`}
                     >
                       {st.label}
                     </span>

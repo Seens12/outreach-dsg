@@ -248,7 +248,7 @@ export default function ReportsView() {
                       {report.name}
                     </h3>
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-md border ${typeClasses}`}
+                      className={`inline-flex items-center px-2.5 py-[3px] text-[12px] rounded-[6px] border ${typeClasses}`}
                     >
                       {typeLabel}
                     </span>
@@ -262,7 +262,7 @@ export default function ReportsView() {
                       {report.dateRange}
                     </span>
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-md border ${statusCfg.bgColor} ${statusCfg.color} ${statusCfg.borderColor}`}
+                      className={`inline-flex items-center gap-1 px-2.5 py-[3px] text-[12px] rounded-[6px] border ${statusCfg.bgColor} ${statusCfg.color} ${statusCfg.borderColor}`}
                     >
                       <StatusIcon
                         className={`w-3 h-3 ${

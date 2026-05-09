@@ -320,9 +320,9 @@ export default function ChatView() {
             </button>
 
             {/* Autonomy pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] shrink-0">
+            <div className="flex items-center gap-1.5 px-2.5 py-[3px] rounded-[6px] bg-[#f0fdf4] border border-[#bbf7d0] shrink-0">
               <span className="status-pulse w-[6px] h-[6px] rounded-full bg-[#16a34a] inline-block" />
-              <span className="text-[11px] font-medium text-[#16a34a] whitespace-nowrap">
+              <span className="text-[12px] text-[#16a34a] whitespace-nowrap">
                 Autopilot
               </span>
             </div>
