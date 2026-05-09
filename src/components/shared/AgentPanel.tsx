@@ -142,10 +142,19 @@ export function AgentPanel() {
   const [transcribedText, setTranscribedText] = useState('')
 
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleTranscribed = useCallback((text: string) => {
     setInput(prev => prev ? `${prev} ${text}` : text)
     setTranscribedText(text)
+    // Trigger auto-resize after transcription
+    requestAnimationFrame(() => {
+      const ta = textareaRef.current
+      if (ta) {
+        ta.style.height = 'auto'
+        ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
+      }
+    })
   }, [])
 
   const {
@@ -165,10 +174,20 @@ export function AgentPanel() {
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: input.trim() }])
     setInput('')
     setTranscribedText('')
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
   }
 
   const handleSuggestion = (label: string) => {
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: label }])
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    const ta = e.target
+    ta.style.height = 'auto'
+    ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
   }
 
   return (
@@ -251,10 +270,10 @@ export function AgentPanel() {
 
           {/* ─── Input Area ─── */}
           <div className="px-4 py-3 border-t border-[#f5f5f5]">
-          {/* Fixed height container for smooth state transitions */}
-          <div className="h-[48px]">
+          {/* Fixed height for voice, auto-expanding for text */}
+          <div>
             {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-full overflow-hidden">
+              <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-xl px-3 h-[48px] overflow-hidden">
                 {/* Cancel button */}
                 <button
                   onClick={cancelRecording}
@@ -293,8 +312,8 @@ export function AgentPanel() {
                 </div>
               </div>
             ) : (
-              /* Normal Input Mode */
-              <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 h-full">
+              /* Normal Input Mode — auto-expanding */
+              <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-lg px-3 min-h-[48px]">
                 {/* Paperclip attachment */}
                 <button
                   className="w-7 h-7 rounded-md flex items-center justify-center transition-colors cursor-pointer hover:bg-[#f5f5f5]"
@@ -303,14 +322,17 @@ export function AgentPanel() {
                   <Paperclip className="w-3.5 h-3.5 text-[#737373]" />
                 </button>
 
-                <Sparkles className="w-4 h-4 text-[#737373]" />
-                <input
-                  type="text"
+                <div className="flex items-center justify-center w-7 h-7 shrink-0">
+                  <Sparkles className="w-4 h-4 text-[#737373]" />
+                </div>
+                <textarea
+                  ref={textareaRef}
                   placeholder="Спросить AI..."
                   value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSend()}
-                  className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3]"
+                  onChange={handleInputChange}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+                  rows={1}
+                  className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-[#a3a3a3] resize-none min-h-[32px] max-h-[200px] py-1.5 leading-[1.5]"
                 />
                 {/* Mic button */}
                 <button

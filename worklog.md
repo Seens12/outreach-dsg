@@ -343,3 +343,30 @@ Stage Summary:
 - All status pills across the project now use pastel color tones
 - Colors are consistent with the existing system palette — no new colors invented
 - InboxView main target: Горячий=pink, Тёплый=amber, Холодный=blue, Черновик=gray, На обучении=cyan, AI-ответ=purple, Срочно=red
+
+---
+Task ID: auto-expand-input
+Agent: Main Agent
+Task: Auto-expanding agent input on Chat and AgentPanel pages (1 line initial, 8-10 lines max, icons at bottom)
+
+Work Log:
+- ChatView.tsx: Added `textareaRef` for auto-resize, `handleInputChange` computes height from scrollHeight capped at 200px (~10 lines)
+- ChatView.tsx: Removed fixed `h-[48px]` wrapper → voice mode gets own `h-[48px]`, text mode uses `min-h-[48px]`
+- ChatView.tsx: Changed flex container from `items-center h-full` to `items-end min-h-[48px]` so icons stay at bottom when expanded
+- ChatView.tsx: Changed textarea `max-h-[32px]` → `max-h-[200px]`, added `ref={textareaRef}`, wired `handleInputChange`
+- ChatView.tsx: Sparkles icon wrapped in w-8 h-8 flex container for consistent bottom alignment with buttons
+- ChatView.tsx: `handleSend` resets textarea height to 'auto' after clearing input
+- ChatView.tsx: `handleTranscribed` triggers auto-resize via requestAnimationFrame after voice text insertion
+- AgentPanel.tsx: Converted `<input type="text">` to `<textarea>` with same auto-expand logic
+- AgentPanel.tsx: Added `textareaRef`, `handleInputChange`, same height reset in `handleSend` and `handleTranscribed`
+- AgentPanel.tsx: Same container changes — voice `h-[48px]`, text `min-h-[48px] items-end`
+- AgentPanel.tsx: Sparkles wrapped in w-7 h-7 flex container for alignment
+- 0 lint errors, clean compile
+
+Stage Summary:
+- Both Chat page and AgentPanel (Расширенный) now have auto-expanding textareas
+- Initial size: same as before (min-h-[48px], single line)
+- Max expansion: ~10 lines (200px), then internal scroll
+- Icons (Paperclip, Sparkles, Mic, Send) always stay at the bottom via `items-end`
+- Voice mode stays at fixed h-[48px] with no height jump on transition
+- Files modified: ChatView.tsx, AgentPanel.tsx

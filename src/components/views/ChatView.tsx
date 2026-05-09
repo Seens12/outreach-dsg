@@ -157,6 +157,7 @@ export default function ChatView() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleWelcomeCardClick = (cardId: string) => {
     setMessages(sampleMessages)
@@ -170,6 +171,9 @@ export default function ChatView() {
       { id: Date.now().toString(), role: 'user', text: input.trim() },
     ])
     setInput('')
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -179,8 +183,23 @@ export default function ChatView() {
     }
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    const ta = e.target
+    ta.style.height = 'auto'
+    ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
+  }
+
   const handleTranscribed = useCallback((text: string) => {
     setInput(prev => prev ? `${prev} ${text}` : text)
+    // Trigger auto-resize after transcription
+    requestAnimationFrame(() => {
+      const ta = textareaRef.current
+      if (ta) {
+        ta.style.height = 'auto'
+        ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
+      }
+    })
   }, [])
 
   const {
@@ -340,10 +359,10 @@ export default function ChatView() {
               </button>
             </div>
           </div>
-          {/* Input area — fixed height for smooth state transitions */}
-          <div className="h-[48px]">
+          {/* Input area — auto-expanding textarea, fixed height for voice mode */}
+          <div>
           {(voicePhase === 'recording' || voicePhase === 'transcribing') ? (
-            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 h-full overflow-hidden">
+            <div className="relative flex items-center gap-3 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 h-[48px] overflow-hidden">
               {/* Cancel button */}
               <button
                 onClick={cancelRecording}
@@ -382,24 +401,27 @@ export default function ChatView() {
               </div>
             </div>
           ) : (
-            /* Normal Input Mode */
-            <div className="flex items-center gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 h-full">
+            /* Normal Input Mode — auto-expanding */
+            <div className="flex items-end gap-2 bg-[#fafafa] border border-[#e8e8e8] rounded-[12px] px-3 min-h-[48px]">
               {/* Attachment */}
               <button className="flex items-center justify-center w-8 h-8 rounded-[8px] hover:bg-[#f0f0f0] transition-colors shrink-0">
                 <Paperclip className="w-4 h-4 text-[#737373]" />
               </button>
 
               {/* Sparkles AI icon */}
-              <Sparkles className="w-4 h-4 text-[#737373] shrink-0" />
+              <div className="flex items-center justify-center w-8 h-8 shrink-0">
+                <Sparkles className="w-4 h-4 text-[#737373]" />
+              </div>
 
-              {/* Textarea */}
+              {/* Textarea — auto-expanding up to ~10 lines */}
               <textarea
+                ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Напишите сообщение..."
                 rows={1}
-                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[32px] py-1.5 leading-[1.5]"
+                className="flex-1 bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#737373] resize-none outline-none min-h-[32px] max-h-[200px] py-1.5 leading-[1.5]"
               />
 
               {/* Mic button */}
