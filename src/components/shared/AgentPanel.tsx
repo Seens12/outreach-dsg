@@ -152,8 +152,13 @@ const DEFAULT_HEIGHT = 380   // opened default
 const MAX_HEIGHT = 70         // vh — max 70% of viewport
 
 /* ─── Main Agent Panel ─── */
-export function AgentPanel() {
-  const [isOpen, setIsOpen] = useState(false)
+interface AgentPanelProps {
+  isOpen: boolean
+  onToggle: () => void
+  onClose: () => void
+}
+
+export function AgentPanel({ isOpen, onToggle, onClose }: AgentPanelProps) {
   const [panelHeight, setPanelHeight] = useState(DEFAULT_HEIGHT)
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages)
   const [input, setInput] = useState('')
@@ -246,12 +251,12 @@ export function AgentPanel() {
     ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'
   }
 
-  const toggleOpen = () => {
+  const handleToggle = () => {
     if (isOpen) {
-      setIsOpen(false)
+      onClose()
     } else {
       setPanelHeight(DEFAULT_HEIGHT)
-      setIsOpen(true)
+      onToggle()
     }
   }
 
@@ -260,11 +265,13 @@ export function AgentPanel() {
   const TipIcon = currentTip.icon
 
   return (
-    <div className="flex-shrink-0 mx-3 mb-3">
+    <div className="flex-shrink-0 mx-3 mb-3 relative z-20">
       <div
         className={cn(
-          'flex flex-col bg-white border border-[#e8e8e8] shadow-card overflow-hidden transition-[height] duration-300 ease-in-out',
-          isOpen ? 'rounded-t-[12px] rounded-b-[6px]' : 'rounded-[10px]',
+          'flex flex-col bg-white border border-[#e8e8e8] overflow-hidden transition-[height,box-shadow] duration-300 ease-in-out',
+          isOpen
+            ? 'rounded-t-[12px] rounded-b-[6px] shadow-[0_-8px_40px_-10px_rgba(0,0,0,0.12),0_-2px_12px_-4px_rgba(0,0,0,0.06)]'
+            : 'rounded-[10px] shadow-card',
         )}
         style={{ height: isOpen ? panelHeight : MIN_HEIGHT }}
       >
@@ -280,7 +287,7 @@ export function AgentPanel() {
 
         {/* ── Toggle bar ── */}
         <button
-          onClick={toggleOpen}
+          onClick={handleToggle}
           className={cn(
             'flex items-center gap-2 px-4 shrink-0 cursor-pointer hover:bg-[#f5f5f5] transition-colors',
             isOpen ? 'h-[40px]' : 'h-[44px]',

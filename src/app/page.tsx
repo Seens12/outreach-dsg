@@ -1,10 +1,11 @@
 'use client'
 
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useAppStore, type ViewId } from '@/lib/store'
 import { Sidebar } from '@/components/dashboard/Sidebar'
 import { Topbar } from '@/components/dashboard/Topbar'
 import { AgentPanel } from '@/components/shared/AgentPanel'
+import { cn } from '@/lib/utils'
 
 // Lazy load all views
 const views: Record<ViewId, React.LazyExoticComponent<() => JSX.Element>> = {
@@ -58,6 +59,7 @@ function LoadingFallback() {
 
 export default function Home() {
   const { view, mode } = useAppStore()
+  const [agentOpen, setAgentOpen] = useState(false)
 
   const isAuth = authViews.has(view)
   const isChat = mode === 'chat' && !isAuth
@@ -77,18 +79,45 @@ export default function Home() {
     )
   }
 
+  const showAgent = !isAuth && !isChat
+
   return (
     <div className="flex h-screen overflow-hidden bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar />
         <main className="flex-1 overflow-hidden relative mx-auto w-full max-w-[1400px] flex flex-col">
-          <div className="flex-1 overflow-hidden relative">
+          {/* Content area */}
+          <div className={cn(
+            'flex-1 overflow-hidden relative transition-[filter,opacity] duration-200',
+            showAgent && agentOpen && 'opacity-60 pointer-events-none',
+          )}>
             <Suspense fallback={<LoadingFallback />}>
               {isChat ? <ChatViewLazy /> : <>{(() => { const V = views[view]; return <V /> })()}</>}
             </Suspense>
           </div>
-          {!isAuth && !isChat && <AgentPanel />}
+
+          {/* Overlay — click to close */}
+          {showAgent && (
+            <div
+              className={cn(
+                'absolute inset-0 z-10 transition-opacity duration-200',
+                agentOpen
+                  ? 'opacity-100 cursor-pointer'
+                  : 'opacity-0 pointer-events-none',
+              )}
+              onClick={() => setAgentOpen(false)}
+            />
+          )}
+
+          {/* Agent panel */}
+          {showAgent && (
+            <AgentPanel
+              isOpen={agentOpen}
+              onToggle={() => setAgentOpen(!agentOpen)}
+              onClose={() => setAgentOpen(false)}
+            />
+          )}
         </main>
       </div>
     </div>
