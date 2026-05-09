@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useAppStore, viewMeta, type ViewId } from '@/lib/store'
 import {
   Bot,
@@ -44,6 +45,8 @@ interface NavGroup {
   label: string
   items: { id: ViewId; icon: React.ElementType; badge?: number }[]
 }
+
+const COLLAPSIBLE_LABELS = new Set(['Настройка', 'Аккаунт'])
 
 const navGroups: NavGroup[] = [
   {
@@ -123,6 +126,19 @@ const navGroups: NavGroup[] = [
 
 export function Sidebar() {
   const { view, mode, setView, setMode, sidebarOpen, toggleSidebar } = useAppStore()
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+
+  const toggleGroup = (label: string) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev)
+      if (next.has(label)) {
+        next.delete(label)
+      } else {
+        next.add(label)
+      }
+      return next
+    })
+  }
 
   return (
     <aside
@@ -146,51 +162,79 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 py-2.5 px-2 overflow-y-auto custom-scroll">
-        {navGroups.map((group) => (
+        {navGroups.map((group) => {
+          const isCollapsible = COLLAPSIBLE_LABELS.has(group.label)
+          const isCollapsed = collapsed.has(group.label)
+          return (
           <div key={group.label} className="mb-4">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] px-2 mb-1">
-              {group.label}
-            </div>
-            {group.items.map((item) => {
-              const Icon = item.icon
-              const isActive = mode === 'expanded' && view === item.id
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setView(item.id)}
-                  aria-current={isActive ? 'page' : undefined}
+            {isCollapsible ? (
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className="w-full flex items-center justify-between px-2 mb-1 cursor-pointer group/label"
+              >
+                <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] group-hover/label:text-[#525252] transition-colors">
+                  {group.label}
+                </span>
+                <ChevronDown
                   className={cn(
-                    'w-full flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
-                    isActive
-                      ? 'bg-[#0d0d0d] text-white'
-                      : 'text-[#525252] hover:bg-[#0d0d0d] hover:text-white'
+                    'w-3 h-3 text-[#737373] transition-transform duration-300',
+                    isCollapsed && '-rotate-90'
                   )}
-                >
-                  <Icon
-                    className="w-[15px] h-[15px] flex-shrink-0"
-                    strokeWidth={1.8}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <span className="flex-1 text-left">{viewMeta[item.id].title}</span>
-                  {item.badge && (
-                    <span
-                      className={cn(
-                        'text-[10.5px] font-semibold min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full',
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#e8e8e8] text-[#525252]'
-                      )}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                  {!item.badge && isActive && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#16a34a] ml-auto" />
-                  )}
-                </button>
-              )
-            })}
+                />
+              </button>
+            ) : (
+              <div className="text-[10px] font-semibold uppercase tracking-[0.06em] text-[#737373] px-2 mb-1">
+                {group.label}
+              </div>
+            )}
+            <div
+              className={cn(
+                'overflow-hidden transition-all duration-300',
+                isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[500px] opacity-100'
+              )}
+            >
+              {group.items.map((item) => {
+                const Icon = item.icon
+                const isActive = mode === 'expanded' && view === item.id
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setView(item.id)}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={cn(
+                      'w-full flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-[13px] font-medium whitespace-nowrap transition-all duration-[160ms] mb-[1px] relative',
+                      isActive
+                        ? 'bg-[#0d0d0d] text-white'
+                        : 'text-[#525252] hover:bg-[#0d0d0d] hover:text-white'
+                    )}
+                  >
+                    <Icon
+                      className="w-[15px] h-[15px] flex-shrink-0"
+                      strokeWidth={1.8}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <span className="flex-1 text-left">{viewMeta[item.id].title}</span>
+                    {item.badge && (
+                      <span
+                        className={cn(
+                          'text-[10.5px] font-semibold min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full',
+                          isActive ? 'bg-white/20 text-white' : 'bg-[#e8e8e8] text-[#525252]'
+                        )}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                    {!item.badge && isActive && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#16a34a] ml-auto" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        ))}
+          )
+        })}
       </nav>
 
       {/* User */}
