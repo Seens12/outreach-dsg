@@ -402,7 +402,7 @@ export default function ChatView() {
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Напишите сообщение..."
+                placeholder="Управляйте системой прямо здесь — настройте параметры, исправьте ошибки, запросите отчёты. Всё без перехода в расширенный режим."
                 rows={5}
                 className="w-full bg-transparent text-[13.5px] text-[#171717] placeholder:text-[#a3a3a3] resize-none outline-none px-4 pt-3 pb-2 leading-[1.5] max-h-[200px]"
               />

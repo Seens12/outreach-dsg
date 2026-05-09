@@ -308,7 +308,7 @@ export function AgentPanel() {
               <div className="flex flex-col bg-[#fafafa] border border-[#e8e8e8] rounded-xl overflow-hidden">
                 <textarea
                   ref={textareaRef}
-                  placeholder="Спросить AI..."
+                  placeholder="Управляйте системой прямо здесь — настройте параметры, исправьте ошибки, запросите отчёты. Всё без перехода в расширенный режим."
                   value={input}
                   onChange={handleInputChange}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
