@@ -148,7 +148,7 @@ function renderContent(content: string) {
 // ── Constants ──────────────────────────────────────────────
 
 const MIN_HEIGHT = 44        // collapsed
-const DEFAULT_HEIGHT = 494   // opened default
+const DEFAULT_HEIGHT = 500   // opened default
 const MAX_HEIGHT = 70         // vh — max 70% of viewport
 
 /* ─── Main Agent Panel ─── */
