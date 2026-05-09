@@ -258,13 +258,13 @@ export default function CrmView() {
                       {crm.name}
                     </h3>
                     {crm.badgeType === 'premium' && (
-                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
+                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
                         <Crown className="size-3" />
                         Премиум
                       </span>
                     )}
                     {crm.badgeType === 'popular' && (
-                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
+                      <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] bg-[#f5f5f5] text-[#525252] border border-[#e8e8e8]">
                         <Star className="size-3" />
                         {crm.badge}
                       </span>

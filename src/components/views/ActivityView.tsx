@@ -229,7 +229,7 @@ export default function ActivityView() {
                       </div>
                     </div>
                     <span
-                      className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-medium shrink-0 ${config.iconBg} ${config.iconColor}`}
+                      className={`inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] shrink-0 ${config.iconBg} ${config.iconColor}`}
                     >
                       {config.label}
                     </span>

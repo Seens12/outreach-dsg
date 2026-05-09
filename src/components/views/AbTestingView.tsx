@@ -169,7 +169,7 @@ function VariantBlock({
           Вариант {label}
         </span>
         {isLeader && (
-          <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#404040] border border-[#e8e8e8]">
+          <span className="inline-flex items-center gap-1 px-2 py-[2px] rounded-full text-[10px] bg-[#f5f5f5] text-[#404040] border border-[#e8e8e8]">
             <Trophy className="size-3" />
             Лидер
           </span>

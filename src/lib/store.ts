@@ -30,7 +30,6 @@ export type ViewId =
   | 'security'
   | 'settings'
   // Support
-  | 'ai-demo'
   | 'help'
   // Auth
   | 'login'
@@ -86,7 +85,6 @@ export const viewMeta: Record<ViewId, { title: string; group?: string }> = {
   billing: { title: 'Биллинг', group: 'Аккаунт' },
   security: { title: 'Безопасность', group: 'Аккаунт' },
   settings: { title: 'Настройки', group: 'Аккаунт' },
-  'ai-demo': { title: 'AI Демо', group: 'Поддержка' },
   help: { title: 'Помощь', group: 'Поддержка' },
   login: { title: 'Вход' },
   register: { title: 'Регистрация' },

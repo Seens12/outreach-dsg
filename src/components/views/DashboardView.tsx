@@ -333,24 +333,24 @@ export default function DashboardView() {
       </div>
 
       {/* Attention Bar */}
-      <div className="flex items-center gap-4 bg-[#fafafa] border border-[#e8e8e8] rounded-[10px] p-4">
-        <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#f5f5f5] shrink-0">
-          <AlertTriangle className="w-[18px] h-[18px] text-[#737373]" />
+      <div className="flex items-center gap-4 bg-[#fefce8] border border-[#fef3c7] rounded-[10px] p-4">
+        <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#fef9c3] shrink-0">
+          <AlertTriangle className="w-[18px] h-[18px] text-[#a16207]" />
         </div>
         <div className="flex flex-col gap-1 flex-1 min-w-0">
-          <span className="text-[13px] font-semibold text-[#0d0d0d]">Требует внимания</span>
+          <span className="text-[13px] font-semibold text-[#a16207]">Требует внимания</span>
           <div className="flex items-center gap-5 flex-wrap">
             {attentionItems.map((item) => (
               <div key={item.label} className="flex items-center gap-1.5 text-[12.5px]">
-                <span className="font-semibold text-[#0d0d0d]">{item.value}</span>
-                <span className="text-[#525252]">{item.label}</span>
+                <span className="font-semibold text-[#a16207]">{item.value}</span>
+                <span className="text-[#a16207]/70">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
         <button
           onClick={() => setView('inbox')}
-          className="flex items-center gap-1 text-[12px] font-medium text-[#525252] hover:text-[#0d0d0d] transition-colors cursor-pointer shrink-0"
+          className="flex items-center gap-1 text-[12px] font-medium text-[#a16207] hover:text-[#92400e] transition-colors cursor-pointer shrink-0"
         >
           Открыть
           <ChevronRight className="w-3 h-3" />

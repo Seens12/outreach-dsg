@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useAppStore, viewMeta, type ViewId } from '@/lib/store'
 import {
-  Bot,
+
   LayoutDashboard,
   Megaphone,
   Inbox,
@@ -112,7 +112,6 @@ const navGroups: NavGroup[] = [
   {
     label: 'Поддержка',
     items: [
-      { id: 'ai-demo', icon: Bot },
       { id: 'help', icon: HelpCircle },
     ],
   },

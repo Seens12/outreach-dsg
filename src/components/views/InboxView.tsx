@@ -246,17 +246,17 @@ export default function InboxView() {
                 {/* Row 3: Badges */}
                 <div className="flex items-center gap-2 ml-[42px]">
                   {/* Lead status */}
-                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold', lead.className)}>
+                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px]', lead.className)}>
                     {lead.label}
                   </span>
 
                   {/* Email state */}
-                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px] font-semibold', state.className)}>
+                  <span className={cn('inline-flex items-center px-2 py-[2px] rounded-full text-[10.5px]', state.className)}>
                     {state.label}
                   </span>
 
                   {/* Confidence */}
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold ml-auto">
+                  <span className="inline-flex items-center gap-1 text-[11px] ml-auto">
                     <CircleDot className={cn(
                       'size-3',
                       item.confidence >= 80 ? 'text-[#0d0d0d]' : item.confidence >= 50 ? 'text-[#737373]' : 'text-[#a3a3a3]'
@@ -465,14 +465,14 @@ export default function InboxView() {
           </div>
 
           {/* Warning box */}
-          <div className="rounded-[8px] bg-[#fafafa] border border-[#e8e8e8] p-3">
+          <div className="rounded-[8px] bg-[#fefce8] border border-[#fef3c7] p-3">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="size-4 text-[#737373] shrink-0 mt-0.5" />
+              <AlertTriangle className="size-4 text-[#a16207] shrink-0 mt-0.5" />
               <div>
-                <p className="text-[12px] font-semibold text-[#404040] mb-0.5">
+                <p className="text-[12px] font-semibold text-[#a16207] mb-0.5">
                   Недостающая информация
                 </p>
-                <p className="text-[11px] text-[#737373] leading-relaxed">
+                <p className="text-[11px] text-[#a16207]/70 leading-relaxed">
                   Нет данных о текущих акциях и специальных предложениях. Добавьте информацию для более точных ответов.
                 </p>
               </div>

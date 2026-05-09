@@ -190,13 +190,13 @@ export default function MailboxesView() {
       </div>
 
       {/* Warning alert */}
-      <div className="bg-[#fafafa] border border-[#e8e8e8] rounded-[10px] p-4 flex gap-3 items-start">
-        <AlertCircle className="w-[15px] h-[15px] text-[#737373] shrink-0 mt-0.5" />
-        <div className="text-[13px] text-[#404040] leading-[1.5]">
+      <div className="bg-[#fef2f2] border border-[#fecaca] rounded-[10px] p-4 flex gap-3 items-start">
+        <AlertCircle className="w-[15px] h-[15px] text-[#be123c] shrink-0 mt-0.5" />
+        <div className="text-[13px] text-[#be123c] leading-[1.5]">
           Ящик <strong>info@outreach2.ru</strong> приостановлен автоматически: spam rate 0.92%
           (порог 0.5%). Рекомендации: проверить список получателей, снизить дневной лимит.{' '}
           <span
-            className="text-[#be123c] font-semibold cursor-pointer hover:underline"
+            className="text-[#9f1239] font-semibold cursor-pointer hover:underline"
             onClick={() => toast.info('Агент анализирует проблему')}
           >
             Попросить агента разобраться →

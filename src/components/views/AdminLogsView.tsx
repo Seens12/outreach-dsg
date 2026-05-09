@@ -40,11 +40,11 @@ const logEntries: LogEntry[] = [
 const levelConfig: Record<LogLevel, { icon: typeof AlertCircle; className: string }> = {
   ERROR: {
     icon: AlertCircle,
-    className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
+    className: 'bg-[#fee2e2] text-[#be123c] border-[#fecaca]',
   },
   WARN: {
     icon: AlertTriangle,
-    className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
+    className: 'bg-[#fefce8] text-[#a16207] border-[#fef3c7]',
   },
   INFO: {
     icon: Info,
@@ -127,12 +127,12 @@ export default function AdminLogsView() {
               <div
                 key={log.id}
                 className={`flex items-start gap-3 px-4 py-3 border-b border-[#e8e8e8] last:border-b-0 ${
-                  log.level === 'ERROR' ? 'bg-[#fffafa]' : ''
+                  log.level === 'ERROR' ? 'bg-[#fffafa]' : log.level === 'WARN' ? 'bg-[#fffdf5]' : ''
                 }`}
               >
                 <Badge
                   variant="outline"
-                  className={`flex-shrink-0 mt-0.5 font-semibold ${cfg.className}`}
+                  className={`flex-shrink-0 mt-0.5 ${cfg.className}`}
                 >
                   <Icon className="w-3 h-3 mr-1" />
                   {log.level}

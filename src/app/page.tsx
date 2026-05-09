@@ -29,7 +29,6 @@ const views: Record<ViewId, React.LazyExoticComponent<() => JSX.Element>> = {
   billing: lazy(() => import('@/components/views/BillingView')),
   security: lazy(() => import('@/components/views/SecurityView')),
   settings: lazy(() => import('@/components/views/SettingsView')),
-  'ai-demo': lazy(() => import('@/components/views/AiDemoView')),
   help: lazy(() => import('@/components/views/HelpView')),
   login: lazy(() => import('@/components/auth/LoginView')),
   register: lazy(() => import('@/components/auth/RegisterView')),
