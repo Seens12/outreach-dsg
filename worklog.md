@@ -271,3 +271,28 @@ Work Log:
 Stage Summary:
 - All 6 tasks completed
 - 0 lint errors
+
+---
+Task ID: voice-input
+Agent: Main
+Task: ChatGPT-style voice input with wave animation, ASR transcription, design-appropriate mic indicator
+
+Work Log:
+- Created API route /api/transcribe (POST) using z-ai-web-dev-sdk ASR backend
+- Created VoiceWave canvas component with 36 animated bars reacting to real-time audio frequency data
+- Redesigned AgentPanel voice input with 4 phases: idle → recording → transcribing → done
+- Wave animation: canvas-based bars, react to voice volume via Web Audio API AnalyserNode
+- Right-to-left pattern: frequency data mapped left-to-right, bars pulse symmetrically from center
+- Replaced red mic outline (bg-[#fef2f2] border-[#dc2626]) with dark design: bg-[#0d0d0d] + micGlow animation + micRipple
+- Cancel button (X) on left side of recording bar
+- Transcription flow: record → stop → spinner "Распознавание..." → text inserted into input
+- Added CSS keyframes: waveIdle, wavePulse, waveFadeIn, waveFadeOut, micGlow, recordingRipple
+- Fixed React lint error (refs during render) by converting analyserRef to analyserNode state
+- 0 lint errors, clean compile
+
+Stage Summary:
+- /api/transcribe route handles audio→text via z-ai-web-dev-sdk
+- VoiceWave component renders real-time audio-reactive wave visualization on canvas
+- Mic button: dark bg-[#0d0d0d] with glow/ripple animations (no red)
+- Recording bar: [X cancel] [wave canvas / transcribing spinner] [stop mic button]
+- Text automatically inserted into input field after transcription
