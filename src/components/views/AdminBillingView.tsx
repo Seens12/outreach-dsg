@@ -72,9 +72,9 @@ const payments: Payment[] = [
 ]
 
 const paymentStatusConfig = {
-  paid: { label: 'Оплачен', className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]', icon: CheckCircle },
-  pending: { label: 'Ожидает', className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]', icon: Clock },
-  failed: { label: 'Ошибка', className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]', icon: XCircle },
+  paid: { label: 'Оплачен', className: 'bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]', icon: CheckCircle },
+  pending: { label: 'Ожидает', className: 'bg-[#fafafa] text-[#a16207] border-[#e8e8e8]', icon: Clock },
+  failed: { label: 'Ошибка', className: 'bg-[#fee2e2] text-[#be123c] border-[#fecaca]', icon: XCircle },
 }
 
 export default function AdminBillingView() {

@@ -99,16 +99,16 @@ const sources = [
 // ---------------------------------------------------------------------------
 
 const leadStatusConfig: Record<LeadStatus, { label: string; className: string }> = {
-  hot: { label: 'Горячий', className: 'bg-[#f5f5f5] text-[#404040]' },
-  warm: { label: 'Тёплый', className: 'bg-[#f5f5f5] text-[#525252]' },
-  cold: { label: 'Холодный', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
+  hot: { label: 'Горячий', className: 'bg-[#fce7f3] text-[#be123c]' },
+  warm: { label: 'Тёплый', className: 'bg-[#fafafa] text-[#a16207]' },
+  cold: { label: 'Холодный', className: 'bg-[#dbeafe] text-[#3b82f6]' },
 }
 
 const emailStateConfig: Record<EmailState, { label: string; className: string }> = {
-  draft: { label: 'Черновик', className: 'bg-[#f5f5f5] text-[#a3a3a3]' },
-  training: { label: 'На обучении', className: 'bg-[#f5f5f5] text-[#737373]' },
-  'ai-reply': { label: 'AI-ответ', className: 'bg-[#f5f5f5] text-[#404040]' },
-  urgent: { label: 'Срочно', className: 'bg-[#0d0d0d] text-white' },
+  draft: { label: 'Черновик', className: 'bg-[#f5f5f5] text-[#525252]' },
+  training: { label: 'На обучении', className: 'bg-[#cffafe] text-[#0891b2]' },
+  'ai-reply': { label: 'AI-ответ', className: 'bg-[#ede9fe] text-[#7c3aed]' },
+  urgent: { label: 'Срочно', className: 'bg-[#fee2e2] text-[#be123c]' },
 }
 
 type InboxFilter = 'all' | 'attention' | 'training' | 'auto'

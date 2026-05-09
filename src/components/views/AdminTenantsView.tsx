@@ -38,9 +38,9 @@ const tenants: Tenant[] = [
 ]
 
 const statusConfig = {
-  active: { label: 'Active', className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]' },
-  trial: { label: 'Trial', className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]' },
-  suspended: { label: 'Suspended', className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]' },
+  active: { label: 'Active', className: 'bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]' },
+  trial: { label: 'Trial', className: 'bg-[#ede9fe] text-[#7c3aed] border-[#ddd6fe]' },
+  suspended: { label: 'Suspended', className: 'bg-[#fee2e2] text-[#be123c] border-[#fecaca]' },
 }
 
 export default function AdminTenantsView() {

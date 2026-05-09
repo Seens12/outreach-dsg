@@ -111,9 +111,9 @@ const sources: KnowledgeSource[] = [
 // ---------------------------------------------------------------------------
 
 const statusStyles: Record<SourceStatus, string> = {
-  'Активен': 'bg-[#f5f5f5] text-[#404040]',
-  'Устаревает': 'bg-[#f5f5f5] text-[#a3a3a3]',
-  'Черновик': 'bg-[#f5f5f5] text-[#525252]',
+  'Активен': 'bg-[#dcfce7] text-[#15803d]',
+  'Устаревает': 'bg-[#fafafa] text-[#a16207]',
+  'Черновик': 'bg-[#dbeafe] text-[#3b82f6]',
 }
 
 const typeConfig: Record<SourceType, { icon: typeof Globe; iconBg: string; iconColor: string }> = {

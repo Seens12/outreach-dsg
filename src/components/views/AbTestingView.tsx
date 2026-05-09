@@ -135,15 +135,15 @@ const topStats = [
 const statusConfig: Record<TestStatus, { label: string; className: string }> = {
   active: {
     label: 'Активный',
-    className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
+    className: 'bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]',
   },
   completed: {
     label: 'Завершён',
-    className: 'bg-[#f5f5f5] text-[#404040] border-[#e8e8e8]',
+    className: 'bg-[#f5f5f5] text-[#525252] border-[#e8e8e8]',
   },
   draft: {
     label: 'Черновик',
-    className: 'bg-[#fafafa] text-[#a3a3a3] border-[#e8e8e8]',
+    className: 'bg-[#dbeafe] text-[#3b82f6] border-[#bfdbfe]',
   },
 };
 
